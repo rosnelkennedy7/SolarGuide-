@@ -47,7 +47,10 @@ def register():
         db.session.add(log)
         db.session.commit()
 
-        # Redirection différente selon le rôle
+        # Connexion automatique sans redemander email/mot de passe
+        login_user(user, remember=True)
+
+        # Redirection directe selon le rôle
         if role == 'technicien':
             return jsonify({"succes": True, "message": "Compte créé ! Passez le QCM de qualification.",
                             "redirect": "/qcm"})

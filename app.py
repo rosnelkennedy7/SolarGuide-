@@ -46,88 +46,108 @@ import pandas as pd
 QCM_QUESTIONS = [
     {
         "id": 1,
-        "question": "Que signifie PR dans un système PV ?",
+        "question": "Un panneau solaire produit quel type de courant ?",
         "options": [
-            "Puissance Réelle",
-            "Performance Ratio",
-            "Production Relative",
-            "Perte Résistive",
+            "Courant alternatif (AC)",
+            "Courant continu (DC)",
+            "Les deux à la fois",
+            "Ça dépend de la marque",
         ],
         "reponse": 1,
     },
     {
         "id": 2,
-        "question": "Quelle est la valeur recommandée du PR pour le Bénin ?",
-        "options": ["0.85", "0.90", "0.75", "0.80"],
-        "reponse": 2,
-    },
-    {
-        "id": 3,
-        "question": "Comment calcule-t-on la puissance crête d'un champ PV ?",
+        "question": "Qu'est-ce qu'un onduleur fait dans une installation solaire ?",
         "options": [
-            "E × PR / Ir",
-            "E / (PR × Ir)",
-            "E × Ir × PR",
-            "E / PR + Ir",
+            "Il stocke l'énergie solaire",
+            "Il convertit le courant DC en courant alternatif AC",
+            "Il protège les panneaux contre la pluie",
+            "Il mesure l'irradiation solaire",
         ],
         "reponse": 1,
     },
     {
-        "id": 4,
-        "question": "Quelle est la profondeur de décharge recommandée pour une batterie AGM ?",
-        "options": ["80 %", "30 %", "50 %", "70 %"],
+        "id": 3,
+        "question": "Quelle couleur de câble utilise-t-on pour le positif en courant continu DC ?",
+        "options": ["Noir", "Bleu", "Rouge", "Vert"],
         "reponse": 2,
     },
     {
-        "id": 5,
-        "question": "Qu'est-ce que le Voc d'un panneau solaire ?",
+        "id": 4,
+        "question": "Pourquoi oriente-t-on les panneaux solaires vers le sud au Bénin ?",
         "options": [
-            "Tension au point de puissance max",
-            "Tension en circuit ouvert",
-            "Tension nominale du système",
-            "Tension de charge batterie",
+            "Pour éviter la pluie",
+            "Pour capter un maximum de rayonnement solaire toute la journée",
+            "Pour faciliter le nettoyage",
+            "C'est juste une habitude",
+        ],
+        "reponse": 1,
+    },
+    {
+        "id": 5,
+        "question": "À quoi sert un régulateur de charge dans une installation solaire ?",
+        "options": [
+            "À convertir le courant DC en AC",
+            "À protéger les batteries contre la surcharge et la décharge excessive",
+            "À mesurer la puissance des panneaux",
+            "À stabiliser la tension du réseau SBEE",
         ],
         "reponse": 1,
     },
     {
         "id": 6,
-        "question": "Quelle chute de tension maximale est autorisée côté DC ?",
-        "options": ["5 %", "10 %", "1 %", "3 %"],
-        "reponse": 3,
+        "question": "Que se passe-t-il si on surcharge une batterie solaire régulièrement ?",
+        "options": [
+            "Elle produit plus d'énergie",
+            "Sa durée de vie diminue fortement",
+            "Elle devient plus performante",
+            "Rien de grave",
+        ],
+        "reponse": 1,
     },
     {
         "id": 7,
-        "question": "Dans un système hybride SBEE + solaire, le coefficient k des batteries vaut :",
-        "options": ["1.25", "1.50", "1.40", "1.10"],
-        "reponse": 2,
+        "question": "Pourquoi installe-t-on un parafoudre dans une installation solaire au Bénin ?",
+        "options": [
+            "Pour économiser de l'énergie",
+            "Pour protéger contre la foudre et les surtensions",
+            "Pour réguler la charge des batteries",
+            "Pour améliorer le rendement des panneaux",
+        ],
+        "reponse": 1,
     },
     {
         "id": 8,
-        "question": "Quelle technologie de régulateur est recommandée pour une installation > 400 Wc ?",
-        "options": ["PWM", "MPPT", "ATS", "IGBT"],
+        "question": "Avant de travailler sur une installation solaire, que doit-on faire en premier ?",
+        "options": [
+            "Couper le disjoncteur AC seulement",
+            "Déconnecter les panneaux et couper toutes les sources",
+            "Mettre des gants et continuer",
+            "Appeler le client",
+        ],
         "reponse": 1,
     },
     {
         "id": 9,
-        "question": "Comment détermine-t-on la tension système (12V/24V/48V) ?",
+        "question": "Quel équipement permet le basculement automatique entre le réseau SBEE et le solaire ?",
         "options": [
-            "Selon le nombre de batteries",
-            "Selon la puissance de l'onduleur",
-            "Selon la puissance crête du champ PV",
-            "Selon la distance des câbles",
+            "Un disjoncteur différentiel",
+            "Un parafoudre",
+            "Un ATS (Commutateur Automatique de Sources)",
+            "Un compteur d'énergie",
         ],
         "reponse": 2,
     },
     {
         "id": 10,
-        "question": "Qu'est-ce qu'un ATS dans un système hybride ?",
+        "question": "Combien de temps peut durer une batterie AGM bien entretenue ?",
         "options": [
-            "Régulateur de tension automatique",
-            "Commutateur automatique de sources",
-            "Transformateur solaire",
-            "Compteur d'énergie",
+            "1 à 2 ans",
+            "3 à 4 ans",
+            "6 à 8 ans",
+            "15 à 20 ans",
         ],
-        "reponse": 1,
+        "reponse": 2,
     },
 ]
 
@@ -281,8 +301,6 @@ def admin_valider_technicien(user_id):
 @app.route('/user/dashboard')
 @login_required
 def user_dashboard():
-    if current_user.role == 'admin':
-        return redirect(url_for('admin_dashboard'))
     if current_user.role == 'technicien':
         return redirect(url_for('technicien_dashboard'))
     projets = Dimensionnement.query.filter_by(user_id=current_user.id)\
@@ -293,7 +311,8 @@ def user_dashboard():
 @app.route('/technicien/dashboard')
 @login_required
 def technicien_dashboard():
-    if current_user.role != 'technicien':
+    # Admin peut visiter l'interface technicien sans restriction
+    if current_user.role not in ('technicien', 'admin'):
         return redirect(url_for('index'))
     projets = Dimensionnement.query.filter_by(user_id=current_user.id)\
                 .order_by(Dimensionnement.date_creation.desc()).all()
@@ -516,8 +535,8 @@ def supprimer_projet(projet_id):
 
 # ─── API PAIEMENT ────────────────────────────────────────────────────
 MONTANTS = {
-    'user':                    2500,
-    'technicien_acte':         7000,
+    'user':                    1500,
+    'technicien_acte':         3000,
     'technicien_mensuel':     25000,
     'technicien_trimestriel': 60000,
     'technicien_annuel':     180000,

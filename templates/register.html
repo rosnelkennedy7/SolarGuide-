@@ -29,8 +29,8 @@
     /* ONGLETS */
     .tabs{display:grid;grid-template-columns:1fr 1fr;gap:0;border-radius:12px;overflow:hidden;border:1px solid rgba(255,255,255,.2);margin-bottom:24px}
     .tab{padding:11px;text-align:center;font-size:13px;font-weight:600;cursor:pointer;transition:all .2s;background:rgba(255,255,255,0.06);color:rgba(255,255,255,.6)}
-    .tab.active-user{background:linear-gradient(135deg,#F5A623,#D47C0A);color:#fff}
-    .tab.active-tech{background:rgba(29,78,216,.7);color:#fff}
+    .tab.active-user{background:#EA580C;color:#fff}
+    .tab.active-tech{background:#1E3A5F;color:#fff}
     .tab:not(.active-user):not(.active-tech):hover{background:rgba(255,255,255,.1)}
 
     .role-badge{border-radius:10px;padding:10px 14px;font-size:12px;margin-bottom:18px;display:flex;align-items:flex-start;gap:8px}
@@ -77,7 +77,7 @@
   <div style="width:100%;max-width:480px">
     <div class="card">
       <div class="card-header">
-        <div style="font-size:32px;margin-bottom:8px">☀️</div>
+        <div style="margin-bottom:8px"><img src="/static/img/soleil.png" alt="SolarGuide" class="logo-soleil" style="width:50px;height:50px;"></div>
         <div class="card-title"><span class="accent">Solar</span>Guide <span style="font-size:20px">🇧🇯</span></div>
         <div class="card-sub">Créez votre compte pour accéder au dimensionnement</div>
       </div>
@@ -85,19 +85,10 @@
       <!-- Onglets -->
       <div class="tabs">
         <div class="tab active-user" id="tab-user" onclick="setRole('user')">
-          🏠 Je suis particulier
+          🏠 Non professionnel
         </div>
         <div class="tab" id="tab-tech" onclick="setRole('technicien')">
-          🔧 Je suis technicien
-        </div>
-      </div>
-
-      <!-- Badge rôle -->
-      <div class="role-badge user" id="role-badge">
-        <span>💡</span>
-        <div>
-          <strong>Compte particulier</strong> — 2 500 FCFA via Mobile Money.
-          Accès complet au dimensionnement de votre installation solaire.
+          🔧 Professionnel
         </div>
       </div>
 
@@ -171,23 +162,18 @@
 
       const tabUser = document.getElementById('tab-user');
       const tabTech = document.getElementById('tab-tech');
-      const badge   = document.getElementById('role-badge');
       const btn     = document.getElementById('btn-submit');
 
       if (role === 'user') {
         tabUser.className = 'tab active-user';
         tabTech.className = 'tab';
-        badge.className   = 'role-badge user';
-        badge.innerHTML   = '<span>💡</span><div><strong>Compte particulier</strong> — 2 500 FCFA via Mobile Money. Accès complet au dimensionnement de votre installation solaire.</div>';
         btn.className     = 'btn-register btn-user';
         document.getElementById('btn-text').textContent = 'Créer mon compte gratuitement';
       } else {
         tabUser.className = 'tab';
         tabTech.className = 'tab active-tech';
-        badge.className   = 'role-badge tech';
-        badge.innerHTML   = '<span>🔧</span><div><strong>Compte technicien</strong> — QCM de qualification (score ≥ 7/10) requis avant paiement. Accès aux paramètres avancés et génération PDF.</div>';
         btn.className     = 'btn-register btn-tech';
-        document.getElementById('btn-text').textContent = 'Créer mon compte technicien';
+        document.getElementById('btn-text').textContent = 'Créer mon compte professionnel';
       }
     }
 
@@ -274,12 +260,12 @@
         } else {
           afficherAlerte('error', data.erreur || 'Erreur lors de la création du compte.');
           btn.disabled = false;
-          btnText.textContent = currentRole === 'user' ? 'Créer mon compte gratuitement' : 'Créer mon compte technicien';
+          btnText.textContent = currentRole === 'user' ? 'Créer mon compte gratuitement' : 'Créer mon compte professionnel';
         }
       } catch {
         afficherAlerte('error', 'Erreur réseau. Vérifiez votre connexion.');
         btn.disabled = false;
-        btnText.textContent = currentRole === 'user' ? 'Créer mon compte gratuitement' : 'Créer mon compte technicien';
+        btnText.textContent = currentRole === 'user' ? 'Créer mon compte gratuitement' : 'Créer mon compte professionnel';
       }
     }
   </script>

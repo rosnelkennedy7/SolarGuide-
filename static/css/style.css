@@ -1265,6 +1265,146 @@ canvas {
 .bg-vitre { background: url('/static/img/vitre.png') center/cover fixed !important; }
 .overlay  { background: rgba(10,15,30,0.82); min-height: 100vh; }
 
+/* ============================================================
+   LOGO SOLEIL ANIMÉ
+============================================================ */
+@keyframes soleil-pulse {
+  0%   { transform: scale(1) rotate(0deg);   filter: brightness(1)   drop-shadow(0 0 10px #F5A623); }
+  50%  { transform: scale(1.08) rotate(5deg); filter: brightness(1.3) drop-shadow(0 0 25px #F5A623); }
+  100% { transform: scale(1) rotate(0deg);   filter: brightness(1)   drop-shadow(0 0 10px #F5A623); }
+}
+.logo-soleil { animation: soleil-pulse 3s ease-in-out infinite; }
+
+/* ============================================================
+   VARIABLES SUPPLÉMENTAIRES
+============================================================ */
+:root {
+  --orange-brule: #EA580C;
+  --bleu-profond: #1E3A5F;
+  --blanc: #FFFFFF;
+  --succes: #22C55E;
+  --danger: #EF4444;
+}
+
+/* ============================================================
+   BG-DRONE — OVERLAY + GLASSMORPHISM SPA
+============================================================ */
+body.bg-drone::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background: rgba(10,15,30,0.82);
+  z-index: 0;
+  pointer-events: none;
+}
+body.bg-drone > * { position: relative; z-index: 1; }
+
+body.bg-drone .navbar {
+  background: rgba(10,15,30,0.8) !important;
+  backdrop-filter: blur(16px) !important;
+  -webkit-backdrop-filter: blur(16px) !important;
+  border-bottom: 1px solid rgba(255,255,255,0.1) !important;
+}
+body.bg-drone .nav-title  { color: #fff !important; }
+body.bg-drone .nav-subtitle { color: rgba(255,255,255,0.6) !important; }
+body.bg-drone .nav-flag   { color: #fff !important; }
+
+body.bg-drone .progress-bar {
+  background: rgba(10,15,30,0.85) !important;
+  border-bottom: 1px solid rgba(255,255,255,0.1) !important;
+}
+body.bg-drone .step-label  { color: rgba(255,255,255,0.55) !important; }
+body.bg-drone .step-item.active .step-label,
+body.bg-drone .step-item.done  .step-label { color: #fff !important; }
+body.bg-drone .step-item.todo  .step-circle {
+  background: rgba(255,255,255,0.08) !important;
+  border: 2px solid rgba(255,255,255,0.2) !important;
+  color: rgba(255,255,255,0.45) !important;
+}
+body.bg-drone .step-item.active .step-circle {
+  background: linear-gradient(135deg,#F5A623,#D47C0A) !important;
+  border-color: transparent !important;
+  color: #fff !important;
+}
+body.bg-drone .step-item.done  .step-circle {
+  background: rgba(34,197,94,0.25) !important;
+  border-color: #22C55E !important;
+  color: #22C55E !important;
+}
+body.bg-drone .step-item:not(:last-child)::after {
+  background: rgba(255,255,255,0.15) !important;
+}
+body.bg-drone .step-item.done:not(:last-child)::after { background: #22C55E !important; }
+
+body.bg-drone .hero {
+  background: rgba(255,255,255,0.06) !important;
+  backdrop-filter: blur(16px) !important;
+  border-bottom: 1px solid rgba(255,255,255,0.1) !important;
+  color: #fff !important;
+}
+body.bg-drone .hero::before { display: none !important; }
+body.bg-drone .hero-badge {
+  background: rgba(245,166,35,0.2) !important;
+  border-color: rgba(245,166,35,0.4) !important;
+  color: #F5A623 !important;
+}
+body.bg-drone .hero-title        { color: #fff !important; }
+body.bg-drone .hero-title .accent{ color: #F5A623 !important; }
+body.bg-drone .hero-desc         { color: rgba(255,255,255,0.72) !important; }
+body.bg-drone .hero-desc strong  { color: #F5A623 !important; }
+body.bg-drone .choice-title      { color: rgba(255,255,255,0.85) !important; }
+
+body.bg-drone .choice-card {
+  background: rgba(255,255,255,0.07) !important;
+  border: 1.5px solid rgba(255,255,255,0.18) !important;
+  backdrop-filter: blur(12px) !important;
+}
+body.bg-drone .choice-card:hover {
+  border-color: #F5A623 !important;
+  background: rgba(245,166,35,0.08) !important;
+}
+body.bg-drone .choice-card.selected {
+  border-color: #F5A623 !important;
+  background: rgba(245,166,35,0.12) !important;
+}
+body.bg-drone #col-budget,
+body.bg-drone #col-dim {
+  background: rgba(255,255,255,0.07) !important;
+  border: 1.5px solid rgba(255,255,255,0.15) !important;
+  backdrop-filter: blur(14px) !important;
+}
+
+body.bg-drone .section-card {
+  background: rgba(255,255,255,0.08) !important;
+  backdrop-filter: blur(20px) !important;
+  -webkit-backdrop-filter: blur(20px) !important;
+  border: 1px solid rgba(255,255,255,0.12) !important;
+  color: #fff !important;
+}
+body.bg-drone .section-title   { color: #F5A623 !important; }
+body.bg-drone .section-subtitle { color: rgba(255,255,255,0.68) !important; }
+
+body.bg-drone .result-card,
+body.bg-drone .result-section-card {
+  background: rgba(255,255,255,0.08) !important;
+  backdrop-filter: blur(20px) !important;
+  border: 1px solid rgba(255,255,255,0.12) !important;
+  color: #fff !important;
+}
+
+body.bg-drone .hint-text,
+body.bg-drone #hint-text { color: rgba(255,255,255,0.65) !important; }
+body.bg-drone .btn-start-wrap,
+body.bg-drone #btn-start { background: linear-gradient(135deg,#F5A623,#D47C0A) !important; color: #fff !important; }
+
+body.bg-drone .loader-overlay { background: rgba(10,15,30,0.92) !important; }
+body.bg-drone .modal-box {
+  background: rgba(15,23,42,0.95) !important;
+  backdrop-filter: blur(24px) !important;
+  border: 1px solid rgba(255,255,255,0.15) !important;
+  color: #fff !important;
+}
+
 .glass-card {
   background: rgba(255,255,255,0.08) !important;
   backdrop-filter: blur(20px) !important;
