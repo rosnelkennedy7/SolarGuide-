@@ -1,5 +1,5 @@
 /* ============================================================
-   VARIABLES — Palette SolarGuide Bénin
+   VARIABLES — Palette HélioBénin
 ============================================================ */
 :root {
   /* Palette or/ambre */
@@ -1258,7 +1258,7 @@ canvas {
 }
 
 /* ============================================================
-   GLASSMORPHISM — SolarGuide Bénin
+   GLASSMORPHISM — HélioBénin
 ============================================================ */
 
 .bg-drone { background: url('/static/img/drone.png') center/cover fixed !important; }

@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>SolarGuide — Mon espace</title>
+    <title>HélioBénin — Dimensionnement solaire PV</title>
 
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
@@ -262,11 +262,11 @@
     <!-- ══ NAVBAR APP ══ -->
     <nav class="navbar">
       <div class="nav-left">
-        <div class="nav-icon"><img src="/static/img/soleil.png" alt="SolarGuide" class="logo-soleil" style="width:32px;height:32px;object-fit:contain;"></div>
+        <div class="nav-icon"><img src="/static/img/soleil.png" alt="HélioBénin" class="logo-soleil" style="width:32px;height:32px;object-fit:contain;"></div>
       </div>
       <div class="nav-center">
-        <div class="nav-title">SolarGuide Bénin</div>
-        <div class="nav-subtitle">Fini les coupures, place au solaire</div>
+        <div class="nav-title">HélioBénin</div>
+        <div class="nav-subtitle">Votre guide de dimensionnement solaire — Bénin</div>
       </div>
       <div class="nav-flag">🇧🇯</div>
     </nav>
@@ -310,10 +310,10 @@
             <div class="ray" style="transform:rotate(270deg) translateX(-50%)"></div>
             <div class="ray" style="transform:rotate(315deg) translateX(-50%)"></div>
           </div>
-          <div class="sun-core"><img src="/static/img/soleil.png" alt="SolarGuide" class="logo-soleil" style="width:28px;height:28px;object-fit:contain;border-radius:50%;"></div>
+          <div class="sun-core"><img src="/static/img/soleil.png" alt="HélioBénin" class="logo-soleil" style="width:28px;height:28px;object-fit:contain;border-radius:50%;"></div>
         </div>
         <div class="hero-badge">🇧🇯 Conçu pour le Bénin</div>
-        <h1 class="hero-title"><span class="accent">SolarGuide</span> Bénin</h1>
+        <h1 class="hero-title"><span class="accent">Hélio</span>Bénin</h1>
         <p class="hero-desc">
           Votre outil de dimensionnement solaire photovoltaïque personnalisé.
           Suivez les étapes pour obtenir votre système idéal.
@@ -428,11 +428,11 @@
     <div class="page" id="page-contact">
       <div class="page-content">
         <div class="kennedy-card">
-          <div style="margin-bottom:8px"><img src="/static/img/soleil.png" alt="SolarGuide" class="logo-soleil" style="width:48px;height:48px;object-fit:contain;"></div>
+          <div style="margin-bottom:8px"><img src="/static/img/soleil.png" alt="HélioBénin" class="logo-soleil" style="width:48px;height:48px;object-fit:contain;"></div>
           <div class="kennedy-title">Votre dimensionnement est prêt !</div>
           <div class="kennedy-desc">
             Pour recevoir un devis précis et une installation professionnelle,
-            contactez <strong>Rosnel Kennedy DOSSA</strong> — ⭐ Fondateur SolarGuide, Expert PV au Bénin.
+            contactez <strong>Rosnel Kennedy DOSSA</strong> — ⭐ Fondateur HélioBénin, Expert PV au Bénin.
           </div>
           <div class="kennedy-btns">
             <a id="wa-kennedy" href="https://wa.me/22901944389?text=Bonjour+M.+DOSSA%2C+j%27ai+obtenu+mon+dimensionnement+sur+SolarGuide+et+je+souhaite+un+devis+pour+mon+installation+solaire." target="_blank" class="btn-wa">
@@ -461,7 +461,7 @@
     </div>
 
     <div class="disclaimer">
-      ⚠️ SolarGuide est un outil d'estimation. Les résultats sont indicatifs — consultez un technicien qualifié pour finaliser votre installation.
+      ⚠️ HélioBénin est un outil d'estimation. Les résultats sont indicatifs — consultez un technicien qualifié pour finaliser votre installation.
     </div>
 
     <!-- SCRIPTS — même ordre que index.html -->
@@ -548,7 +548,7 @@
 
           // Message WhatsApp pré-rempli
           const msg = encodeURIComponent(
-            `Bonjour Kennedy, je viens de faire un dimensionnement sur SolarGuide.\n` +
+            `Bonjour Kennedy, je viens de faire un dimensionnement sur HélioBénin.\n` +
             `Système : ${pan?.nombre}×${pan?.puissance_unitaire}Wc, ${bat?.nombre}×${bat?.capacite_unitaire}Ah ${bat?.type}\n` +
             `Budget estimé : ${min.toLocaleString('fr-FR')} – ${max.toLocaleString('fr-FR')} FCFA\n` +
             `Je voudrais un devis complet.`

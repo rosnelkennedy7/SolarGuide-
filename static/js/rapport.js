@@ -57,7 +57,7 @@ function genererRapportPDF() {
     doc.rect(0, 0, W, 16, "F");
     doc.setTextColor(255, 255, 255);
     doc.setFontSize(11); doc.setFont("helvetica", "bold");
-    doc.text("☀ SolarGuide Bénin", ML, 10);
+    doc.text("☀ HélioBénin", ML, 10);
     doc.setFontSize(8); doc.setFont("helvetica", "normal");
     doc.text("Réf. " + refStr + "  ·  " + dateStr, W - MR, 10, { align: "right" });
     doc.setTextColor(0, 0, 0);
@@ -78,7 +78,7 @@ function genererRapportPDF() {
     doc.line(ML, 287, ML + TW, 287);
     doc.setFontSize(7); doc.setFont("helvetica", "normal");
     doc.setTextColor(150, 150, 150);
-    doc.text("☀ SolarGuide Bénin · solarguide.bj", ML, 292);
+    doc.text("☀ HélioBénin · solarguide.bj", ML, 292);
     doc.text("Page " + page, W - MR, 292, { align: "right" });
     doc.setTextColor(0, 0, 0);
   }
@@ -330,7 +330,7 @@ function genererDevisPDF() {
   doc.rect(0, 0, W, 16, "F");
   doc.setTextColor(255, 255, 255);
   doc.setFontSize(11); doc.setFont("helvetica", "bold");
-  doc.text("☀ SolarGuide Bénin", ML, 10);
+  doc.text("☀ HélioBénin", ML, 10);
   doc.setFontSize(8); doc.setFont("helvetica", "normal");
   doc.text("Réf. " + refStr + "  ·  " + dateStr, W - MR, 10, { align: "right" });
   doc.setTextColor(0, 0, 0);
@@ -456,7 +456,7 @@ function genererDevisPDF() {
   doc.setDrawColor(200, 200, 200); doc.setLineWidth(0.3);
   doc.line(ML, 287, ML + TW, 287);
   doc.setFontSize(7); doc.setFont("helvetica", "normal"); doc.setTextColor(150, 150, 150);
-  doc.text("☀ SolarGuide Bénin · solarguide.bj", ML, 292);
+  doc.text("☀ HélioBénin · solarguide.bj", ML, 292);
   doc.text("Page 1", W - MR, 292, { align: "right" });
 
   doc.save("devis_solarguide_" + refStr + ".pdf");
@@ -506,7 +506,7 @@ function genererRapportHTML() {
   }).join("");
 
   const w = window.open("", "_blank");
-  w.document.write(`<!DOCTYPE html><html lang="fr"><head><meta charset="UTF-8"><title>Rapport SolarGuide — ${refStr}</title>
+  w.document.write(`<!DOCTYPE html><html lang="fr"><head><meta charset="UTF-8"><title>HélioBénin — Dimensionnement solaire PV</title>
 <style>*{margin:0;padding:0;box-sizing:border-box;}body{font-family:Arial,sans-serif;font-size:11pt;color:#1a1a1a;}
 .page{width:210mm;min-height:297mm;margin:0 auto;padding:15mm 18mm;page-break-after:always;position:relative;}
 .page:last-child{page-break-after:auto;}
@@ -523,10 +523,10 @@ tr:nth-child(even) td{background:#f5faf5;}
 @media screen{.no-print{display:flex;background:#166534;color:#fff;padding:10px 20px;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:100;}}
 @media print{.no-print{display:none!important;}}
 </style></head><body>
-<div class="no-print"><span style="font-weight:bold;">☀ SolarGuide Bénin — ${refStr}</span>
+<div class="no-print"><span style="font-weight:bold;">☀ HélioBénin — ${refStr}</span>
 <button onclick="window.print()" style="background:#fff;color:#166534;border:none;padding:8px 20px;border-radius:6px;font-weight:bold;cursor:pointer;">Imprimer / PDF</button></div>
 <div class="page">
-<div class="entete"><div class="entete-logo">☀ SolarGuide Bénin</div><div class="entete-ref">Réf. ${refStr}<br>${dateStr} à ${heureStr}</div></div>
+<div class="entete"><div class="entete-logo">☀ HélioBénin</div><div class="entete-ref">Réf. ${refStr}<br>${dateStr} à ${heureStr}</div></div>
 <div style="text-align:center;margin-bottom:14px;"><div style="font-size:18pt;font-weight:bold;color:#166534;">Rapport de Dimensionnement Solaire</div><div style="font-size:9pt;color:#888;margin-top:4px;">Résultats indicatifs · IRENA 2024</div></div>
 <div class="sec">Informations générales</div>
 <table><tr><th>Paramètre</th><th>Valeur</th></tr>
@@ -545,15 +545,15 @@ ${lignesApp}
 <tr><td>Batterie ${dim.batterie?.type || ""}</td><td>${dim.batterie?.capacite_unitaire || "—"} Ah · ${dim.batterie?.nombre || 1} unité(s) · ${dim.tension || "—"}V</td></tr>
 <tr><td>Régulateur ${reg.type || ""}</td><td>${reg.courant || "—"} A · ${dim.tension || "—"}V</td></tr>
 <tr><td>Onduleur</td><td>${dim.onduleur?.puissance || "—"} W · onde pure 220V AC</td></tr></table>
-<div class="pied"><span>☀ SolarGuide Bénin · solarguide.bj</span><span>Page 1</span></div></div>
+<div class="pied"><span>☀ HélioBénin · solarguide.bj</span><span>Page 1</span></div></div>
 <div class="page">
-<div class="entete"><div class="entete-logo">☀ SolarGuide Bénin</div><div class="entete-ref">Réf. ${refStr}</div></div>
+<div class="entete"><div class="entete-logo">☀ HélioBénin</div><div class="entete-ref">Réf. ${refStr}</div></div>
 <div class="sec">Devis estimatif</div>
 <table><tr><th>Désignation</th><th style="text-align:center;">Qté</th><th style="text-align:right;">Prix unitaire</th><th style="text-align:right;">Total (FCFA)</th></tr>
 ${lignesDevis.map(l => `<tr><td>${l.d}</td><td style="text-align:center;">${l.q}</td><td style="text-align:right;">${formatNombre(l.pu)}</td><td style="text-align:right;font-weight:bold;">${formatNombre(l.q * l.pu)}</td></tr>`).join("")}
 <tr class="tot"><td colspan="3">TOTAL ESTIMÉ (HT)</td><td style="text-align:right;">${formatNombre(totalDevis)} FCFA</td></tr></table>
 <div style="font-size:9pt;color:#888;margin-top:6px;">⚠ Main d'œuvre non incluse · Prix indicatifs IRENA 2024</div>
-<div class="pied"><span>☀ SolarGuide Bénin · solarguide.bj</span><span>Page 2</span></div></div>
+<div class="pied"><span>☀ HélioBénin · solarguide.bj</span><span>Page 2</span></div></div>
 </body></html>`);
   w.document.close();
 }

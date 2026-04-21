@@ -684,7 +684,7 @@ KENNEDY_FICHE = {
     "abonnement": "annuel",
     "prioritaire": True,
     "fondateur": True,
-    "badge": "⭐ Fondateur SolarGuide",
+    "badge": "⭐ Fondateur HélioBénin",
     "poste": "Directeur — R.K Tech",
 }
 

@@ -44,7 +44,7 @@ function formatNombre(n) {
 const MODALS = {
   budget: {
     titre: "💰 Parcours — J'ai un budget",
-    desc: "Vous connaissez le montant que vous pouvez investir. SolarGuide calcule automatiquement le meilleur système possible avec votre budget, puis vous liste les appareils que vous pouvez alimenter.",
+    desc: "Vous connaissez le montant que vous pouvez investir. HélioBénin calcule automatiquement le meilleur système possible avec votre budget, puis vous liste les appareils que vous pouvez alimenter.",
     liste: [
       {
         type: "ok",
@@ -66,7 +66,7 @@ const MODALS = {
   },
   dimensionnement: {
     titre: "📐 Parcours — Je veux un dimensionnement",
-    desc: "Vous partez de vos besoins réels. Vous listez vos appareils, leurs heures d'utilisation, et SolarGuide calcule le système exact nécessaire avec un devis estimatif.",
+    desc: "Vous partez de vos besoins réels. Vous listez vos appareils, leurs heures d'utilisation, et HélioBénin calcule le système exact nécessaire avec un devis estimatif.",
     liste: [
       {
         type: "ok",

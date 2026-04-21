@@ -81,7 +81,7 @@ function selectionnerSuggestion(lat, lon, nom) {
 
   if (!estDansBenin(lat, lon)) {
     alert(
-      "⚠️ Cette localisation est hors du Bénin. SolarGuide est une application béninoise — veuillez sélectionner un lieu au Bénin.",
+      "⚠️ Cette localisation est hors du Bénin. HélioBénin est une application béninoise — veuillez sélectionner un lieu au Bénin.",
     );
     return;
   }
@@ -247,7 +247,7 @@ function initMap() {
     const lon = parseFloat(e.latlng.lng.toFixed(4));
     if (!estDansBenin(lat, lon)) {
       alert(
-        "⚠️ Cette position est hors du Bénin 🇧🇯\nSolarGuide est une application béninoise. Veuillez sélectionner un point à l'intérieur du Bénin.",
+        "⚠️ Cette position est hors du Bénin 🇧🇯\nHélioBénin est une application béninoise. Veuillez sélectionner un point à l'intérieur du Bénin.",
       );
       return;
     }
