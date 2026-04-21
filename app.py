@@ -343,8 +343,14 @@ def get_irradiation():
                     "longitude": lon, "latitude": lat, "format": "JSON"},
             timeout=10
         )
-        irr = round(r.json()["properties"]["parameter"]["ALLSKY_SFC_SW_DWN"]["ANN"], 2)
-        return jsonify({"succes": True, "irradiation": irr})
+        monthly = r.json()["properties"]["parameter"]["ALLSKY_SFC_SW_DWN"]
+        mois_noms = ["Jan","Fév","Mar","Avr","Mai","Jun","Jul","Aoû","Sep","Oct","Nov","Déc"]
+        mois_keys = ["JAN","FEB","MAR","APR","MAY","JUN","JUL","AUG","SEP","OCT","NOV","DEC"]
+        valeurs = {k: monthly[k] for k in mois_keys if k in monthly}
+        pire_key = min(valeurs, key=valeurs.get)
+        pire_val = round(valeurs[pire_key], 2)
+        pire_nom = mois_noms[mois_keys.index(pire_key)]
+        return jsonify({"succes": True, "irradiation": pire_val, "mois_defavorable": pire_nom})
     except Exception as e:
         return jsonify({"succes": False, "erreur": str(e)})
 
@@ -437,23 +443,6 @@ def calculer_budget():
         return jsonify({"succes": False, "erreur": str(e), "trace": traceback.format_exc()})
 
 
-# ─── API ÉCONOMIE ────────────────────────────────────────────────────
-@app.route('/economie', methods=['POST'])
-def economie():
-    try:
-        data  = request.get_json()
-        bilan = comparer_economie(
-            dimensionnement  = data.get('dimensionnement'),
-            prix             = data.get('prix'),
-            conso_kwh_jour   = data.get('conso_kwh_jour'),
-            type_carburant   = data.get('type_carburant', 'essence'),
-            prix_carburant   = data.get('prix_carburant', 750),
-            source_carburant = data.get('source_carburant', 'marché local'),
-            heures_groupe    = data.get('heures_groupe', 8),
-        )
-        return jsonify({"succes": True, "economie": bilan})
-    except Exception as e:
-        return jsonify({"succes": False, "erreur": str(e)})
 
 
 # ─── API APPAREILS ───────────────────────────────────────────────────

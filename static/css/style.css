@@ -1293,7 +1293,7 @@ body.bg-drone::before {
   content: '';
   position: fixed;
   inset: 0;
-  background: rgba(10,15,30,0.82);
+  background: rgba(10,15,30,0.65);
   z-index: 0;
   pointer-events: none;
 }

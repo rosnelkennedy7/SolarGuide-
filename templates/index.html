@@ -2399,7 +2399,7 @@
             class="btn-primary"
             id="btn-sys-next"
             disabled
-            onclick="goToPage('economie')"
+            onclick="goToPage('techniciens')"
           >
             Suivant →
           </button>
@@ -2408,137 +2408,8 @@
     </div>
 
     <!-- ============================================================
-         PAGE 4 — ÉCONOMIE
+         PAGE 4 — TECHNICIENS (was PAGE 5)
     ============================================================ -->
-    <div class="page" id="page-economie">
-      <div class="page-content">
-        <div class="section-card">
-          <div class="section-title">⛽ Votre groupe électrogène</div>
-          <div class="section-subtitle">
-            Renseignez les informations de votre groupe pour un bilan précis
-          </div>
-          <div
-            style="
-              display: grid;
-              grid-template-columns: 1fr 1fr;
-              gap: 12px;
-              margin-bottom: 14px;
-            "
-          >
-            <div>
-              <div
-                style="
-                  font-size: 12px;
-                  font-weight: 600;
-                  color: var(--gray-700);
-                  margin-bottom: 6px;
-                "
-              >
-                Type de carburant
-              </div>
-              <div style="display: flex; gap: 8px">
-                <button
-                  id="fuel-essence"
-                  onclick="selectCarburant('essence')"
-                  style="
-                    flex: 1;
-                    padding: 8px;
-                    border-radius: 8px;
-                    border: 2px solid var(--gray-200);
-                    background: #fff;
-                    cursor: pointer;
-                    font-size: 12px;
-                    font-weight: 600;
-                  "
-                >
-                  ⛽ Essence
-                </button>
-                <button
-                  id="fuel-gasoil"
-                  onclick="selectCarburant('gasoil')"
-                  style="
-                    flex: 1;
-                    padding: 8px;
-                    border-radius: 8px;
-                    border: 2px solid var(--gray-200);
-                    background: #fff;
-                    cursor: pointer;
-                    font-size: 12px;
-                    font-weight: 600;
-                  "
-                >
-                  🛢️ Gasoil
-                </button>
-              </div>
-            </div>
-            <div>
-              <div
-                style="
-                  font-size: 12px;
-                  font-weight: 600;
-                  color: var(--gray-700);
-                  margin-bottom: 6px;
-                "
-              >
-                Prix du carburant (FCFA/litre)
-              </div>
-              <input
-                type="number"
-                id="prix-carburant"
-                value="700"
-                min="100"
-                step="10"
-                style="
-                  width: 100%;
-                  border: 1px solid var(--gray-200);
-                  border-radius: 8px;
-                  padding: 9px 12px;
-                  font-family: &quot;Inter&quot;, sans-serif;
-                  font-size: 13px;
-                  outline: none;
-                "
-              />
-            </div>
-          </div>
-          <div style="margin-bottom: 14px">
-            <div
-              style="
-                font-size: 12px;
-                font-weight: 600;
-                color: var(--gray-700);
-                margin-bottom: 6px;
-              "
-            >
-              Heures d'utilisation par jour
-            </div>
-            <input
-              type="number"
-              id="heures-groupe"
-              value="8"
-              min="1"
-              max="24"
-              style="
-                width: 100%;
-                border: 1px solid var(--gray-200);
-                border-radius: 8px;
-                padding: 9px 12px;
-                font-family: &quot;Inter&quot;, sans-serif;
-                font-size: 13px;
-                outline: none;
-              "
-            />
-          </div>
-          <div style="text-align: center">
-            <button
-              class="btn-primary"
-              style="display: inline-flex; justify-content: center"
-              onclick="lancerEconomie()"
-            >
-              📊 Calculer le bilan économique
-            </button>
-          </div>
-        </div>
-
         <div id="eco-results" style="display: none">
           <div class="section-card">
             <div class="section-title">📅 Bilan annuel comparatif</div>
@@ -2910,7 +2781,7 @@
           </div>
         </div>
         <div class="nav-buttons">
-          <button class="btn-secondary" onclick="goToPage('economie')">
+          <button class="btn-secondary" onclick="goToPage('systeme')">
             ← Retour
           </button>
           <button class="btn-primary" onclick="genererRapport()">
@@ -2937,7 +2808,6 @@
     <script src="{{ url_for('static', filename='js/consommation.js') }}"></script>
     <script src="{{ url_for('static', filename='js/appareils.js') }}"></script>
     <script src="{{ url_for('static', filename='js/systeme.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/economie.js') }}"></script>
     <script src="{{ url_for('static', filename='js/techniciens.js') }}"></script>
     <script src="{{ url_for('static', filename='js/budget.js') }}"></script>
     <script src="{{ url_for('static', filename='js/rapport.js') }}"></script>

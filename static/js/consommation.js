@@ -68,8 +68,10 @@ function remplirSelect(selectId, heures, defaut) {
 
 function initConsommation() {
   const secCoupures = document.getElementById("section-coupures");
-  if (state.typeSysteme === "hybrid") secCoupures.style.display = "block";
-  else secCoupures.style.display = "none";
+  if (secCoupures) {
+    if (state.typeSysteme === "hybrid") secCoupures.style.display = "block";
+    else secCoupures.style.display = "none";
+  }
   if (!state.typeInstallation) selectTypeInstallation("residentiel");
   [
     "coupure-pointe-matin",

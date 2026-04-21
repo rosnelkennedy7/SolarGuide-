@@ -55,14 +55,12 @@ function updateProgress(page) {
       "localisation",
       "consommation",
       "systeme",
-      "economie",
       "techniciens",
     ];
     labels = [
       "Localisation",
       "Consommation",
       "Système",
-      "Économie",
       "Techniciens",
     ];
   }

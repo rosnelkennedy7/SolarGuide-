@@ -154,8 +154,9 @@ function placerMarqueur(lat, lon, nomLieu) {
     .then((data) => {
       hideLoader();
       if (data.succes) {
+        const moisDef = data.mois_defavorable || "";
         document.getElementById("coord-irr").textContent =
-          data.irradiation + " kWh/m²/j";
+          data.irradiation + " kWh/m²/j" + (moisDef ? " (" + moisDef + ")" : "");
         let qualite, etoiles, couleur;
         const irr = data.irradiation;
         if (irr >= 5.5) {
@@ -178,12 +179,13 @@ function placerMarqueur(lat, lon, nomLieu) {
         const qBox = document.getElementById("qualite-site-box");
         if (qBox) {
           qBox.style.display = "flex";
-          qBox.innerHTML = `<div style="font-size:20px;">${etoiles}</div><div><div style="font-size:13px;font-weight:700;color:${couleur};">${qualite}</div><div style="font-size:11px;color:var(--gray-500);">Irradiation ${irr} kWh/m²/j</div></div>`;
+          qBox.innerHTML = `<div style="font-size:20px;">${etoiles}</div><div><div style="font-size:13px;font-weight:700;color:${couleur};">${qualite}</div><div style="font-size:11px;color:var(--gray-500);">Irradiation défavorable ${irr} kWh/m²/j${moisDef ? " · " + moisDef : ""}</div></div>`;
         }
         state.localisation = {
           latitude: lat,
           longitude: lon,
           irradiation: data.irradiation,
+          mois_defavorable: moisDef,
           nom: state.nomLieu || "",
         };
       } else {

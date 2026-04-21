@@ -94,13 +94,22 @@ function initBudgetCharges() {
 }
 
 function ajouterAppareilBudget() {
-  _creerLigneAppareilGenerique(
-    "budget-appareils-list",
-    "bapp",
-    budgetAppareilCount++,
-    true,
-  );
-  mettreAJourBarreBudget();
+  if (appareils_defaut.length === 0) {
+    fetch("/get_appareils")
+      .then(r => r.json())
+      .then(data => {
+        if (data.succes) appareils_defaut = data.appareils;
+        _creerLigneAppareilGenerique("budget-appareils-list", "bapp", budgetAppareilCount++, true);
+        mettreAJourBarreBudget();
+      })
+      .catch(() => {
+        _creerLigneAppareilGenerique("budget-appareils-list", "bapp", budgetAppareilCount++, true);
+        mettreAJourBarreBudget();
+      });
+  } else {
+    _creerLigneAppareilGenerique("budget-appareils-list", "bapp", budgetAppareilCount++, true);
+    mettreAJourBarreBudget();
+  }
 }
 
 function mettreAJourBarreBudget() {

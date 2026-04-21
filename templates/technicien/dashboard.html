@@ -608,7 +608,7 @@
     <!-- ══ NAVBAR APP ══ -->
     <nav class="navbar">
       <div class="nav-left">
-        <div class="nav-icon">☀️</div>
+        <div class="nav-icon"><img src="/static/img/soleil.png" alt="SolarGuide" class="logo-soleil" style="width:32px;height:32px;object-fit:contain;"></div>
       </div>
       <div class="nav-center">
         <div class="nav-title">SolarGuide Bénin</div>
@@ -656,7 +656,7 @@
             <div class="ray" style="transform:rotate(270deg) translateX(-50%)"></div>
             <div class="ray" style="transform:rotate(315deg) translateX(-50%)"></div>
           </div>
-          <div class="sun-core">☀️</div>
+          <div class="sun-core"><img src="/static/img/soleil.png" alt="SolarGuide" class="logo-soleil" style="width:28px;height:28px;object-fit:contain;border-radius:50%;"></div>
         </div>
         <div class="hero-badge">🔧 Interface technicien professionnel</div>
         <h1 class="hero-title"><span class="accent">SolarGuide</span> Pro</h1>
@@ -851,20 +851,12 @@
     <script src="{{ url_for('static', filename='js/consommation.js') }}"></script>
     <script src="{{ url_for('static', filename='js/systeme.js') }}"></script>
     <script src="{{ url_for('static', filename='js/budget.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/economie.js') }}"></script>
     <script src="{{ url_for('static', filename='js/rapport.js') }}"></script>
     <script src="{{ url_for('static', filename='js/techniciens.js') }}"></script>
     <script src="{{ url_for('static', filename='js/app.js') }}"></script>
 
     <script>
       // ══ OVERRIDES TECHNICIEN ══
-      // Remplace la page économie par l'affichage du rapport
-      function lancerEconomie() {
-        if (!state.dimensionnement) return;
-        if (window._afficherRapportTech) {
-          window._afficherRapportTech(state.dimensionnement, state.prix);
-        }
-      }
 
       // Étapes adaptées au parcours technicien
       function updateProgress(page) {
