@@ -172,10 +172,16 @@ def index():
         if current_user.role == 'admin':
             return redirect(url_for('admin_dashboard'))
         elif current_user.role == 'technicien':
+            if not current_user.qcm_valide:
+                return redirect(url_for('qcm'))
+            if not current_user.a_paye:
+                return redirect(url_for('page_paiement'))
             return redirect(url_for('technicien_dashboard'))
         else:
+            if not current_user.a_paye:
+                return redirect(url_for('page_paiement'))
             return redirect(url_for('user_dashboard'))
-    return render_template('index.html')
+    return redirect(url_for('auth.login'))
 
 
 # ─── ADMIN ─────────────────────────────────────────────────────────
@@ -690,21 +696,7 @@ KENNEDY_FICHE = {
 
 @app.route('/techniciens')
 def annuaire_techniciens():
-    techniciens = User.query.filter_by(role='technicien', actif=True, banni=False).all()
-    techniciens.sort(key=lambda t: (t.abonnement != 'annuel', t.abonnement != 'trimestriel'))
-    liste = [KENNEDY_FICHE] + [
-        {
-            "id": t.id, "nom": t.nom, "prenom": t.prenom,
-            "whatsapp": t.whatsapp, "ville": t.ville,
-            "specialite": t.specialite,
-            "disponible": t.disponible_sous_traitance,
-            "abonnement": t.abonnement,
-            "prioritaire": t.abonnement == 'annuel',
-            "fondateur": False,
-            "badge": None,
-        } for t in techniciens
-    ]
-    return jsonify({"succes": True, "techniciens": liste})
+    return jsonify({"succes": True, "techniciens": [KENNEDY_FICHE]})
 
 
 # ─── PROFIL ──────────────────────────────────────────────────────────

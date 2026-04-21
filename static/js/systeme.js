@@ -41,6 +41,26 @@ function selectTypeOnduleur(type) {
   const el = document.getElementById("ond-" + type);
   if (el) el.classList.add("selected");
   updateSectionsOnduleur();
+  _appliquerCompatibiliteBatteries(type);
+}
+
+function _appliquerCompatibiliteBatteries(typeOnd) {
+  // Classique → toutes batteries OK
+  // Hybride / All-in-One → Plomb-acide incompatible
+  const incompatibles = (typeOnd === "hybride" || typeOnd === "allinone")
+    ? ["Plomb-acide"] : [];
+  ["Plomb-acide","AGM","Gel","LiFePO4","Lithium-Ion"].forEach(bat => {
+    const el = document.getElementById("bat-" + bat);
+    if (!el) return;
+    if (incompatibles.includes(bat)) {
+      el.style.opacity = "0.3";
+      el.style.pointerEvents = "none";
+      if (state.typeBatterie === bat) selectBatterie("AGM");
+    } else {
+      el.style.opacity = "1";
+      el.style.pointerEvents = "auto";
+    }
+  });
 }
 function updateSectionsOnduleur() {
   const secAts = document.getElementById("section-ats-info");
@@ -154,7 +174,7 @@ function afficherResultats(dim, prix) {
     badge.style.cssText =
       (colors[dim.tension] || colors[24]) +
       "display:inline-flex;align-items:center;padding:4px 14px;border-radius:20px;font-size:13px;font-weight:700;";
-    badge.innerHTML = `Système ${dim.tension}V <button class="help-btn" onclick="ouvrirHelp('tension')">En savoir plus</button>`;
+    badge.innerHTML = `Système ${dim.tension}V <button class="help-btn" onclick="ouvrirHelp('tension')">🔍</button>`;
   }
 
   // ── Panneaux ──
@@ -324,19 +344,29 @@ function afficherResultats(dim, prix) {
     lignes.push({ designation: "Parafoudre AC Type 2 230V/40kA", qte: 1, pu: 15500 });
     lignes.push({ designation: `Câble de terre ${cables.terre_DC || panReg.section || "—"}mm² — ${panReg.metrage || distDC*2}m`, qte: 1, pu: prix?.cable_terre || 4500 });
 
+    const isTech = (window.SG_CONFIG || {}).role === "technicien";
     lignes.forEach((l, i) => {
       const t = l.qte * l.pu;
-      total += t;
+      if (!isTech) total += t;
       const tr = document.createElement("tr");
       tr.style.background = i % 2 === 0 ? "#f8fafc" : "#fff";
+      const puCell = isTech
+        ? `<input type="number" min="0" value="" placeholder="PU (FCFA)"
+             style="width:110px;padding:4px 6px;border:1px solid #d1d5db;border-radius:4px;text-align:right;font-size:13px;"
+             oninput="_recalcDevis(this)">`
+        : formatNombre(l.pu);
+      const totalCell = isTech
+        ? `<span class="devis-ligne-total" style="font-weight:600;">—</span>`
+        : `<span style="font-weight:600;">${formatNombre(t)}</span>`;
       tr.innerHTML = `<td style="padding:8px 10px;border-bottom:1px solid #f1f5f9;">${l.designation}</td>
                       <td style="padding:8px 10px;border-bottom:1px solid #f1f5f9;text-align:center;">${l.qte}</td>
-                      <td style="padding:8px 10px;border-bottom:1px solid #f1f5f9;text-align:right;">${formatNombre(l.pu)}</td>
-                      <td style="padding:8px 10px;border-bottom:1px solid #f1f5f9;text-align:right;font-weight:600;">${formatNombre(t)}</td>`;
+                      <td style="padding:8px 10px;border-bottom:1px solid #f1f5f9;text-align:right;">${puCell}</td>
+                      <td style="padding:8px 10px;border-bottom:1px solid #f1f5f9;text-align:right;">${totalCell}</td>`;
+      tr.dataset.qte = l.qte;
       tbody.appendChild(tr);
     });
     const devisTotal = document.getElementById("devis-total");
-    if (devisTotal) devisTotal.textContent = formatNombre(total) + " FCFA";
+    if (devisTotal) devisTotal.textContent = isTech ? "—" : formatNombre(total) + " FCFA";
 
     // Mettre à jour prix dans state pour compatibilité
     if (!prix) prix = {};
@@ -356,17 +386,7 @@ function afficherResultats(dim, prix) {
   if (btnCalc)   btnCalc.style.display = "none";
   if (btnRecalc) btnRecalc.style.display = "flex";
 
-  // ── Autonomie réelle ──
-  const autoBox = document.getElementById("autonomie-box");
-  if (autoBox && dim.autonomie_heures) {
-    autoBox.style.display = "block";
-    autoBox.innerHTML = `<div style="display:flex;align-items:center;gap:10px;">
-      <div style="font-size:24px;">⏱️</div>
-      <div>
-        <div style="font-size:13px;font-weight:700;color:var(--green-800);">Autonomie réelle : <strong>${dim.autonomie_heures}h</strong> sans soleil</div>
-        <div style="font-size:11px;color:var(--gray-500);">${dim.batterie.capacite_unitaire * dim.batterie.nombre} Ah · DoD ${Math.round((dim.batterie.DoD||0.5)*100)}%</div>
-      </div></div>`;
-  }
+  // Section autonomie réelle — supprimée
 
   // ── Alertes ──
   const alertBox = document.getElementById("alerte-box");
@@ -391,22 +411,12 @@ function afficherResultats(dim, prix) {
     if (msgs.length > 0) {
       chuteBox.style.display = "block";
       chuteBox.innerHTML =
-        '<div style="display:flex;align-items:center;gap:6px;margin-bottom:4px;"><span style="font-weight:700;">⚠️ Chute de tension</span><button class="help-btn" onclick="ouvrirHelp(\'chute_tension\')">En savoir plus</button></div>' +
+        '<div style="display:flex;align-items:center;gap:6px;margin-bottom:4px;"><span style="font-weight:700;">⚠️ Chute de tension</span><button class="help-btn" onclick="ouvrirHelp(\'chute_tension\')">🔍</button></div>' +
         msgs.map((m) => `<div style="margin-bottom:6px;">${m}</div>`).join("");
     } else chuteBox.style.display = "none";
   }
 
-  // ── Groupe équivalent ──
-  const groupeBox = document.getElementById("groupe-box");
-  if (groupeBox && dim.groupe_kva) {
-    groupeBox.style.display = "block";
-    groupeBox.innerHTML = `<div style="display:flex;align-items:center;gap:10px;">
-      <div style="font-size:20px;">🔧</div>
-      <div>
-        <div style="font-size:13px;font-weight:700;color:var(--gray-700);">Équivalent groupe électrogène : <strong>${dim.groupe_kva} kVA</strong></div>
-        <div style="font-size:11px;color:var(--gray-500);">Pour vos ${Math.round(dim.puissance_installee || 0)}W de charges simultanées</div>
-      </div></div>`;
-  }
+  // Section groupe électrogène équivalent — supprimée
 
   // ── Callback page suivante selon profil ──
   if (typeof window._afficherRapportTech === "function") {
@@ -416,6 +426,24 @@ function afficherResultats(dim, prix) {
   } else {
     lancerEconomie();
   }
+}
+
+function _recalcDevis(inputEl) {
+  const tbody = document.getElementById("devis-body");
+  if (!tbody) return;
+  let total = 0;
+  tbody.querySelectorAll("tr").forEach(tr => {
+    const inp = tr.querySelector("input[type=number]");
+    const span = tr.querySelector(".devis-ligne-total");
+    if (!inp || !span) return;
+    const qte = parseFloat(tr.dataset.qte) || 1;
+    const pu = parseFloat(inp.value) || 0;
+    const t = qte * pu;
+    total += t;
+    span.textContent = t > 0 ? formatNombre(t) : "—";
+  });
+  const devisTotal = document.getElementById("devis-total");
+  if (devisTotal) devisTotal.textContent = total > 0 ? formatNombre(total) + " FCFA" : "—";
 }
 
 // ── Sauvegarder depuis page systeme/contact ──

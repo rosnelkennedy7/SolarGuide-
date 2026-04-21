@@ -1293,7 +1293,7 @@ body.bg-drone::before {
   content: '';
   position: fixed;
   inset: 0;
-  background: rgba(10,15,30,0.65);
+  background: rgba(10,15,30,0.55);
   z-index: 0;
   pointer-events: none;
 }
@@ -1472,3 +1472,53 @@ body.bg-drone .modal-box {
   border-radius: 14px; padding: 18px; transition: all 0.2s;
 }
 .kpi-glass:hover { background: rgba(255,255,255,0.11); border-color: rgba(245,166,35,0.3); }
+
+/* ============================================================
+   LISIBILITÉ TEXTES SUR FONDS SOMBRES
+============================================================ */
+body.bg-drone .section-title,
+body.bg-drone .hero-title,
+body.bg-drone h1, body.bg-drone h2 {
+  color: #FFFFFF !important;
+  text-shadow: 0 1px 3px rgba(0,0,0,0.8) !important;
+}
+body.bg-drone .section-subtitle,
+body.bg-drone .hero-desc {
+  color: #F5A623 !important;
+  text-shadow: 0 1px 3px rgba(0,0,0,0.8) !important;
+}
+body.bg-drone p,
+body.bg-drone .card-sub,
+body.bg-drone .step-text,
+body.bg-drone .offer-desc {
+  color: #E2E8F0 !important;
+}
+body.bg-drone label,
+body.bg-drone .form-group label,
+body.bg-drone .result-label {
+  color: #94A3B8 !important;
+}
+body.bg-vitre .section-title,
+body.bg-vitre .hero-title {
+  color: #FFFFFF !important;
+  text-shadow: 0 1px 3px rgba(0,0,0,0.7) !important;
+}
+body.bg-vitre .section-subtitle,
+body.bg-vitre .hero-desc {
+  color: #F5A623 !important;
+}
+
+/* Bouton aide compact */
+.help-btn {
+  background: rgba(255,255,255,0.12);
+  border: 1px solid rgba(255,255,255,0.25);
+  border-radius: 50%;
+  width: 20px; height: 20px;
+  font-size: 11px;
+  cursor: pointer;
+  display: inline-flex; align-items: center; justify-content: center;
+  color: rgba(255,255,255,0.8);
+  padding: 0;
+  transition: all 0.2s;
+}
+.help-btn:hover { background: rgba(245,166,35,0.3); border-color: #F5A623; }

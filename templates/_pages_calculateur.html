@@ -69,8 +69,8 @@
       <div class="section-subtitle">Ajoutez vos appareils — la barre de progression se met à jour automatiquement</div>
       <div style="display:grid;grid-template-columns:2fr 1fr 1fr 1fr 1fr 40px;gap:6px;padding:8px 12px;background:var(--gray-100);border-radius:8px 8px 0 0;font-size:11px;font-weight:600;color:var(--gray-600)">
         <span>Appareil</span><span>Puissance (W)</span><span>Quantité</span>
-        <span style="display:flex;align-items:center;gap:3px">Heures jour ☀️<button class="help-btn" style="padding:1px 4px;font-size:9px;margin:0" onclick="ouvrirHelp('heures_jour')">En savoir plus</button></span>
-        <span style="display:flex;align-items:center;gap:3px">Heures nuit 🌙<button class="help-btn" style="padding:1px 4px;font-size:9px;margin:0" onclick="ouvrirHelp('heures_nuit')">En savoir plus</button></span>
+        <span style="display:flex;align-items:center;gap:3px">Heures jour ☀️<button class="help-btn" style="padding:1px 4px;font-size:9px;margin:0" onclick="ouvrirHelp('heures_jour')">🔍</button></span>
+        <span style="display:flex;align-items:center;gap:3px">Heures nuit 🌙<button class="help-btn" style="padding:1px 4px;font-size:9px;margin:0" onclick="ouvrirHelp('heures_nuit')">🔍</button></span>
         <span></span>
       </div>
       <div id="budget-appareils-list"></div>
@@ -152,7 +152,7 @@
     </div>
 
     <div class="section-card" id="section-coupures" style="display:none">
-      <div class="section-title">⚡ Situation de coupure SBEE <button class="help-btn" onclick="ouvrirHelp('coupures')">En savoir plus</button></div>
+      <div class="section-title">⚡ Situation de coupure SBEE <button class="help-btn" onclick="ouvrirHelp('coupures')">🔍</button></div>
       <div class="section-subtitle">Définissez vos tranches horaires et cochez si la SBEE coupe dans votre quartier</div>
       <div style="display:grid;gap:10px;margin-bottom:14px" id="tranches-container">
         <div style="background:#fef3c7;border-radius:10px;padding:12px 14px" id="bloc-pointe-matin">
@@ -218,8 +218,8 @@
       <div class="section-subtitle">Ajoutez tous vos appareils et leurs heures d'utilisation par jour</div>
       <div style="display:grid;grid-template-columns:2fr 1fr 1fr 1fr 1fr 40px;gap:6px;padding:8px 12px;background:var(--gray-100);border-radius:8px 8px 0 0;font-size:11px;font-weight:600;color:var(--gray-600)">
         <span>Appareil</span><span>Puissance (W)</span><span>Quantité</span>
-        <span style="display:flex;align-items:center;gap:3px">Heures jour ☀️<button class="help-btn" style="padding:1px 4px;font-size:9px;margin:0" onclick="ouvrirHelp('heures_jour')">En savoir plus</button></span>
-        <span style="display:flex;align-items:center;gap:3px">Heures nuit 🌙<button class="help-btn" style="padding:1px 4px;font-size:9px;margin:0" onclick="ouvrirHelp('heures_nuit')">En savoir plus</button></span>
+        <span style="display:flex;align-items:center;gap:3px">Heures jour ☀️<button class="help-btn" style="padding:1px 4px;font-size:9px;margin:0" onclick="ouvrirHelp('heures_jour')">🔍</button></span>
+        <span style="display:flex;align-items:center;gap:3px">Heures nuit 🌙<button class="help-btn" style="padding:1px 4px;font-size:9px;margin:0" onclick="ouvrirHelp('heures_nuit')">🔍</button></span>
         <span></span>
       </div>
       <div id="appareils-list"></div>
@@ -240,43 +240,48 @@
       <div class="section-subtitle">Sélectionnez un type de batterie et un type d'onduleur</div>
 
       <div style="font-size:12px;font-weight:600;color:var(--gray-600);margin-bottom:4px;display:flex;align-items:center;gap:6px">
-        🔋 Type de batterie <button class="help-btn" onclick="ouvrirHelp('batterie')">En savoir plus</button>
+        🔋 Type de batterie <button class="help-btn" onclick="ouvrirHelp('batterie')">🔍</button>
       </div>
-      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px">
-        <div class="choice-card" onclick="selectBatterie('AGM')" id="bat-AGM" style="padding:0">
-          <div style="padding:12px;text-align:center">
-            <div style="font-size:22px;margin-bottom:6px">🔋</div>
-            <div style="font-weight:700;font-size:13px;color:var(--gray-900)">AGM</div>
-            <div style="font-size:11px;color:var(--gray-500);margin:4px 0">6-8 ans · DoD 50%</div>
-            <div style="font-size:10px;color:var(--gray-500);line-height:1.4">Sans entretien · Robuste</div>
-            <div style="font-size:11px;color:var(--green-800);font-weight:600;margin-top:6px">Prix moyen</div>
-          </div>
-        </div>
-        <div class="choice-card" onclick="selectBatterie('Lithium-Ion')" id="bat-Lithium-Ion" style="padding:0">
-          <div style="padding:12px;text-align:center">
-            <div style="font-size:22px;margin-bottom:6px">⚡</div>
-            <div style="font-weight:700;font-size:13px;color:var(--gray-900)">Lithium-Ion</div>
-            <div style="font-size:11px;color:var(--gray-500);margin:4px 0">10-15 ans · DoD 80%</div>
-            <div style="font-size:10px;color:var(--gray-500);line-height:1.4">Légère · Longévité max</div>
-            <div style="font-size:11px;color:var(--orange-600);font-weight:600;margin-top:6px">Premium</div>
-          </div>
-        </div>
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:16px">
         <div class="choice-card" onclick="selectBatterie('Plomb-acide')" id="bat-Plomb-acide" style="padding:0">
-          <div style="padding:12px;text-align:center">
-            <div style="font-size:22px;margin-bottom:6px">🪫</div>
-            <div style="font-weight:700;font-size:13px;color:var(--gray-900)">Plomb-acide</div>
-            <div style="font-size:11px;color:var(--gray-500);margin:4px 0">4-5 ans · DoD 50%</div>
-            <div style="font-size:10px;color:var(--gray-500);line-height:1.4">Entretien requis · Abordable</div>
-            <div style="font-size:11px;color:var(--blue-600);font-weight:600;margin-top:6px">Économique</div>
+          <div style="padding:10px;text-align:center">
+            <div style="font-size:20px;margin-bottom:4px">🪫</div>
+            <div style="font-weight:700;font-size:12px;color:var(--gray-900)">Plomb-acide</div>
+            <div style="font-size:10px;color:var(--gray-500);margin:3px 0">4-5 ans · DoD 50%</div>
+            <div style="font-size:10px;color:var(--blue-600);font-weight:600;margin-top:4px">Économique</div>
+          </div>
+        </div>
+        <div class="choice-card" onclick="selectBatterie('AGM')" id="bat-AGM" style="padding:0">
+          <div style="padding:10px;text-align:center">
+            <div style="font-size:20px;margin-bottom:4px">🔋</div>
+            <div style="font-weight:700;font-size:12px;color:var(--gray-900)">AGM</div>
+            <div style="font-size:10px;color:var(--gray-500);margin:3px 0">6-8 ans · DoD 50%</div>
+            <div style="font-size:10px;color:var(--green-800);font-weight:600;margin-top:4px">Prix moyen</div>
+          </div>
+        </div>
+        <div class="choice-card" onclick="selectBatterie('Gel')" id="bat-Gel" style="padding:0">
+          <div style="padding:10px;text-align:center">
+            <div style="font-size:20px;margin-bottom:4px">💧</div>
+            <div style="font-weight:700;font-size:12px;color:var(--gray-900)">Gel</div>
+            <div style="font-size:10px;color:var(--gray-500);margin:3px 0">7-10 ans · DoD 60%</div>
+            <div style="font-size:10px;color:var(--green-800);font-weight:600;margin-top:4px">Robuste</div>
+          </div>
+        </div>
+        <div class="choice-card" onclick="selectBatterie('LiFePO4')" id="bat-LiFePO4" style="padding:0">
+          <div style="padding:10px;text-align:center">
+            <div style="font-size:20px;margin-bottom:4px">⚡</div>
+            <div style="font-weight:700;font-size:12px;color:var(--gray-900)">LiFePO4</div>
+            <div style="font-size:10px;color:var(--gray-500);margin:3px 0">10-15 ans · DoD 80%</div>
+            <div style="font-size:10px;color:var(--orange-600);font-weight:600;margin-top:4px">Premium</div>
           </div>
         </div>
       </div>
-      <div style="margin-top:-10px;margin-bottom:16px"><button class="help-btn" onclick="ouvrirHelp('dod')">En savoir plus sur le DoD</button></div>
+      <div style="margin-top:-10px;margin-bottom:16px"><button class="help-btn" onclick="ouvrirHelp('dod')">🔍 DoD</button></div>
 
       <div style="font-size:12px;font-weight:600;color:var(--gray-600);margin-bottom:4px;display:flex;align-items:center;gap:6px">
-        🔌 Type d'onduleur <button class="help-btn" onclick="ouvrirHelp('onduleur')">En savoir plus</button>
+        🔌 Type d'onduleur <button class="help-btn" onclick="ouvrirHelp('onduleur')">🔍</button>
       </div>
-      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px">
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px;max-width:600px;margin-left:auto;margin-right:auto">
         <div class="choice-card" onclick="selectTypeOnduleur('classique')" id="ond-classique" style="padding:0">
           <div style="padding:12px;text-align:center">
             <div style="font-size:22px;margin-bottom:6px">🔌</div>
@@ -308,7 +313,7 @@
 
       <div id="section-ats-info" style="display:none;background:var(--green-50);border:1px solid var(--green-200);border-radius:10px;padding:12px 14px;margin-bottom:14px">
         <div style="font-size:12px;font-weight:600;color:var(--green-800);margin-bottom:4px;display:flex;align-items:center;gap:8px">
-          🔄 ATS automatique inclus dans le dimensionnement <button class="help-btn" onclick="ouvrirHelp('ats')">En savoir plus</button>
+          🔄 ATS automatique inclus dans le dimensionnement <button class="help-btn" onclick="ouvrirHelp('ats')">🔍</button>
         </div>
         <div style="font-size:11px;color:var(--gray-500)">Commutateur automatique qui bascule entre SBEE et onduleur sans intervention manuelle.</div>
       </div>
@@ -316,7 +321,7 @@
       <div id="section-onduleur-hybride" style="display:none"></div>
 
       <div style="font-size:12px;font-weight:600;color:var(--gray-600);margin-bottom:4px;display:flex;align-items:center;gap:6px">
-        ⏱️ Autonomie (jours sans soleil) <button class="help-btn" onclick="ouvrirHelp('autonomie')">En savoir plus</button>
+        ⏱️ Autonomie (jours sans soleil) <button class="help-btn" onclick="ouvrirHelp('autonomie')">🔍</button>
       </div>
       <div style="display:flex;gap:10px;margin-bottom:16px">
         <button class="btn-secondary" id="auto-1" onclick="selectAutonomie(1)" style="flex:1">1 jour</button>
@@ -329,42 +334,62 @@
         <button class="btn-secondary" style="flex:1;justify-content:center;text-align:center;display:none" onclick="lancerCalcul(true)" id="btn-recalculer">🔄 Recalculer</button>
       </div>
 
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
-        <div>
-          <div style="font-size:12px;font-weight:600;color:var(--gray-700);margin-bottom:4px;display:flex;align-items:center;gap:6px">
-            Distance DC — panneau → régulateur (m) <button class="help-btn" onclick="ouvrirHelp('distance_dc')">En savoir plus</button>
+      <!-- Distances câbles — affichage conditionnel selon profil -->
+      <div id="distances-user-fixe" style="display:none;background:var(--gray-50);border:1px solid var(--gray-200);border-radius:8px;padding:10px 14px;font-size:13px;color:var(--gray-700)">
+        📏 Distance DC : 5m &nbsp;|&nbsp; Distance AC : 3m
+        <input type="hidden" id="distance-dc" value="5" />
+        <input type="hidden" id="distance-ac" value="3" />
+      </div>
+      <div id="distances-tech-inputs" style="display:none">
+        <div style="display:flex;gap:16px;align-items:flex-end">
+          <div style="flex:1">
+            <div style="font-size:12px;font-weight:600;color:var(--gray-700);margin-bottom:4px;display:flex;align-items:center;gap:6px">
+              Distance DC — panneau → régulateur (m) <button class="help-btn" onclick="ouvrirHelp('distance_dc')">🔍</button>
+            </div>
+            <input type="number" id="distance-dc" value="5" min="1" max="50" step="1"
+              onkeydown="return (event.keyCode!==69&&event.keyCode!==101&&event.keyCode!==43&&event.keyCode!==45);"
+              style="width:100%;border:1px solid var(--gray-200);border-radius:8px;padding:8px 10px;font-family:'Inter',sans-serif;font-size:13px;outline:none" />
           </div>
-          <input type="number" id="distance-dc" value="5" min="1" max="50" step="1"
-            onkeydown="return (event.keyCode!==69&&event.keyCode!==101&&event.keyCode!==43&&event.keyCode!==45);"
-            style="width:100%;border:1px solid var(--gray-200);border-radius:8px;padding:8px 10px;font-family:'Inter',sans-serif;font-size:13px;outline:none" />
-        </div>
-        <div>
-          <div style="font-size:12px;font-weight:600;color:var(--gray-700);margin-bottom:4px;display:flex;align-items:center;gap:6px">
-            Distance AC — onduleur → tableau (m) <button class="help-btn" onclick="ouvrirHelp('distance_ac')">En savoir plus</button>
+          <div style="flex:1">
+            <div style="font-size:12px;font-weight:600;color:var(--gray-700);margin-bottom:4px;display:flex;align-items:center;gap:6px">
+              Distance AC — onduleur → tableau (m) <button class="help-btn" onclick="ouvrirHelp('distance_ac')">🔍</button>
+            </div>
+            <input type="number" id="distance-ac" value="3" min="1" max="50" step="1"
+              onkeydown="return (event.keyCode!==69&&event.keyCode!==101&&event.keyCode!==43&&event.keyCode!==45);"
+              style="width:100%;border:1px solid var(--gray-200);border-radius:8px;padding:8px 10px;font-family:'Inter',sans-serif;font-size:13px;outline:none" />
           </div>
-          <input type="number" id="distance-ac" value="3" min="1" max="50" step="1"
-            onkeydown="return (event.keyCode!==69&&event.keyCode!==101&&event.keyCode!==43&&event.keyCode!==45);"
-            style="width:100%;border:1px solid var(--gray-200);border-radius:8px;padding:8px 10px;font-family:'Inter',sans-serif;font-size:13px;outline:none" />
         </div>
       </div>
+      <script>
+        (function() {
+          const cfg = window.SG_CONFIG || {};
+          if (cfg.cables_fixes) {
+            const el = document.getElementById('distances-user-fixe');
+            if (el) el.style.display = 'block';
+          } else {
+            const el = document.getElementById('distances-tech-inputs');
+            if (el) el.style.display = 'block';
+          }
+        })();
+      </script>
     </div>
 
     <!-- RÉSULTATS -->
     <div class="section-card" id="results-section" style="display:none">
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
         <div class="section-title" style="margin-bottom:0">⚙️ Votre système dimensionné</div>
-        <div id="badge-tension" style="display:inline-flex;align-items:center;padding:4px 14px;border-radius:20px;font-size:13px;font-weight:700;background:var(--blue-100);color:var(--blue-700)">—<button class="help-btn" onclick="ouvrirHelp('tension')">En savoir plus</button></div>
+        <div id="badge-tension" style="display:inline-flex;align-items:center;padding:4px 14px;border-radius:20px;font-size:13px;font-weight:700;background:var(--blue-100);color:var(--blue-700)">—<button class="help-btn" onclick="ouvrirHelp('tension')">🔍</button></div>
       </div>
-      <div id="autonomie-box" style="display:none;background:var(--green-50);border:1px solid var(--green-200);border-radius:10px;padding:12px 14px;margin-bottom:12px"></div>
+      <div id="autonomie-box" style="display:none!important;visibility:hidden;background:var(--green-50);border:1px solid var(--green-200);border-radius:10px;padding:12px 14px;margin-bottom:12px"></div>
       <div id="alerte-box" style="display:none;background:var(--orange-100);border-radius:10px;padding:10px 14px;margin-bottom:12px;font-size:12px;color:var(--orange-600);font-weight:500"></div>
       <div id="chute-box" style="display:none;background:#fee2e2;border:1px solid #fca5a5;border-radius:10px;padding:12px 14px;margin-bottom:12px;font-size:12px;color:#dc2626"></div>
-      <div id="groupe-box" style="display:none;background:var(--gray-100);border-radius:10px;padding:12px 14px;margin-bottom:12px"></div>
+      <div id="groupe-box" style="display:none!important;visibility:hidden;background:var(--gray-100);border-radius:10px;padding:12px 14px;margin-bottom:12px"></div>
 
       <div style="font-size:12px;font-weight:600;color:var(--gray-600);margin-bottom:8px;padding-bottom:4px;border-bottom:1px solid var(--gray-100)">⚡ Composants principaux</div>
       <div class="results-grid" style="margin-bottom:16px">
         <div class="result-card"><div class="result-icon icon-blue">🔋</div><div><div class="result-label">Batterie</div><div class="result-value" id="res-batterie">—</div><div class="result-sub" id="res-batterie-info">—</div></div></div>
         <div class="result-card"><div class="result-icon icon-green">🔌</div><div><div class="result-label">Onduleur</div><div class="result-value" id="res-onduleur">—</div><div class="result-sub" id="res-onduleur-type">Onde pure</div></div></div>
-        <div class="result-card"><div class="result-icon icon-purple">⚡</div><div><div class="result-label" style="display:flex;align-items:center;gap:4px">Régulateur<button class="help-btn" onclick="ouvrirHelp('mppt')">En savoir plus</button></div><div class="result-value" id="res-mppt">—</div><div class="result-sub" id="res-mppt-type">—</div></div></div>
+        <div class="result-card"><div class="result-icon icon-purple">⚡</div><div><div class="result-label" style="display:flex;align-items:center;gap:4px">Régulateur<button class="help-btn" onclick="ouvrirHelp('mppt')">🔍</button></div><div class="result-value" id="res-mppt">—</div><div class="result-sub" id="res-mppt-type">—</div></div></div>
         <div class="result-card"><div class="result-icon icon-yellow">☀️</div><div><div class="result-label">Panneau solaire</div><div class="result-value" id="res-panneau">—</div><div class="result-sub" id="res-panneau-nb">—</div></div></div>
         <div class="result-card" id="res-ats-card" style="display:none"><div class="result-icon icon-blue">🔄</div><div><div class="result-label">ATS</div><div class="result-value" id="res-ats">—</div><div class="result-sub">Basculement auto SBEE</div></div></div>
       </div>

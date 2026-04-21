@@ -23,6 +23,8 @@ function initPageBudget() {
   document.getElementById("budget-indicator").style.display = "none";
 }
 
+const BUDGET_MINIMUM = 150000;
+
 function verifierBudget() {
   const val = parseFloat(document.getElementById("input-budget").value) || 0;
   const indic = document.getElementById("budget-indicator");
@@ -33,6 +35,19 @@ function verifierBudget() {
 
   if (!val || val <= 0) {
     indic.style.display = "none";
+    if (!estRetour) typeLocal.style.display = "none";
+    btnNext.disabled = true;
+    return;
+  }
+
+  if (val < BUDGET_MINIMUM) {
+    indic.style.display = "block";
+    indic.style.background = "#fee2e2";
+    indic.style.border = "1px solid #fca5a5";
+    indic.style.color = "#dc2626";
+    indic.innerHTML = `<div style="font-weight:700;margin-bottom:4px;">⚠️ Budget insuffisant</div>
+      <div>Une installation solaire correcte nécessite au minimum <strong>${formatNombre(BUDGET_MINIMUM)} FCFA</strong>.</div>`;
+    input.style.borderColor = "#dc2626";
     if (!estRetour) typeLocal.style.display = "none";
     btnNext.disabled = true;
     return;
