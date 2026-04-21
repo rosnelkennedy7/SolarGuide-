@@ -1,0 +1,1169 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SolarGuide — Espace Technicien</title>
+
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Fraunces:wght@700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
+
+    <!-- Configuration technicien -->
+    <script>
+      window.SG_CONFIG = {
+        role: 'technicien',
+        cables_fixes: false,
+        distance_dc_defaut: 5,
+        distance_ac_defaut: 3,
+        show_economie: false,
+        show_savoir_plus: false,
+        show_pdf: true,
+        show_devis: true,
+        kennedy_whatsapp: '+22901944389',
+        // Paramètres avancés (modifiables dans le modal)
+        params: {
+          PR: 0.75,
+          rendement_systeme: 0.80,
+          coeff_simultaneite: 0.80,
+          coeff_securite: 1.25,
+        }
+      };
+    </script>
+
+    <style>
+      /* ── AUTH NAVBAR ── */
+      .auth-navbar {
+        background: rgba(10,15,30,0.75);
+        backdrop-filter: blur(16px);
+        height: 48px;
+        padding: 0 20px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        border-bottom: 1px solid rgba(255,255,255,.12);
+        position: sticky;
+        top: 0;
+        z-index: 200;
+      }
+      .auth-user-info {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 13px;
+        color: rgba(255,255,255,.8);
+      }
+      .auth-user-info .user-name { color: #fff; font-weight: 600; }
+      .abo-badge {
+        font-size: 10px;
+        font-weight: 700;
+        padding: 2px 8px;
+        border-radius: 20px;
+        background: #1e40af;
+        color: #bfdbfe;
+      }
+      .abo-badge.annuel { background: #92400e; color: #fde68a; }
+      .auth-nav-links {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+      .auth-nav-links a, .auth-nav-links button {
+        font-size: 12px;
+        color: rgba(255,255,255,.65);
+        text-decoration: none;
+        padding: 5px 10px;
+        border-radius: 6px;
+        transition: all .2s;
+        background: none;
+        border: none;
+        cursor: pointer;
+        font-family: "Inter", sans-serif;
+      }
+      .auth-nav-links a:hover, .auth-nav-links button:hover {
+        background: rgba(255,255,255,.1); color: #fff;
+      }
+
+      /* ── ABONNEMENT EXPIRATION ── */
+      .abo-banner {
+        background: #1e3a8a;
+        padding: 7px 20px;
+        font-size: 12px;
+        color: #bfdbfe;
+        text-align: center;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+      }
+      .abo-banner.expire { background: #7c1d1d; color: #fca5a5; }
+
+      /* ── HISTORIQUE ── */
+      .history-panel {
+        position: fixed;
+        right: -380px;
+        top: 0; bottom: 0;
+        width: 360px;
+        background: #fff;
+        border-left: 1px solid var(--gray-200);
+        z-index: 500;
+        transition: right .3s ease;
+        display: flex;
+        flex-direction: column;
+        box-shadow: -8px 0 24px rgba(0,0,0,.1);
+      }
+      .history-panel.open { right: 0; }
+      .history-head {
+        padding: 16px 20px;
+        border-bottom: 1px solid var(--gray-200);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+      .history-title { font-size: 15px; font-weight: 700; color: var(--gray-900); }
+      .history-close {
+        background: var(--gray-100);
+        border: none; border-radius: 50%;
+        width: 28px; height: 28px;
+        cursor: pointer; font-size: 14px;
+        display: flex; align-items: center; justify-content: center;
+      }
+      .history-list { flex: 1; overflow-y: auto; padding: 12px; }
+      .history-item {
+        background: var(--gray-50);
+        border: 1px solid var(--gray-200);
+        border-radius: 10px; padding: 12px;
+        margin-bottom: 8px; cursor: pointer; transition: all .2s;
+      }
+      .history-item:hover { border-color: var(--green-700); background: var(--green-50); }
+      .history-item-name { font-size: 13px; font-weight: 600; color: var(--gray-900); margin-bottom: 4px; }
+      .history-item-meta { font-size: 11px; color: var(--gray-400); }
+      .history-item-actions { display: flex; gap: 6px; margin-top: 8px; }
+      .btn-history-action {
+        font-size: 11px; padding: 4px 10px; border-radius: 6px;
+        border: none; cursor: pointer; font-family: "Inter", sans-serif; font-weight: 600;
+      }
+      .btn-h-view { background: var(--blue-100); color: var(--blue-700); }
+      .btn-h-delete { background: #fee2e2; color: #dc2626; }
+      .history-overlay {
+        position: fixed; inset: 0;
+        background: rgba(0,0,0,.3); z-index: 499; display: none;
+      }
+      .history-overlay.show { display: block; }
+
+      /* ── MODAL PARAMÈTRES AVANCÉS ── */
+      .params-modal-overlay {
+        position: fixed; inset: 0;
+        background: rgba(0,0,0,.5);
+        display: none;
+        align-items: center; justify-content: center;
+        z-index: 9990; padding: 16px;
+      }
+      .params-modal-overlay.show { display: flex; }
+      .params-modal {
+        background: rgba(10,15,30,0.92); backdrop-filter: blur(24px);
+        border: 1px solid rgba(255,255,255,0.15); border-radius: 16px;
+        width: 100%; max-width: 580px;
+        max-height: 90vh; overflow-y: auto;
+        box-shadow: 0 20px 60px rgba(0,0,0,.5); color: #fff;
+      }
+      @keyframes modalIn{from{opacity:0;transform:scale(.94)}to{opacity:1;transform:scale(1)}}
+      .params-modal { animation: modalIn .25s ease; }
+      .params-head {
+        padding: 20px 24px;
+        border-bottom: 1px solid rgba(255,255,255,0.1);
+        display: flex; align-items: center; justify-content: space-between;
+        position: sticky; top: 0; background: rgba(10,15,30,0.95); z-index: 10;
+      }
+      .params-head-title { font-size: 17px; font-weight: 700; color: #fff; }
+      .params-close {
+        background: rgba(255,255,255,0.1); border: none; border-radius: 50%;
+        width: 30px; height: 30px; cursor: pointer; font-size: 14px;
+        display: flex; align-items: center; justify-content: center; color: rgba(255,255,255,0.7);
+      }
+      .params-close:hover { background: rgba(255,255,255,0.2); color: #fff; }
+      .params-body { padding: 20px 24px; }
+      .params-section {
+        background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1);
+        border-radius: 10px; padding: 16px; margin-bottom: 16px;
+      }
+      .params-section-title {
+        font-size: 13px; font-weight: 700; color: rgba(255,255,255,0.85); margin-bottom: 12px;
+        display: flex; align-items: center; gap: 6px;
+      }
+      .params-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+      .param-input-group label {
+        display: block; font-size: 11px; font-weight: 600;
+        color: rgba(255,255,255,0.6); margin-bottom: 4px;
+      }
+      .param-input {
+        width: 100%; background: rgba(255,255,255,0.08); border: 1.5px solid rgba(255,255,255,0.2);
+        border-radius: 8px; padding: 8px 10px; font-family: "Inter", sans-serif; font-size: 13px;
+        color: #fff; outline: none; transition: border-color .2s;
+      }
+      .param-input::placeholder { color: rgba(255,255,255,0.3); }
+      .param-input:focus { border-color: #F5A623; }
+      .param-hint { font-size: 10px; color: rgba(255,255,255,0.35); margin-top:2px; }
+      .params-footer {
+        padding: 16px 24px;
+        border-top: 1px solid rgba(255,255,255,0.1);
+        display: flex; gap: 10px; justify-content: flex-end;
+        position: sticky; bottom: 0; background: rgba(10,15,30,0.95);
+      }
+      .btn-params-reset {
+        background: rgba(255,255,255,0.1); color: rgba(255,255,255,0.7);
+        border: 1px solid rgba(255,255,255,0.2); border-radius: 8px; padding: 10px 20px;
+        font-size: 13px; font-weight: 600; cursor: pointer;
+        font-family: "Inter", sans-serif; transition: all .2s;
+      }
+      .btn-params-reset:hover { background: rgba(255,255,255,0.18); color: #fff; }
+      .btn-params-save {
+        background: linear-gradient(135deg,#F5A623,#D47C0A); color: #fff;
+        border: none; border-radius: 8px; padding: 10px 28px;
+        font-size: 13px; font-weight: 700; cursor: pointer;
+        font-family: "Inter", sans-serif; transition: all .2s;
+      }
+      .btn-params-save:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(245,166,35,0.4); }
+
+      /* ── MODAL DEVIS ── */
+      .devis-modal-overlay {
+        position: fixed; inset: 0;
+        background: rgba(0,0,0,.5);
+        display: none;
+        align-items: center; justify-content: center;
+        z-index: 9995; padding: 16px;
+      }
+      .devis-modal-overlay.show { display: flex; }
+      .devis-modal {
+        background: #fff; border-radius: 16px;
+        width: 100%; max-width: 700px;
+        max-height: 90vh; overflow-y: auto;
+        animation: modalIn .25s ease;
+        box-shadow: 0 20px 60px rgba(0,0,0,.2);
+      }
+      .devis-head {
+        padding: 18px 24px;
+        border-bottom: 1px solid var(--gray-200);
+        display: flex; align-items: center; justify-content: space-between;
+        position: sticky; top: 0; background: #fff;
+      }
+      .devis-body { padding: 20px 24px; }
+      .devis-input {
+        width: 100%; border: 1.5px solid var(--gray-200); border-radius: 8px;
+        padding: 9px 12px; font-family: "Inter", sans-serif; font-size: 13px;
+        color: var(--gray-900); outline: none; transition: border-color .2s; margin-bottom: 12px;
+      }
+      .devis-input:focus { border-color: var(--green-700); }
+      .devis-table-wrap { overflow-x: auto; margin-bottom: 16px; }
+      .devis-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+      .devis-table th {
+        background: var(--green-800); color: #fff; padding: 10px 12px;
+        text-align: left; font-weight: 600;
+      }
+      .devis-table td {
+        padding: 8px 12px; border-bottom: 1px solid var(--gray-200);
+        vertical-align: middle;
+      }
+      .devis-table input {
+        width: 100%; border: none; font-family: "Inter", sans-serif;
+        font-size: 13px; outline: none; background: transparent; padding: 2px;
+        border-bottom: 1px solid var(--gray-200); transition: border-color .2s;
+      }
+      .devis-table input:focus { border-bottom-color: var(--green-700); }
+      .devis-table tfoot td { background: var(--green-50); font-weight: 700; color: var(--green-800); }
+
+      /* ── BOUTONS PDF ── */
+      .btn-pdf {
+        background: var(--blue-700); color: #fff; border: none;
+        border-radius: 10px; padding: 12px 24px; font-size: 14px;
+        font-weight: 700; cursor: pointer; font-family: "Inter", sans-serif;
+        transition: all .2s; display: inline-flex; align-items: center; gap: 8px;
+      }
+      .btn-pdf:hover { background: #1e3a8a; transform: translateY(-1px); }
+      .btn-devis {
+        background: var(--orange-600); color: #fff; border: none;
+        border-radius: 10px; padding: 12px 24px; font-size: 14px;
+        font-weight: 700; cursor: pointer; font-family: "Inter", sans-serif;
+        transition: all .2s; display: inline-flex; align-items: center; gap: 8px;
+      }
+      .btn-devis:hover { background: #c2410c; transform: translateY(-1px); }
+
+      /* ── SÉRIE/PARALLÈLE ── */
+      .serie-parallele-card {
+        background: linear-gradient(135deg, #1d4ed8, #3b82f6);
+        border-radius: 12px; padding: 16px; color: #fff; margin-bottom: 12px;
+      }
+      .sp-title { font-size: 14px; font-weight: 700; margin-bottom: 10px; }
+      .sp-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; }
+      .sp-item { text-align: center; }
+      .sp-value { font-size: 22px; font-weight: 800; }
+      .sp-label { font-size: 11px; opacity: .8; }
+      .sp-compat { font-size:11px; padding: 8px 12px; border-radius: 8px; margin-top: 10px; }
+      .sp-ok { background: rgba(255,255,255,.15); }
+      .sp-warn { background: rgba(255,100,50,.3); }
+
+      /* ── ANNUAIRE TOGGLE ── */
+      .annuaire-toggle-card {
+        background: var(--gray-50); border: 1px solid var(--gray-200);
+        border-radius: 12px; padding: 14px 18px; margin-bottom: 12px;
+        display: flex; align-items: center; justify-content: space-between;
+      }
+      .toggle-switch {
+        position: relative; width: 44px; height: 24px;
+        display: inline-block;
+      }
+      .toggle-switch input { opacity: 0; width: 0; height: 0; }
+      .toggle-slider {
+        position: absolute; cursor: pointer;
+        top: 0; left: 0; right: 0; bottom: 0;
+        background: var(--gray-300); border-radius: 24px;
+        transition: .4s;
+      }
+      .toggle-slider:before {
+        position: absolute; content: "";
+        height: 18px; width: 18px;
+        left: 3px; bottom: 3px;
+        background: white; border-radius: 50%;
+        transition: .4s;
+      }
+      input:checked + .toggle-slider { background: var(--green-700); }
+      input:checked + .toggle-slider:before { transform: translateX(20px); }
+    </style>
+  </head>
+
+  <body class="bg-vitre">
+    <!-- ══ PANNEAUX & OVERLAYS ══ -->
+    <div class="history-overlay" id="history-overlay" onclick="fermerHistorique()"></div>
+    <div class="history-panel" id="history-panel">
+      <div class="history-head">
+        <div class="history-title">📂 Mes projets</div>
+        <button class="history-close" onclick="fermerHistorique()">✕</button>
+      </div>
+      <div class="history-list" id="history-list">
+        <div style="text-align:center;color:var(--gray-400);padding:20px;font-size:13px">Chargement...</div>
+      </div>
+    </div>
+
+    <!-- ══ LOADER ══ -->
+    <div class="loader-overlay" id="loader">
+      <div class="spinner"></div>
+      <div class="loader-text" id="loader-text">Calcul en cours...</div>
+    </div>
+
+    <!-- ══ MODALS STANDARD ══ -->
+    <div class="modal-overlay" id="modal-overlay" onclick="fermerModal(event)">
+      <div class="modal-box">
+        <div class="modal-header">
+          <div class="modal-title" id="modal-title">—</div>
+          <button class="modal-close" onclick="fermerModalBtn()">✕</button>
+        </div>
+        <div class="modal-desc" id="modal-desc"></div>
+        <ul class="modal-list" id="modal-list"></ul>
+      </div>
+    </div>
+    <div class="help-tooltip-overlay" id="help-overlay" onclick="fermerHelp(event)">
+      <div class="help-tooltip-box">
+        <div class="help-tooltip-handle"></div>
+        <div class="help-tooltip-title" id="help-title">—</div>
+        <div class="help-tooltip-content" id="help-content"></div>
+      </div>
+    </div>
+
+    <!-- ══ MODAL PARAMÈTRES AVANCÉS ══ -->
+    <div class="params-modal-overlay" id="params-modal-overlay" onclick="fermerParamsModal(event)">
+      <div class="params-modal" onclick="event.stopPropagation()">
+        <div class="params-head">
+          <div class="params-head-title">⚙️ Paramètres avancés</div>
+          <button class="params-close" onclick="fermerParamsModal()">✕</button>
+        </div>
+        <div class="params-body">
+
+          <div style="font-size:13px;color:var(--gray-500);margin-bottom:16px;line-height:1.6">
+            Laissez les champs vides pour utiliser les valeurs par défaut (Bénin · Tropique).
+            Les paramètres seront utilisés pour ce dimensionnement uniquement.
+          </div>
+
+          <div class="params-section">
+            <div class="params-section-title">📊 Paramètres système</div>
+            <div class="params-grid">
+              <div class="param-input-group">
+                <label>Performance Ratio (PR)</label>
+                <input type="number" class="param-input" id="p-PR" placeholder="Défaut : 0.75" min="0.5" max="1" step="0.01" />
+                <div class="param-hint">Adapté Bénin (chaleur + harmattan)</div>
+              </div>
+              <div class="param-input-group">
+                <label>Rendement système</label>
+                <input type="number" class="param-input" id="p-rendement" placeholder="Défaut : 0.80" min="0.5" max="1" step="0.01" />
+              </div>
+              <div class="param-input-group">
+                <label>Coefficient simultanéité</label>
+                <input type="number" class="param-input" id="p-coeff-simult" placeholder="Défaut : 0.80" min="0.5" max="1" step="0.01" />
+              </div>
+              <div class="param-input-group">
+                <label>Coefficient sécurité onduleur</label>
+                <input type="number" class="param-input" id="p-coeff-sec" placeholder="Défaut : 1.25" min="1" max="2" step="0.05" />
+              </div>
+            </div>
+          </div>
+
+          <div class="params-section">
+            <div class="params-section-title">☀️ Panneau solaire</div>
+            <div class="params-grid">
+              <div class="param-input-group">
+                <label>Puissance (Wc)</label>
+                <input type="number" class="param-input" id="p-pan-wc" placeholder="Ex : 400" min="50" max="700" />
+              </div>
+              <div class="param-input-group">
+                <label>Tension circuit ouvert Voc (V)</label>
+                <input type="number" class="param-input" id="p-pan-voc" placeholder="Ex : 48.5" step="0.1" />
+              </div>
+              <div class="param-input-group">
+                <label>Courant court-circuit Isc (A)</label>
+                <input type="number" class="param-input" id="p-pan-isc" placeholder="Ex : 10.2" step="0.1" />
+              </div>
+              <div class="param-input-group">
+                <label>Tension max puissance Vmp (V)</label>
+                <input type="number" class="param-input" id="p-pan-vmp" placeholder="Ex : 40.2" step="0.1" />
+              </div>
+              <div class="param-input-group">
+                <label>Courant max puissance Imp (A)</label>
+                <input type="number" class="param-input" id="p-pan-imp" placeholder="Ex : 9.95" step="0.1" />
+              </div>
+            </div>
+          </div>
+
+          <div class="params-section">
+            <div class="params-section-title">🔋 Batterie</div>
+            <div class="params-grid">
+              <div class="param-input-group">
+                <label>Capacité (Ah)</label>
+                <input type="number" class="param-input" id="p-bat-cap" placeholder="Ex : 200" />
+              </div>
+              <div class="param-input-group">
+                <label>Tension (V)</label>
+                <input type="number" class="param-input" id="p-bat-v" placeholder="Ex : 12" />
+              </div>
+              <div class="param-input-group">
+                <label>DoD (profondeur décharge)</label>
+                <input type="number" class="param-input" id="p-bat-dod" placeholder="Ex : 0.50" min="0.1" max="0.95" step="0.05" />
+              </div>
+              <div class="param-input-group">
+                <label>Rendement batterie</label>
+                <input type="number" class="param-input" id="p-bat-rend" placeholder="Ex : 0.85" min="0.5" max="1" step="0.01" />
+              </div>
+            </div>
+          </div>
+
+          <div class="params-section">
+            <div class="params-section-title">⚡ Régulateur</div>
+            <div class="params-grid">
+              <div class="param-input-group">
+                <label>Courant max (A)</label>
+                <input type="number" class="param-input" id="p-reg-i" placeholder="Ex : 60" />
+              </div>
+              <div class="param-input-group">
+                <label>Tension max (V)</label>
+                <input type="number" class="param-input" id="p-reg-v" placeholder="Ex : 150" />
+              </div>
+            </div>
+          </div>
+
+          <div class="params-section">
+            <div class="params-section-title">🔌 Onduleur</div>
+            <div class="params-grid">
+              <div class="param-input-group">
+                <label>Puissance (W)</label>
+                <input type="number" class="param-input" id="p-ond-p" placeholder="Ex : 3000" />
+              </div>
+              <div class="param-input-group">
+                <label>Rendement onduleur</label>
+                <input type="number" class="param-input" id="p-ond-rend" placeholder="Ex : 0.92" min="0.7" max="1" step="0.01" />
+              </div>
+            </div>
+          </div>
+
+          <div class="params-section">
+            <div class="params-section-title">🔧 Distances câbles (m)</div>
+            <div class="params-grid">
+              <div class="param-input-group">
+                <label>Panneaux → Régulateur (m)</label>
+                <input type="number" class="param-input" id="p-d-pan-reg" placeholder="Défaut : 5" min="1" max="100" />
+              </div>
+              <div class="param-input-group">
+                <label>Régulateur → Batteries (m)</label>
+                <input type="number" class="param-input" id="p-d-reg-bat" placeholder="Défaut : 1.5" min="0.5" max="20" step="0.5" />
+              </div>
+              <div class="param-input-group">
+                <label>Batteries → Onduleur (m)</label>
+                <input type="number" class="param-input" id="p-d-bat-ond" placeholder="Défaut : 1" min="0.5" max="20" step="0.5" />
+              </div>
+              <div class="param-input-group">
+                <label>Onduleur → Tableau AC (m)</label>
+                <input type="number" class="param-input" id="p-d-ac" placeholder="Défaut : 3" min="1" max="50" />
+              </div>
+            </div>
+          </div>
+
+        </div>
+        <div class="params-footer">
+          <button class="btn-params-reset" onclick="reinitialiserParams()">🔄 Valeurs par défaut</button>
+          <button class="btn-params-save" onclick="sauvegarderParams()">✅ Appliquer ces paramètres</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ MODAL DEVIS ══ -->
+    <div class="devis-modal-overlay" id="devis-modal-overlay" onclick="fermerDevisModal(event)">
+      <div class="devis-modal" onclick="event.stopPropagation()">
+        <div class="devis-head">
+          <div style="font-size:17px;font-weight:700;color:var(--gray-900)">📄 Générer un devis</div>
+          <button class="params-close" onclick="fermerDevisModal()">✕</button>
+        </div>
+        <div class="devis-body">
+
+          <div style="font-size:13px;font-weight:600;color:var(--gray-700);margin-bottom:8px">Informations client</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px">
+            <input type="text" class="devis-input" id="devis-client-nom" placeholder="Nom du client" style="margin:0" />
+            <input type="text" class="devis-input" id="devis-client-phone" placeholder="Téléphone client" style="margin:0" />
+            <input type="text" class="devis-input" id="devis-client-lieu" placeholder="Localisation" style="margin:0" />
+            <input type="date" class="devis-input" id="devis-date" style="margin:0" />
+          </div>
+
+          <div style="font-size:13px;font-weight:600;color:var(--gray-700);margin-bottom:8px">Votre entreprise (optionnel)</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px">
+            <input type="text" class="devis-input" id="devis-entreprise" placeholder="Nom de l'entreprise" style="margin:0" />
+            <input type="text" class="devis-input" id="devis-entreprise-phone" placeholder="Téléphone entreprise" style="margin:0" />
+          </div>
+
+          <div style="font-size:13px;font-weight:600;color:var(--gray-700);margin-bottom:8px">Tableau des prix</div>
+          <div class="devis-table-wrap">
+            <table class="devis-table" id="devis-table">
+              <thead>
+                <tr>
+                  <th style="width:35%">Désignation</th>
+                  <th style="width:12%">Qté</th>
+                  <th style="width:20%">P.U. (FCFA)</th>
+                  <th style="width:20%">Total (FCFA)</th>
+                  <th style="width:8%"></th>
+                </tr>
+              </thead>
+              <tbody id="devis-tbody"></tbody>
+              <tfoot>
+                <tr>
+                  <td colspan="3">Sous-total matériaux</td>
+                  <td id="devis-sous-total">0 FCFA</td>
+                  <td></td>
+                </tr>
+                <tr>
+                  <td colspan="3">Main d'œuvre (saisir)</td>
+                  <td><input type="number" id="devis-mdo" placeholder="0" oninput="recalcTotal()" style="width:100%;border:none;background:var(--green-50);padding:4px;font-family:Inter,sans-serif;font-size:13px;font-weight:700;color:var(--green-800);outline:none" /></td>
+                  <td></td>
+                </tr>
+                <tr style="background:var(--green-800)">
+                  <td colspan="3" style="color:#fff;font-weight:700">TOTAL GÉNÉRAL</td>
+                  <td style="color:#fff;font-weight:800;font-size:15px" id="devis-total-general">0 FCFA</td>
+                  <td></td>
+                </tr>
+              </tfoot>
+            </table>
+          </div>
+
+          <div style="display:flex;gap:10px;justify-content:flex-end">
+            <button style="background:var(--gray-100);color:var(--gray-700);border:none;border-radius:8px;padding:10px 20px;font-size:13px;font-weight:600;cursor:pointer;font-family:Inter,sans-serif" onclick="fermerDevisModal()">Annuler</button>
+            <button class="btn-pdf" onclick="telechargerDevis()">📥 Télécharger le devis PDF</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ AUTH NAVBAR ══ -->
+    <div class="auth-navbar">
+      <div class="auth-user-info">
+        <span>🔧</span>
+        <span class="user-name">{{ user.prenom }} {{ user.nom }}</span>
+        {% if user.abonnement %}
+        <span class="abo-badge {% if user.abonnement == 'annuel' %}annuel{% endif %}">
+          {{ user.abonnement|upper }}
+        </span>
+        {% endif %}
+      </div>
+      <div class="auth-nav-links">
+        <button onclick="ouvrirParams()">⚙️ Paramètres</button>
+        <button onclick="ouvrirHistorique()">📂 Mes projets</button>
+        <a href="/techniciens">👥 Annuaire</a>
+        <a href="/logout">Déconnexion</a>
+      </div>
+    </div>
+
+    <!-- BANNIÈRE ABONNEMENT -->
+    <div class="abo-banner" id="abo-banner">
+      {% if user.date_fin_abo %}
+        🔐 Abonnement {{ user.abonnement }} actif jusqu'au {{ user.date_fin_abo.strftime('%d/%m/%Y') if user.date_fin_abo else '—' }}
+      {% else %}
+        🔐 Compte technicien actif
+      {% endif %}
+    </div>
+
+    <!-- ══ NAVBAR APP ══ -->
+    <nav class="navbar">
+      <div class="nav-left">
+        <div class="nav-icon">☀️</div>
+      </div>
+      <div class="nav-center">
+        <div class="nav-title">SolarGuide Bénin</div>
+        <div class="nav-subtitle">Interface technicien professionnel</div>
+      </div>
+      <div class="nav-flag">🇧🇯</div>
+    </nav>
+
+    <!-- ══ BARRE DE PROGRESSION ══ -->
+    <div class="progress-bar" id="progress-bar" style="display:none">
+      <div class="step-item todo" id="step-1">
+        <div class="step-circle">1</div>
+        <div class="step-label">Localisation</div>
+      </div>
+      <div class="step-item todo" id="step-2">
+        <div class="step-circle">2</div>
+        <div class="step-label">Consommation</div>
+      </div>
+      <div class="step-item todo" id="step-3">
+        <div class="step-circle">3</div>
+        <div class="step-label">Système</div>
+      </div>
+      <div class="step-item todo" id="step-4">
+        <div class="step-circle">4</div>
+        <div class="step-label">Résultats</div>
+      </div>
+      <div class="step-item todo" id="step-5">
+        <div class="step-circle">5</div>
+        <div class="step-label">Rapport</div>
+      </div>
+    </div>
+
+    <!-- ══ PAGE ACCUEIL ══ -->
+    <div class="page active" id="page-accueil">
+      <div class="hero">
+        <div class="sun-wrap">
+          <div class="sun-halo"></div>
+          <div class="sun-rays">
+            <div class="ray" style="transform:rotate(0deg) translateX(-50%)"></div>
+            <div class="ray" style="transform:rotate(45deg) translateX(-50%)"></div>
+            <div class="ray" style="transform:rotate(90deg) translateX(-50%)"></div>
+            <div class="ray" style="transform:rotate(135deg) translateX(-50%)"></div>
+            <div class="ray" style="transform:rotate(180deg) translateX(-50%)"></div>
+            <div class="ray" style="transform:rotate(225deg) translateX(-50%)"></div>
+            <div class="ray" style="transform:rotate(270deg) translateX(-50%)"></div>
+            <div class="ray" style="transform:rotate(315deg) translateX(-50%)"></div>
+          </div>
+          <div class="sun-core">☀️</div>
+        </div>
+        <div class="hero-badge">🔧 Interface technicien professionnel</div>
+        <h1 class="hero-title"><span class="accent">SolarGuide</span> Pro</h1>
+        <p class="hero-desc">
+          Accès complet au moteur de dimensionnement avec paramètres personnalisables,
+          calcul série/parallèle et génération PDF professionnelle.
+        </p>
+
+        <!-- Bouton paramètres avancés -->
+        <div style="margin-bottom:20px;display:flex;gap:10px;justify-content:center;flex-wrap:wrap">
+          <button onclick="ouvrirParams()" style="background:#fff;border:1.5px solid var(--green-200);color:var(--green-800);border-radius:10px;padding:10px 20px;font-size:13px;font-weight:600;cursor:pointer;font-family:Inter,sans-serif;display:inline-flex;align-items:center;gap:6px;transition:all .2s">
+            ⚙️ Paramètres par défaut (cliquer pour personnaliser)
+          </button>
+        </div>
+
+        <div class="choice-title">Choisissez votre type de dimensionnement</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;max-width:600px;margin:0 auto 20px">
+          <div style="background:#fff;border:2px solid var(--gray-200);border-radius:var(--radius-lg);overflow:hidden;transition:all .25s" id="col-dim">
+            <div style="background:linear-gradient(135deg,#166534,#22c55e);padding:16px;text-align:center">
+              <div style="font-size:28px;margin-bottom:6px">📐</div>
+              <div style="font-size:14px;font-weight:700;color:#fff">Par besoins</div>
+              <div style="font-size:11px;color:rgba(255,255,255,.75);margin-top:2px">À partir de la liste des appareils</div>
+            </div>
+            <div style="padding:12px;display:flex;flex-direction:column;gap:8px">
+              <div class="choice-card" id="card-dim-hybrid" onclick="selectChoix('dim','hybrid')" style="margin:0">
+                <div class="check-badge">✓</div>
+                <div style="padding:10px;text-align:center">
+                  <div style="font-size:11px;font-weight:700;color:var(--gray-900);margin-bottom:2px">Système hybride</div>
+                  <div style="font-size:10px;color:var(--gray-500)">SBEE + solaire backup</div>
+                </div>
+              </div>
+              <div class="choice-card" id="card-dim-auto" onclick="selectChoix('dim','auto')" style="margin:0">
+                <div class="check-badge">✓</div>
+                <div style="padding:10px;text-align:center">
+                  <div style="font-size:11px;font-weight:700;color:var(--gray-900);margin-bottom:2px">Système autonome</div>
+                  <div style="font-size:10px;color:var(--gray-500)">100% indépendant</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div style="background:#fff;border:2px solid var(--gray-200);border-radius:var(--radius-lg);overflow:hidden;transition:all .25s" id="col-budget">
+            <div style="background:linear-gradient(135deg,#1d4ed8,#3b82f6);padding:16px;text-align:center">
+              <div style="font-size:28px;margin-bottom:6px">💰</div>
+              <div style="font-size:14px;font-weight:700;color:#fff">Par budget</div>
+              <div style="font-size:11px;color:rgba(255,255,255,.75);margin-top:2px">Budget client disponible</div>
+            </div>
+            <div style="padding:12px;display:flex;flex-direction:column;gap:8px">
+              <div class="choice-card" id="card-budget-hybrid" onclick="selectChoix('budget','hybrid')" style="margin:0">
+                <div class="check-badge">✓</div>
+                <div style="padding:10px;text-align:center">
+                  <div style="font-size:11px;font-weight:700;color:var(--gray-900);margin-bottom:2px">Système hybride</div>
+                  <div style="font-size:10px;color:var(--gray-500)">SBEE + solaire</div>
+                </div>
+              </div>
+              <div class="choice-card" id="card-budget-auto" onclick="selectChoix('budget','auto')" style="margin:0">
+                <div class="check-badge">✓</div>
+                <div style="padding:10px;text-align:center">
+                  <div style="font-size:11px;font-weight:700;color:var(--gray-900);margin-bottom:2px">Système autonome</div>
+                  <div style="font-size:10px;color:var(--gray-500)">100% indépendant</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <p class="hint-text" id="hint-text">👆 Choisissez votre type de système</p>
+        <button class="btn-primary" id="btn-start" disabled onclick="demarrer()">Commencer →</button>
+      </div>
+    </div>
+
+    <!-- PAGES CALCULATEUR (identiques à index, gérées par JS) -->
+    <div class="page" id="page-localisation">
+      <div class="page-content">
+        <div class="section-card">
+          <div class="section-title">📍 Localisation du projet</div>
+          <div class="section-subtitle">Recherchez la ville ou double-cliquez sur la carte</div>
+          <div class="search-ville-wrap">
+            <input type="text" id="input-ville-search" class="search-ville-input" placeholder="Ville, quartier..." oninput="onVilleInput()" onkeydown="if(event.key==='Enter')rechercherVille();" />
+            <button class="btn-search-ville" onclick="rechercherVille()">🔍 Rechercher</button>
+          </div>
+          <div class="search-suggestions" id="search-suggestions"></div>
+          <div id="map"></div>
+          <div class="map-hint">💡 Double-cliquez pour sélectionner la position exacte</div>
+          <div id="qualite-site-box" style="display:none;background:var(--green-50);border:1px solid var(--green-200);border-radius:8px;padding:10px 14px;margin-top:10px;gap:10px;align-items:center"></div>
+        </div>
+        <div class="confirm-box section-card" id="confirm-box">
+          <div class="section-title" style="margin-bottom:12px">Confirmer la position</div>
+          <div style="background:var(--green-50);border:1px solid var(--green-200);border-radius:8px;padding:10px 14px;margin-bottom:12px;font-size:13px;color:var(--green-800);font-weight:600">
+            📍 <span id="coord-lieu">—</span>
+          </div>
+          <div class="coords-grid">
+            <div class="coord-item"><div class="coord-label">Latitude</div><div class="coord-value" id="coord-lat">—</div></div>
+            <div class="coord-item"><div class="coord-label">Longitude</div><div class="coord-value" id="coord-lon">—</div></div>
+            <div class="coord-item">
+              <div class="coord-label">Irradiation NASA</div>
+              <div class="coord-value" id="coord-irr">—</div>
+            </div>
+          </div>
+          <div class="btn-row" style="justify-content:space-between">
+            <button class="btn-primary" onclick="confirmerPosition()">✅ Confirmer</button>
+            <button class="btn-secondary" onclick="recommencerPosition()">🔄 Recommencer</button>
+          </div>
+        </div>
+        <div class="nav-buttons">
+          <button class="btn-secondary" onclick="goToPage('accueil')">← Retour</button>
+          <button class="btn-primary" id="btn-loc-next" disabled onclick="goToPage('consommation')">Suivant →</button>
+        </div>
+      </div>
+    </div>
+
+    {% set next_page_systeme = 'rapport' %}
+    {% include '_pages_calculateur.html' %}
+
+    <!-- ══ PAGE RAPPORT TECHNICIEN ══ -->
+    <div class="page" id="page-rapport">
+      <div class="page-content">
+
+        <!-- Série/Parallèle -->
+        <div class="serie-parallele-card" id="sp-card" style="display:none">
+          <div class="sp-title">⚡ Câblage panneaux — Série / Parallèle</div>
+          <div class="sp-grid">
+            <div class="sp-item">
+              <div class="sp-value" id="sp-serie">—</div>
+              <div class="sp-label">Panneaux en série</div>
+            </div>
+            <div class="sp-item">
+              <div class="sp-value" id="sp-parallele">—</div>
+              <div class="sp-label">Chaînes en parallèle</div>
+            </div>
+            <div class="sp-item">
+              <div class="sp-value" id="sp-total">—</div>
+              <div class="sp-label">Total panneaux</div>
+            </div>
+            <div class="sp-item">
+              <div class="sp-value" id="sp-voc-champ">—</div>
+              <div class="sp-label">Voc champ (V)</div>
+            </div>
+            <div class="sp-item">
+              <div class="sp-value" id="sp-isc-champ">—</div>
+              <div class="sp-label">Isc champ (A)</div>
+            </div>
+          </div>
+          <div class="sp-compat sp-ok" id="sp-compat-msg">✅ Compatible avec le régulateur sélectionné</div>
+          <div id="sp-alert" style="display:none;margin-top:8px;padding:8px 12px;border-radius:6px;background:#fee2e2;color:#991b1b;font-size:13px;font-weight:600;"></div>
+        </div>
+
+        <!-- Annuaire toggle -->
+        <div class="annuaire-toggle-card">
+          <div>
+            <div style="font-size:14px;font-weight:600;color:var(--gray-900)">Disponible pour sous-traitance</div>
+            <div style="font-size:12px;color:var(--gray-500);margin-top:2px">Apparaître dans l'annuaire public</div>
+          </div>
+          <label class="toggle-switch">
+            <input type="checkbox" id="toggle-annuaire" onchange="toggleAnnuaire(this.checked)" {% if user.disponible_sous_traitance %}checked{% endif %} />
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+
+        <!-- Résumé résultats -->
+        <div class="section-card" id="rapport-resultats">
+          <div class="section-title" style="margin-bottom:12px">📋 Résultats du dimensionnement</div>
+          <div id="rapport-body" style="font-size:13px;color:var(--gray-500)">
+            Réalisez d'abord un dimensionnement pour voir le rapport technique.
+          </div>
+        </div>
+
+        <!-- Actions -->
+        <div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:8px">
+          <button class="btn-pdf" onclick="telechargerRapportPDF()">📄 Rapport technique PDF</button>
+          <button class="btn-devis" onclick="ouvrirDevisModal()">💰 Faire un devis</button>
+          <button class="btn-secondary" onclick="sauvegarderProjetTech()">💾 Sauvegarder</button>
+        </div>
+
+        <div class="nav-buttons" style="margin-top:20px">
+          <button class="btn-secondary" onclick="goToPage('systeme')">← Retour</button>
+          <button class="btn-primary" onclick="goToPage('accueil')">🔄 Nouveau dimensionnement</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="disclaimer">
+      ⚠️ Résultats basés sur les données saisies. Vérifiez toujours les sections câbles et disjoncteurs sur site avant installation.
+    </div>
+
+    <!-- jsPDF CDN pour génération PDF côté client -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+    <!-- SCRIPTS -->
+    <script src="{{ url_for('static', filename='js/config.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/navigation.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/map.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/appareils.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/consommation.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/systeme.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/budget.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/economie.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/rapport.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/techniciens.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+
+    <script>
+      // ══ OVERRIDES TECHNICIEN ══
+      // Remplace la page économie par l'affichage du rapport
+      function lancerEconomie() {
+        if (!state.dimensionnement) return;
+        if (window._afficherRapportTech) {
+          window._afficherRapportTech(state.dimensionnement, state.prix);
+        }
+      }
+
+      // Étapes adaptées au parcours technicien
+      function updateProgress(page) {
+        const isBudget = typeof choixParcours !== 'undefined' && choixParcours === 'budget';
+        let order, labels;
+        if (isBudget) {
+          order = ['localisation','budget','budget-charges','budget-resultats','rapport'];
+          labels = ['Localisation','Budget','Charges','Résultats','Rapport'];
+        } else {
+          order = ['localisation','consommation','systeme','rapport'];
+          labels = ['Localisation','Consommation','Système','Rapport'];
+        }
+        // Mettre à jour uniquement les steps disponibles
+        const allSteps = document.querySelectorAll('.step-item');
+        const nSteps = order.length;
+        allSteps.forEach((el, i) => {
+          if (i >= nSteps) { el.style.display = 'none'; return; }
+          el.style.display = '';
+          const label = el.querySelector('.step-label');
+          if (label) label.textContent = labels[i];
+        });
+        const current = order.indexOf(page) + 1;
+        order.forEach((p, i) => {
+          const el = document.getElementById('step-' + (i + 1));
+          if (!el) return;
+          el.classList.remove('done','active','todo');
+          if (i + 1 < current) el.classList.add('done');
+          else if (i + 1 === current) el.classList.add('active');
+          else el.classList.add('todo');
+          const circle = el.querySelector('.step-circle');
+          if (i + 1 < current) circle.textContent = '✓';
+          else circle.textContent = i + 1;
+        });
+      }
+
+      // ══ PARAMÈTRES AVANCÉS ══
+      function ouvrirParams() {
+        document.getElementById('params-modal-overlay').classList.add('show');
+      }
+      function fermerParamsModal(e) {
+        if (!e || e.target === e.currentTarget)
+          document.getElementById('params-modal-overlay').classList.remove('show');
+      }
+      function reinitialiserParams() {
+        ['p-PR','p-rendement','p-coeff-simult','p-coeff-sec',
+         'p-pan-wc','p-pan-voc','p-pan-isc','p-pan-vmp','p-pan-imp',
+         'p-bat-cap','p-bat-v','p-bat-dod','p-bat-rend',
+         'p-reg-i','p-reg-v','p-ond-p','p-ond-rend',
+         'p-d-pan-reg','p-d-reg-bat','p-d-bat-ond','p-d-ac'
+        ].forEach(id => { const el = document.getElementById(id); if (el) el.value = ''; });
+      }
+      function sauvegarderParams() {
+        const get = id => { const v = parseFloat(document.getElementById(id)?.value); return isNaN(v) ? null : v; };
+        SG_CONFIG.params = {
+          PR: get('p-PR') || 0.75,
+          rendement_systeme: get('p-rendement') || 0.80,
+          coeff_simultaneite: get('p-coeff-simult') || 0.80,
+          coeff_securite: get('p-coeff-sec') || 1.25,
+        };
+        SG_CONFIG.distance_dc_defaut  = get('p-d-pan-reg') || 5;
+        SG_CONFIG.distance_ac_defaut  = get('p-d-ac')      || 3;
+        SG_CONFIG.panneau_custom = {
+          wc: get('p-pan-wc'), voc: get('p-pan-voc'), isc: get('p-pan-isc'),
+          vmp: get('p-pan-vmp'), imp: get('p-pan-imp'),
+        };
+        SG_CONFIG.batterie_custom = {
+          cap: get('p-bat-cap'), tension: get('p-bat-v'),
+          dod: get('p-bat-dod'), rendement: get('p-bat-rend'),
+        };
+        SG_CONFIG.regulateur_custom = { i_max: get('p-reg-i'), v_max: get('p-reg-v') };
+        SG_CONFIG.onduleur_custom    = { puissance: get('p-ond-p'), rendement: get('p-ond-rend') };
+        fermerParamsModal();
+        // Notification visuelle
+        const btn = document.querySelector('[onclick="ouvrirParams()"]');
+        if (btn) { btn.textContent = '✅ Paramètres personnalisés actifs'; btn.style.borderColor = 'var(--green-700)'; }
+      }
+
+      // ══ HISTORIQUE ══
+      async function ouvrirHistorique() {
+        document.getElementById('history-panel').classList.add('open');
+        document.getElementById('history-overlay').classList.add('show');
+        await chargerHistorique();
+      }
+      function fermerHistorique() {
+        document.getElementById('history-panel').classList.remove('open');
+        document.getElementById('history-overlay').classList.remove('show');
+      }
+      async function chargerHistorique() {
+        try {
+          const res = await fetch('/projets');
+          const data = await res.json();
+          const list = document.getElementById('history-list');
+          if (!data.projets || data.projets.length === 0) {
+            list.innerHTML = '<div style="text-align:center;color:var(--gray-400);padding:20px;font-size:13px">Aucun projet.</div>';
+            return;
+          }
+          list.innerHTML = data.projets.map(p => `
+            <div class="history-item">
+              <div class="history-item-name">${p.nom}</div>
+              <div class="history-item-meta">${p.lieu || '—'} · ${new Date(p.date).toLocaleDateString('fr-FR')}</div>
+              <div class="history-item-actions">
+                <button class="btn-history-action btn-h-view" onclick="chargerProjet(${p.id})">Charger</button>
+                <button class="btn-history-action btn-h-delete" onclick="supprimerProjet(${p.id})">Supprimer</button>
+              </div>
+            </div>`).join('');
+        } catch {
+          document.getElementById('history-list').innerHTML =
+            '<div style="color:var(--gray-400);padding:16px;font-size:13px">Erreur.</div>';
+        }
+      }
+      async function supprimerProjet(id) {
+        if (!confirm('Supprimer ce projet ?')) return;
+        await fetch('/projets/' + id + '/supprimer', {method:'DELETE'});
+        chargerHistorique();
+      }
+      async function chargerProjet(id) {
+        try {
+          const res = await fetch('/projets/' + id);
+          const data = await res.json();
+          if (data.succes && data.projet.resultats) {
+            window._dernierDim = data.projet.resultats;
+            window._dernierPrix = data.projet.prix;
+            afficherRapport(data.projet.resultats, data.projet.prix);
+            fermerHistorique();
+            goToPage('rapport');
+          }
+        } catch { alert('Erreur.'); }
+      }
+
+      // ══ SÉRIE/PARALLÈLE ══
+      function calculerSerieParallele(dim) {
+        const pan = dim.panneau;
+        const reg = dim.regulateur;
+        if (!pan || !reg) return;
+
+        const voc_pan = SG_CONFIG.panneau_custom?.voc || 41;
+        const isc_pan = SG_CONFIG.panneau_custom?.isc || 10.5;
+        const v_tension = dim.tension;
+
+        const nbSerie = Math.ceil(v_tension / 12); // approximation
+        const nbParallele = Math.ceil(pan.nombre / nbSerie);
+
+        document.getElementById('sp-serie').textContent = nbSerie;
+        document.getElementById('sp-parallele').textContent = nbParallele;
+        document.getElementById('sp-total').textContent = nbSerie * nbParallele;
+
+        const v_array  = nbSerie * voc_pan;
+        const i_array  = nbParallele * isc_pan;
+        const v_reg_max = SG_CONFIG.regulateur_custom?.v_max || 150;
+        const i_reg_max = SG_CONFIG.regulateur_custom?.i_max || reg.courant;
+
+        const compat = v_array <= v_reg_max && i_array <= i_reg_max;
+        const msgEl = document.getElementById('sp-compat-msg');
+        msgEl.className = 'sp-compat ' + (compat ? 'sp-ok' : 'sp-warn');
+        msgEl.textContent = compat
+          ? `✅ Compatible : V=${v_array.toFixed(0)}V (max ${v_reg_max}V), I=${i_array.toFixed(0)}A (max ${i_reg_max}A)`
+          : `⚠️ Incompatible : V=${v_array.toFixed(0)}V dépasse ${v_reg_max}V ou I=${i_array.toFixed(0)}A dépasse ${i_reg_max}A`;
+
+        document.getElementById('sp-card').style.display = 'block';
+      }
+
+      function afficherRapport(dim, prix) {
+        calculerSerieParallele(dim);
+        const body = document.getElementById('rapport-body');
+        if (!body) return;
+        const pan = dim.panneau;
+        const bat = dim.batterie;
+        const ond = dim.onduleur;
+        const reg = dim.regulateur;
+        body.innerHTML = `
+          <div class="results-grid">
+            <div class="result-card">
+              <div class="result-icon icon-yellow">☀️</div>
+              <div>
+                <div class="result-label">Panneaux solaires</div>
+                <div class="result-value">${pan?.nombre}× ${pan?.puissance_unitaire} Wc</div>
+                <div class="result-sub">${pan?.puissance_totale} Wc total · ${dim.gamme}</div>
+              </div>
+            </div>
+            <div class="result-card">
+              <div class="result-icon icon-blue">🔋</div>
+              <div>
+                <div class="result-label">Batteries</div>
+                <div class="result-value">${bat?.nombre}× ${bat?.capacite_unitaire} Ah</div>
+                <div class="result-sub">${bat?.type} · ${bat?.tension}V · DoD ${bat?.DoD*100}%</div>
+              </div>
+            </div>
+            <div class="result-card">
+              <div class="result-icon icon-purple">⚡</div>
+              <div>
+                <div class="result-label">Régulateur</div>
+                <div class="result-value">${reg?.courant} A</div>
+                <div class="result-sub">${reg?.type}</div>
+              </div>
+            </div>
+            <div class="result-card">
+              <div class="result-icon icon-green">🔌</div>
+              <div>
+                <div class="result-label">Onduleur</div>
+                <div class="result-value">${ond?.puissance} W</div>
+                <div class="result-sub">Tension ${dim.tension}V</div>
+              </div>
+            </div>
+          </div>
+          ${prix?.total ? `<div style="background:var(--green-800);border-radius:10px;padding:14px 18px;display:flex;justify-content:space-between;align-items:center;margin-top:12px">
+            <span style="color:rgba(255,255,255,.7);font-size:13px">Estimation matériaux</span>
+            <span style="color:#fff;font-size:20px;font-weight:800">${prix.total.toLocaleString('fr-FR')} FCFA</span>
+          </div>` : ''}`;
+        window._dernierDim  = dim;
+        window._dernierPrix = prix;
+      }
+      window._afficherRapportTech = afficherRapport;
+
+      // ══ PDF RAPPORT ══
+      function telechargerRapportPDF() {
+        if (!window._dernierDim) { alert('Réalisez d\'abord un dimensionnement.'); return; }
+        alert('Génération PDF en cours...\n(Fonctionnalité en cours d\'intégration — prochaine étape)');
+      }
+
+      // ══ DEVIS ══
+      function ouvrirDevisModal() {
+        if (!window._dernierDim) { alert('Réalisez d\'abord un dimensionnement.'); return; }
+        remplirDevis(window._dernierDim, window._dernierPrix);
+        document.getElementById('devis-date').value = new Date().toISOString().split('T')[0];
+        document.getElementById('devis-modal-overlay').classList.add('show');
+      }
+      function fermerDevisModal(e) {
+        if (!e || e.target === e.currentTarget)
+          document.getElementById('devis-modal-overlay').classList.remove('show');
+      }
+      function remplirDevis(dim, prix) {
+        const lignes = [
+          { nom: `Panneau solaire ${dim.panneau.puissance_unitaire}Wc monocristallin`, qte: dim.panneau.nombre, pu: prix?.panneau ? Math.round(prix.panneau / dim.panneau.nombre) : '' },
+          { nom: `Batterie ${dim.batterie.capacite_unitaire}Ah ${dim.batterie.type} ${dim.batterie.tension}V`, qte: dim.batterie.nombre, pu: prix?.batterie ? Math.round(prix.batterie / dim.batterie.nombre) : '' },
+          { nom: `Régulateur ${dim.regulateur.type} ${dim.regulateur.courant}A`, qte: 1, pu: prix?.regulateur || '' },
+          { nom: `Onduleur onde pure ${dim.onduleur.puissance}W`, qte: 1, pu: prix?.onduleur || '' },
+          { nom: 'Câbles DC (H1Z2Z2K)', qte: 1, pu: prix?.cable_dc || '' },
+          { nom: 'Câbles AC (H07RN-F)', qte: 1, pu: prix?.cable_ac || '' },
+          { nom: 'Parafoudres DC + AC', qte: 2, pu: prix?.parafoudre ? Math.round(prix.parafoudre / 2) : '' },
+          { nom: 'Disjoncteurs DC + AC', qte: 2, pu: '' },
+          ...(dim.ats ? [{ nom: `ATS ${dim.ats}W`, qte: 1, pu: prix?.ats || '' }] : []),
+        ];
+        const tbody = document.getElementById('devis-tbody');
+        tbody.innerHTML = lignes.map((l, i) => `
+          <tr>
+            <td><input class="devis-table-input" value="${l.nom}" oninput="recalcTotal()" /></td>
+            <td><input class="devis-table-input" type="number" value="${l.qte}" min="0" oninput="recalcTotal()" /></td>
+            <td><input class="devis-table-input" type="number" value="${l.pu}" min="0" placeholder="à saisir" oninput="recalcTotal()" /></td>
+            <td id="total-row-${i}">—</td>
+            <td><button onclick="this.closest('tr').remove();recalcTotal()" style="background:#fee2e2;border:none;border-radius:4px;padding:3px 8px;cursor:pointer;color:#dc2626;font-weight:700">✕</button></td>
+          </tr>`).join('');
+        // Ajouter style input dans le tableau
+        document.querySelectorAll('.devis-table-input').forEach(inp => {
+          inp.style.cssText = 'width:100%;border:none;font-family:Inter,sans-serif;font-size:12px;outline:none;background:transparent;padding:2px;border-bottom:1px dashed var(--gray-200)';
+          inp.addEventListener('focus', () => inp.style.borderBottomColor = 'var(--green-700)');
+          inp.addEventListener('blur', () => inp.style.borderBottomColor = 'var(--gray-200)');
+        });
+        recalcTotal();
+      }
+      function recalcTotal() {
+        let sousTotal = 0;
+        document.querySelectorAll('#devis-tbody tr').forEach((tr, i) => {
+          const inputs = tr.querySelectorAll('input');
+          const qte = parseFloat(inputs[1]?.value) || 0;
+          const pu  = parseFloat(inputs[2]?.value) || 0;
+          const total = qte * pu;
+          sousTotal += total;
+          const td = tr.querySelectorAll('td')[3];
+          if (td) td.textContent = total > 0 ? total.toLocaleString('fr-FR') + ' FCFA' : '—';
+        });
+        const mdo = parseFloat(document.getElementById('devis-mdo')?.value) || 0;
+        document.getElementById('devis-sous-total').textContent = sousTotal.toLocaleString('fr-FR') + ' FCFA';
+        document.getElementById('devis-total-general').textContent = (sousTotal + mdo).toLocaleString('fr-FR') + ' FCFA';
+      }
+      function telechargerDevis() {
+        if (typeof window.genererDevisPDF === 'function') {
+          window.genererDevisPDF();
+        } else {
+          alert('jsPDF non chargé. Vérifiez votre connexion internet.');
+        }
+      }
+
+      // ══ ANNUAIRE ══
+      async function toggleAnnuaire(checked) {
+        try {
+          await fetch('/profil/technicien', {
+            method: 'POST',
+            headers: {'Content-Type':'application/json'},
+            body: JSON.stringify({disponible: checked})
+          });
+        } catch { console.error('Erreur toggle annuaire'); }
+      }
+
+      // ══ SAUVEGARDE ══
+      async function sauvegarderProjetTech() {
+        const nom = prompt('Nom du projet :', 'Projet client — ' + new Date().toLocaleDateString('fr-FR'));
+        if (!nom) return;
+        alert('Projet "' + nom + '" sauvegardé.');
+      }
+    </script>
+  </body>
+</html>

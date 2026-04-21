@@ -1,0 +1,287 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Inscription — SolarGuide Bénin</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Fraunces:wght@700;800&display=swap" rel="stylesheet" />
+  <style>
+    *{margin:0;padding:0;box-sizing:border-box}
+    :root{
+      --green-50:#f0fdf4;--green-100:#dcfce7;--green-200:#bbf7d0;
+      --green-700:#15803d;--green-800:#166534;--green-900:#14532d;
+      --orange-600:#ea580c;--orange-100:#ffedd5;
+      --blue-100:#dbeafe;--blue-700:#1d4ed8;
+      --gray-50:#f8fafc;--gray-100:#f1f5f9;--gray-200:#e2e8f0;
+      --gray-400:#94a3b8;--gray-500:#64748b;--gray-600:#475569;--gray-700:#334155;--gray-900:#0f172a;
+    }
+    body{font-family:"Inter",sans-serif;background:url('/static/img/drone.png') center/cover fixed;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px 16px;position:relative;}
+    body::before{content:'';position:fixed;inset:0;background:rgba(10,15,30,0.82);z-index:0;}
+    body > *{position:relative;z-index:1;}
+    @keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+    @keyframes spin{to{transform:rotate(360deg)}}
+    .card{background:rgba(255,255,255,0.09);backdrop-filter:blur(22px);-webkit-backdrop-filter:blur(22px);border:1px solid rgba(255,255,255,0.15);border-radius:20px;width:100%;max-width:480px;padding:36px 32px;box-shadow:0 30px 80px rgba(0,0,0,.45);animation:fadeUp .4s ease;color:#fff}
+    .card-header{text-align:center;margin-bottom:28px}
+    .card-title{font-family:"Fraunces",serif;font-weight:800;font-size:24px;color:#fff}
+    .card-title .accent{color:#F5A623}
+    .card-sub{font-size:13px;color:rgba(255,255,255,.6);margin-top:4px}
+
+    /* ONGLETS */
+    .tabs{display:grid;grid-template-columns:1fr 1fr;gap:0;border-radius:12px;overflow:hidden;border:1px solid rgba(255,255,255,.2);margin-bottom:24px}
+    .tab{padding:11px;text-align:center;font-size:13px;font-weight:600;cursor:pointer;transition:all .2s;background:rgba(255,255,255,0.06);color:rgba(255,255,255,.6)}
+    .tab.active-user{background:linear-gradient(135deg,#F5A623,#D47C0A);color:#fff}
+    .tab.active-tech{background:rgba(29,78,216,.7);color:#fff}
+    .tab:not(.active-user):not(.active-tech):hover{background:rgba(255,255,255,.1)}
+
+    .role-badge{border-radius:10px;padding:10px 14px;font-size:12px;margin-bottom:18px;display:flex;align-items:flex-start;gap:8px}
+    .role-badge.user{background:rgba(245,166,35,.12);border:1px solid rgba(245,166,35,.3);color:rgba(255,255,255,.85)}
+    .role-badge.tech{background:rgba(29,78,216,.15);border:1px solid rgba(29,78,216,.35);color:rgba(255,255,255,.85)}
+
+    .form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    .form-group{margin-bottom:14px}
+    label{display:block;font-size:12px;font-weight:600;color:rgba(255,255,255,.72);margin-bottom:5px}
+    input{width:100%;background:rgba(255,255,255,0.08);border:1.5px solid rgba(255,255,255,0.2);border-radius:10px;padding:10px 13px;font-family:"Inter",sans-serif;font-size:13px;color:#fff;outline:none;transition:border-color .2s,box-shadow .2s}
+    input::placeholder{color:rgba(255,255,255,.38)}
+    input:focus{border-color:#F5A623;box-shadow:0 0 0 3px rgba(245,166,35,.2)}
+    .input-wrap{position:relative}
+    .toggle-pw{position:absolute;right:11px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;font-size:15px;color:rgba(255,255,255,.45)}
+
+    .strength-bar{height:4px;border-radius:2px;margin-top:5px;background:rgba(255,255,255,.15);overflow:hidden}
+    .strength-fill{height:100%;border-radius:2px;transition:width .3s,background .3s}
+    .strength-text{font-size:11px;margin-top:3px}
+
+    .btn-register{width:100%;border:none;border-radius:10px;padding:13px;font-size:15px;font-weight:700;cursor:pointer;font-family:"Inter",sans-serif;transition:all .2s;display:flex;align-items:center;justify-content:center;gap:8px;color:#fff;margin-top:4px}
+    .btn-user{background:linear-gradient(135deg,#F5A623,#D47C0A)}
+    .btn-user:hover{transform:translateY(-1px);box-shadow:0 8px 25px rgba(245,166,35,.4)}
+    .btn-tech{background:rgba(29,78,216,.8)}
+    .btn-tech:hover{background:rgba(29,78,216,1);transform:translateY(-1px);box-shadow:0 8px 24px rgba(29,78,216,.4)}
+    .btn-register:disabled{opacity:.5;cursor:not-allowed;transform:none;box-shadow:none}
+
+    .alert{border-radius:10px;padding:12px 14px;font-size:13px;margin-bottom:14px;display:none;gap:8px;align-items:flex-start}
+    .alert-error{background:rgba(239,68,68,.15);border:1px solid rgba(239,68,68,.35);color:#fca5a5}
+    .alert-success{background:rgba(34,197,94,.15);border:1px solid rgba(34,197,94,.35);color:#86efac}
+    .alert.show{display:flex}
+
+    .spinner{width:16px;height:16px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite;flex-shrink:0}
+    .link-row{text-align:center;font-size:13px;color:rgba(255,255,255,.5);margin-top:16px}
+    .link-row a{color:#F5A623;font-weight:600;text-decoration:none}
+    .link-row a:hover{text-decoration:underline}
+    .back-link{text-align:center;margin-top:16px}
+    .back-link a{font-size:12px;color:rgba(255,255,255,.5);text-decoration:none}
+    .back-link a:hover{color:#fff}
+
+    @media(max-width:400px){.form-row{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+  <div style="width:100%;max-width:480px">
+    <div class="card">
+      <div class="card-header">
+        <div style="font-size:32px;margin-bottom:8px">☀️</div>
+        <div class="card-title"><span class="accent">Solar</span>Guide <span style="font-size:20px">🇧🇯</span></div>
+        <div class="card-sub">Créez votre compte pour accéder au dimensionnement</div>
+      </div>
+
+      <!-- Onglets -->
+      <div class="tabs">
+        <div class="tab active-user" id="tab-user" onclick="setRole('user')">
+          🏠 Je suis particulier
+        </div>
+        <div class="tab" id="tab-tech" onclick="setRole('technicien')">
+          🔧 Je suis technicien
+        </div>
+      </div>
+
+      <!-- Badge rôle -->
+      <div class="role-badge user" id="role-badge">
+        <span>💡</span>
+        <div>
+          <strong>Compte particulier</strong> — 2 500 FCFA via Mobile Money.
+          Accès complet au dimensionnement de votre installation solaire.
+        </div>
+      </div>
+
+      <!-- Alertes -->
+      <div class="alert alert-error" id="alert-error"></div>
+      <div class="alert alert-success" id="alert-success"></div>
+
+      <form id="register-form" onsubmit="soumettre(event)">
+        <input type="hidden" id="role" value="user" />
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="prenom">Prénom</label>
+            <input type="text" id="prenom" placeholder="Ex : Kofi" required />
+          </div>
+          <div class="form-group">
+            <label for="nom">Nom</label>
+            <input type="text" id="nom" placeholder="Ex : ADOMOU" required />
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="email">Adresse email</label>
+          <input type="email" id="email" placeholder="votre@email.com" required autocomplete="email" />
+        </div>
+
+        <div class="form-group">
+          <label for="whatsapp">Numéro WhatsApp</label>
+          <input type="tel" id="whatsapp" placeholder="Ex : +22961234567" required />
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="password">Mot de passe</label>
+            <div class="input-wrap">
+              <input type="password" id="password" placeholder="6 caractères min." required oninput="evalForce()" />
+              <button type="button" class="toggle-pw" onclick="togglePw('password','tp1')">👁️</button>
+            </div>
+            <div class="strength-bar"><div class="strength-fill" id="strength-fill" style="width:0%;background:#dc2626"></div></div>
+            <div class="strength-text" id="strength-text" style="color:var(--gray-400)"></div>
+          </div>
+          <div class="form-group">
+            <label for="confirm">Confirmer</label>
+            <div class="input-wrap">
+              <input type="password" id="confirm" placeholder="Même mot de passe" required oninput="checkMatch()" />
+              <button type="button" class="toggle-pw" onclick="togglePw('confirm','tp2')">👁️</button>
+            </div>
+            <div id="match-hint" style="font-size:11px;margin-top:3px"></div>
+          </div>
+        </div>
+
+        <button class="btn-register btn-user" type="submit" id="btn-submit">
+          <span id="btn-text">Créer mon compte gratuitement</span>
+        </button>
+      </form>
+
+      <div class="link-row">
+        Déjà un compte ? <a href="/login">Se connecter</a>
+      </div>
+    </div>
+
+    <div class="back-link"><a href="/">← Retour à l'accueil public</a></div>
+  </div>
+
+  <script>
+    let currentRole = 'user';
+
+    function setRole(role) {
+      currentRole = role;
+      document.getElementById('role').value = role;
+
+      const tabUser = document.getElementById('tab-user');
+      const tabTech = document.getElementById('tab-tech');
+      const badge   = document.getElementById('role-badge');
+      const btn     = document.getElementById('btn-submit');
+
+      if (role === 'user') {
+        tabUser.className = 'tab active-user';
+        tabTech.className = 'tab';
+        badge.className   = 'role-badge user';
+        badge.innerHTML   = '<span>💡</span><div><strong>Compte particulier</strong> — 2 500 FCFA via Mobile Money. Accès complet au dimensionnement de votre installation solaire.</div>';
+        btn.className     = 'btn-register btn-user';
+        document.getElementById('btn-text').textContent = 'Créer mon compte gratuitement';
+      } else {
+        tabUser.className = 'tab';
+        tabTech.className = 'tab active-tech';
+        badge.className   = 'role-badge tech';
+        badge.innerHTML   = '<span>🔧</span><div><strong>Compte technicien</strong> — QCM de qualification (score ≥ 7/10) requis avant paiement. Accès aux paramètres avancés et génération PDF.</div>';
+        btn.className     = 'btn-register btn-tech';
+        document.getElementById('btn-text').textContent = 'Créer mon compte technicien';
+      }
+    }
+
+    function togglePw(id, btnId) {
+      const inp = document.getElementById(id);
+      inp.type = inp.type === 'password' ? 'text' : 'password';
+    }
+
+    function evalForce() {
+      const pw = document.getElementById('password').value;
+      const fill = document.getElementById('strength-fill');
+      const txt  = document.getElementById('strength-text');
+      let score = 0;
+      if (pw.length >= 6) score++;
+      if (pw.length >= 10) score++;
+      if (/[A-Z]/.test(pw)) score++;
+      if (/[0-9]/.test(pw)) score++;
+      if (/[^A-Za-z0-9]/.test(pw)) score++;
+      const levels = [
+        {pct:'20%', color:'#dc2626', label:'Très faible'},
+        {pct:'40%', color:'#ea580c', label:'Faible'},
+        {pct:'60%', color:'#ca8a04', label:'Moyen'},
+        {pct:'80%', color:'#16a34a', label:'Fort'},
+        {pct:'100%',color:'#166534', label:'Très fort'},
+      ];
+      const lvl = levels[Math.min(score, 4)];
+      fill.style.width = lvl.pct;
+      fill.style.background = lvl.color;
+      txt.style.color = lvl.color;
+      txt.textContent = pw.length === 0 ? '' : lvl.label;
+    }
+
+    function checkMatch() {
+      const pw = document.getElementById('password').value;
+      const cf = document.getElementById('confirm').value;
+      const hint = document.getElementById('match-hint');
+      if (!cf) { hint.textContent = ''; return; }
+      if (pw === cf) { hint.style.color = '#16a34a'; hint.textContent = '✓ Les mots de passe correspondent'; }
+      else           { hint.style.color = '#dc2626'; hint.textContent = '✗ Les mots de passe ne correspondent pas'; }
+    }
+
+    function afficherAlerte(type, msg) {
+      ['alert-error','alert-success'].forEach(id => {
+        const el = document.getElementById(id);
+        el.classList.remove('show');
+        el.innerHTML = '';
+      });
+      const el = document.getElementById('alert-' + type);
+      el.innerHTML = (type === 'error' ? '⚠️ ' : '✅ ') + msg;
+      el.classList.add('show');
+    }
+
+    async function soumettre(e) {
+      e.preventDefault();
+      const pw = document.getElementById('password').value;
+      const cf = document.getElementById('confirm').value;
+
+      if (pw !== cf) { afficherAlerte('error', 'Les mots de passe ne correspondent pas.'); return; }
+      if (pw.length < 6) { afficherAlerte('error', 'Mot de passe trop court (6 caractères minimum).'); return; }
+
+      const btn = document.getElementById('btn-submit');
+      const btnText = document.getElementById('btn-text');
+      btn.disabled = true;
+      btnText.innerHTML = '<div class="spinner"></div>&nbsp;Création...';
+
+      try {
+        const res = await fetch('/register', {
+          method: 'POST',
+          headers: {'Content-Type':'application/json'},
+          body: JSON.stringify({
+            nom:       document.getElementById('nom').value.trim(),
+            prenom:    document.getElementById('prenom').value.trim(),
+            email:     document.getElementById('email').value.trim().toLowerCase(),
+            whatsapp:  document.getElementById('whatsapp').value.trim(),
+            password:  pw,
+            role:      currentRole,
+          })
+        });
+        const data = await res.json();
+
+        if (data.succes) {
+          afficherAlerte('success', data.message);
+          setTimeout(() => { window.location.href = data.redirect || '/login'; }, 1500);
+        } else {
+          afficherAlerte('error', data.erreur || 'Erreur lors de la création du compte.');
+          btn.disabled = false;
+          btnText.textContent = currentRole === 'user' ? 'Créer mon compte gratuitement' : 'Créer mon compte technicien';
+        }
+      } catch {
+        afficherAlerte('error', 'Erreur réseau. Vérifiez votre connexion.');
+        btn.disabled = false;
+        btnText.textContent = currentRole === 'user' ? 'Créer mon compte gratuitement' : 'Créer mon compte technicien';
+      }
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,2946 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SolarGuide Bénin — Dimensionnement Solaire</title>
+
+    <!-- Leaflet CSS -->
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    />
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <!-- Google Fonts -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Fraunces:wght@700;800&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- CSS externe -->
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/style.css') }}"
+    />
+  </head>
+
+  <body>
+    <!-- ============================================================
+         LOADER
+    ============================================================ -->
+    <div class="loader-overlay" id="loader">
+      <div class="spinner"></div>
+      <div class="loader-text" id="loader-text">Chargement...</div>
+    </div>
+
+    <!-- ============================================================
+         MODAL "EN SAVOIR PLUS" — Page Accueil
+    ============================================================ -->
+    <div class="modal-overlay" id="modal-overlay" onclick="fermerModal(event)">
+      <div class="modal-box">
+        <div class="modal-header">
+          <div class="modal-title" id="modal-title">—</div>
+          <button class="modal-close" onclick="fermerModalBtn()">✕</button>
+        </div>
+        <div class="modal-desc" id="modal-desc"></div>
+        <ul class="modal-list" id="modal-list"></ul>
+      </div>
+    </div>
+
+    <!-- ============================================================
+         BULLE D'AIDE — Tooltip contextuel (toutes pages)
+    ============================================================ -->
+    <div
+      class="help-tooltip-overlay"
+      id="help-overlay"
+      onclick="fermerHelp(event)"
+    >
+      <div class="help-tooltip-box">
+        <div class="help-tooltip-handle"></div>
+        <div class="help-tooltip-title" id="help-title">—</div>
+        <div class="help-tooltip-content" id="help-content"></div>
+      </div>
+    </div>
+
+    <!-- ============================================================
+         NAVBAR
+    ============================================================ -->
+    <nav class="navbar">
+      <div class="nav-left">
+        <div class="nav-icon">☀️</div>
+      </div>
+      <div class="nav-center">
+        <div class="nav-title">SolarGuide Bénin</div>
+        <div class="nav-subtitle">Fini les coupures, place au solaire</div>
+      </div>
+      <div class="nav-flag">🇧🇯</div>
+    </nav>
+
+    <!-- ============================================================
+         BARRE DE PROGRESSION
+    ============================================================ -->
+    <div class="progress-bar" id="progress-bar" style="display: none">
+      <div class="step-item todo" id="step-1">
+        <div class="step-circle">1</div>
+        <div class="step-label">Localisation</div>
+      </div>
+      <div class="step-item todo" id="step-2">
+        <div class="step-circle">2</div>
+        <div class="step-label">Consommation</div>
+      </div>
+      <div class="step-item todo" id="step-3">
+        <div class="step-circle">3</div>
+        <div class="step-label">Système</div>
+      </div>
+      <div class="step-item todo" id="step-4">
+        <div class="step-circle">4</div>
+        <div class="step-label">Économie</div>
+      </div>
+      <div class="step-item todo" id="step-5">
+        <div class="step-circle">5</div>
+        <div class="step-label">Techniciens</div>
+      </div>
+    </div>
+
+    <!-- ============================================================
+         PAGE 0 — ACCUEIL
+    ============================================================ -->
+    <div class="page active" id="page-accueil">
+      <div class="hero">
+        <!-- Soleil animé -->
+        <div class="sun-wrap">
+          <div class="sun-halo"></div>
+          <div class="sun-rays">
+            <div
+              class="ray"
+              style="transform: rotate(0deg) translateX(-50%)"
+            ></div>
+            <div
+              class="ray"
+              style="transform: rotate(45deg) translateX(-50%)"
+            ></div>
+            <div
+              class="ray"
+              style="transform: rotate(90deg) translateX(-50%)"
+            ></div>
+            <div
+              class="ray"
+              style="transform: rotate(135deg) translateX(-50%)"
+            ></div>
+            <div
+              class="ray"
+              style="transform: rotate(180deg) translateX(-50%)"
+            ></div>
+            <div
+              class="ray"
+              style="transform: rotate(225deg) translateX(-50%)"
+            ></div>
+            <div
+              class="ray"
+              style="transform: rotate(270deg) translateX(-50%)"
+            ></div>
+            <div
+              class="ray"
+              style="transform: rotate(315deg) translateX(-50%)"
+            ></div>
+          </div>
+          <div class="sun-core">☀️</div>
+        </div>
+
+        <div class="hero-badge">🇧🇯 Conçu pour le Bénin</div>
+        <h1 class="hero-title"><span class="accent">SolarGuide</span> Bénin</h1>
+        <p class="hero-desc">
+          Vous en avez marre des délestages à répétition ? SolarGuide vous
+          accompagne pas à pas dans le dimensionnement de votre système solaire
+          pour une
+          <strong>indépendance énergétique totale</strong> — que vous soyez
+          connecté au réseau ou totalement autonome.
+        </p>
+
+        <div class="choice-title">Comment voulez-vous procéder ?</div>
+
+        <!-- Grille 2 colonnes -->
+        <div
+          style="
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            max-width: 600px;
+            margin: 0 auto 20px;
+          "
+        >
+          <!-- ── Colonne Budget ── -->
+          <div
+            style="
+              background: var(--white);
+              border: 2px solid var(--gray-200);
+              border-radius: var(--radius-lg);
+              overflow: hidden;
+              transition: all 0.25s;
+            "
+            id="col-budget"
+          >
+            <!-- En-tête colonne -->
+            <div
+              style="
+                background: linear-gradient(135deg, #1d4ed8, #3b82f6);
+                padding: 16px;
+                text-align: center;
+              "
+            >
+              <div style="font-size: 28px; margin-bottom: 6px">💰</div>
+              <div style="font-size: 14px; font-weight: 700; color: #fff">
+                J'ai un budget
+              </div>
+              <div
+                style="
+                  font-size: 11px;
+                  color: rgba(255, 255, 255, 0.75);
+                  margin-top: 2px;
+                "
+              >
+                Je sais combien je veux dépenser
+              </div>
+              <button
+                class="btn-savoir-plus"
+                style="
+                  margin-top: 8px;
+                  background: rgba(255, 255, 255, 0.15);
+                  border-color: rgba(255, 255, 255, 0.4);
+                  color: #fff;
+                "
+                onclick="ouvrirModal('budget', event)"
+              >
+                ℹ️ En savoir plus
+              </button>
+            </div>
+            <!-- Cartes système -->
+            <div
+              style="
+                padding: 12px;
+                display: flex;
+                flex-direction: column;
+                gap: 8px;
+              "
+            >
+              <div
+                class="choice-card"
+                id="card-budget-hybrid"
+                onclick="selectChoix('budget', 'hybrid')"
+                style="margin: 0"
+              >
+                <div class="check-badge">✓</div>
+                <div style="padding: 10px; text-align: center">
+                  <div
+                    style="
+                      font-size: 11px;
+                      font-weight: 700;
+                      color: var(--gray-900);
+                      margin-bottom: 2px;
+                    "
+                  >
+                    Système hybride
+                  </div>
+                  <div style="font-size: 10px; color: var(--gray-500)">
+                    Couplé au réseau SBEE
+                  </div>
+                </div>
+              </div>
+              <div
+                class="choice-card"
+                id="card-budget-auto"
+                onclick="selectChoix('budget', 'auto')"
+                style="margin: 0"
+              >
+                <div class="check-badge">✓</div>
+                <div style="padding: 10px; text-align: center">
+                  <div
+                    style="
+                      font-size: 11px;
+                      font-weight: 700;
+                      color: var(--gray-900);
+                      margin-bottom: 2px;
+                    "
+                  >
+                    Système autonome
+                  </div>
+                  <div style="font-size: 10px; color: var(--gray-500)">
+                    100% indépendant
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ── Colonne Dimensionnement ── -->
+          <div
+            style="
+              background: var(--white);
+              border: 2px solid var(--gray-200);
+              border-radius: var(--radius-lg);
+              overflow: hidden;
+              transition: all 0.25s;
+            "
+            id="col-dim"
+          >
+            <!-- En-tête colonne -->
+            <div
+              style="
+                background: linear-gradient(135deg, #166534, #22c55e);
+                padding: 16px;
+                text-align: center;
+              "
+            >
+              <div style="font-size: 28px; margin-bottom: 6px">📐</div>
+              <div style="font-size: 14px; font-weight: 700; color: #fff">
+                Je veux un dimensionnement
+              </div>
+              <div
+                style="
+                  font-size: 11px;
+                  color: rgba(255, 255, 255, 0.75);
+                  margin-top: 2px;
+                "
+              >
+                Je pars de mes besoins
+              </div>
+              <button
+                class="btn-savoir-plus"
+                style="
+                  margin-top: 8px;
+                  background: rgba(255, 255, 255, 0.15);
+                  border-color: rgba(255, 255, 255, 0.4);
+                  color: #fff;
+                "
+                onclick="ouvrirModal('dimensionnement', event)"
+              >
+                ℹ️ En savoir plus
+              </button>
+            </div>
+            <!-- Cartes système -->
+            <div
+              style="
+                padding: 12px;
+                display: flex;
+                flex-direction: column;
+                gap: 8px;
+              "
+            >
+              <div
+                class="choice-card"
+                id="card-dim-hybrid"
+                onclick="selectChoix('dim', 'hybrid')"
+                style="margin: 0"
+              >
+                <div class="check-badge">✓</div>
+                <div style="padding: 10px; text-align: center">
+                  <div
+                    style="
+                      font-size: 11px;
+                      font-weight: 700;
+                      color: var(--gray-900);
+                      margin-bottom: 2px;
+                    "
+                  >
+                    Système hybride
+                  </div>
+                  <div style="font-size: 10px; color: var(--gray-500)">
+                    Couplé au réseau SBEE
+                  </div>
+                </div>
+              </div>
+              <div
+                class="choice-card"
+                id="card-dim-auto"
+                onclick="selectChoix('dim', 'auto')"
+                style="margin: 0"
+              >
+                <div class="check-badge">✓</div>
+                <div style="padding: 10px; text-align: center">
+                  <div
+                    style="
+                      font-size: 11px;
+                      font-weight: 700;
+                      color: var(--gray-900);
+                      margin-bottom: 2px;
+                    "
+                  >
+                    Système autonome
+                  </div>
+                  <div style="font-size: 10px; color: var(--gray-500)">
+                    100% indépendant
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <p class="hint-text" id="hint-text">
+          👆 Choisissez votre approche et votre type de système
+        </p>
+
+        <button
+          class="btn-primary"
+          id="btn-start"
+          disabled
+          onclick="demarrer()"
+        >
+          Commencer →
+        </button>
+
+        <div style="margin-top: 12px">
+          <button
+            onclick="lancerDemo()"
+            style="
+              background: transparent;
+              border: 1px solid var(--green-200);
+              color: var(--green-800);
+              border-radius: 8px;
+              padding: 8px 20px;
+              font-size: 12px;
+              font-weight: 600;
+              cursor: pointer;
+              font-family: &quot;Inter&quot;, sans-serif;
+            "
+          >
+            🎯 Voir une démonstration
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================================================
+         PAGE 1 — LOCALISATION
+    ============================================================ -->
+    <div class="page" id="page-localisation">
+      <div class="page-content">
+        <div class="section-card">
+          <div class="section-title">📍 Votre localisation</div>
+          <div class="section-subtitle">
+            Recherchez votre ville ou double-cliquez directement sur la carte du
+            Bénin
+          </div>
+
+          <!-- Barre de recherche ville/quartier -->
+          <div class="search-ville-wrap">
+            <input
+              type="text"
+              id="input-ville-search"
+              class="search-ville-input"
+              placeholder="Ex : Cotonou, Parakou, Abomey-Calavi..."
+              oninput="onVilleInput()"
+              onkeydown="if (event.key === 'Enter') rechercherVille();"
+            />
+            <button class="btn-search-ville" onclick="rechercherVille()">
+              🔍 Rechercher
+            </button>
+          </div>
+          <!-- Suggestions -->
+          <div class="search-suggestions" id="search-suggestions"></div>
+
+          <div id="map"></div>
+          <div class="map-hint">
+            💡 Naviguez librement — double-cliquez pour sélectionner votre
+            position exacte sur la carte
+          </div>
+
+          <!-- Indicateur qualité site -->
+          <div
+            id="qualite-site-box"
+            style="
+              display: none;
+              background: var(--green-50);
+              border: 1px solid var(--green-200);
+              border-radius: 8px;
+              padding: 10px 14px;
+              margin-top: 10px;
+              gap: 10px;
+              align-items: center;
+            "
+          ></div>
+        </div>
+
+        <!-- Confirmation position -->
+        <div class="confirm-box section-card" id="confirm-box">
+          <div class="section-title" style="margin-bottom: 12px">
+            Est-ce bien votre emplacement ?
+          </div>
+          <div
+            style="
+              background: var(--green-50);
+              border: 1px solid var(--green-200);
+              border-radius: 8px;
+              padding: 10px 14px;
+              margin-bottom: 12px;
+              font-size: 13px;
+              color: var(--green-800);
+              font-weight: 600;
+            "
+          >
+            📍 <span id="coord-lieu">Identification en cours...</span>
+          </div>
+          <div class="coords-grid">
+            <div class="coord-item">
+              <div class="coord-label">Latitude</div>
+              <div class="coord-value" id="coord-lat">—</div>
+            </div>
+            <div class="coord-item">
+              <div class="coord-label">Longitude</div>
+              <div class="coord-value" id="coord-lon">—</div>
+            </div>
+            <div class="coord-item">
+              <div
+                class="coord-label"
+                style="
+                  display: flex;
+                  align-items: center;
+                  justify-content: center;
+                  gap: 4px;
+                "
+              >
+                Irradiation NASA
+                <button class="help-btn" onclick="ouvrirHelp('irradiation')">
+                  En savoir plus
+                </button>
+              </div>
+              <div class="coord-value" id="coord-irr">—</div>
+            </div>
+          </div>
+          <div class="btn-row" style="justify-content: space-between">
+            <button class="btn-primary" onclick="confirmerPosition()">
+              ✅ Confirmer
+            </button>
+            <button class="btn-secondary" onclick="recommencerPosition()">
+              🔄 Recommencer
+            </button>
+          </div>
+        </div>
+
+        <div class="nav-buttons">
+          <button class="btn-secondary" onclick="goToPage('accueil')">
+            ← Retour
+          </button>
+          <button
+            class="btn-primary"
+            id="btn-loc-next"
+            disabled
+            onclick="goToPage('consommation')"
+          >
+            Suivant →
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================================================
+         PAGE BUDGET — BUDGET + TYPE LOCAL
+    ============================================================ -->
+    <div class="page" id="page-budget">
+      <div class="page-content">
+        <div class="section-card">
+          <div class="section-title">💰 Votre budget</div>
+          <div class="section-subtitle">
+            Entrez votre budget disponible pour l'installation (hors main
+            d'œuvre)
+          </div>
+
+          <div style="margin-bottom: 16px">
+            <div
+              style="
+                font-size: 12px;
+                font-weight: 600;
+                color: var(--gray-700);
+                margin-bottom: 6px;
+              "
+            >
+              Budget disponible (FCFA)
+            </div>
+            <input
+              type="number"
+              id="input-budget"
+              min="0"
+              step="1000"
+              placeholder="Ex : 500000"
+              oninput="verifierBudget()"
+              style="
+                width: 100%;
+                border: 2px solid var(--gray-200);
+                border-radius: 8px;
+                padding: 12px 14px;
+                font-family: &quot;Inter&quot;, sans-serif;
+                font-size: 16px;
+                font-weight: 600;
+                outline: none;
+                transition: border-color 0.2s;
+              "
+            />
+          </div>
+
+          <!-- Indicateur budget minimum -->
+          <div
+            id="budget-indicator"
+            style="
+              display: none;
+              border-radius: 10px;
+              padding: 12px 14px;
+              margin-bottom: 16px;
+              font-size: 13px;
+            "
+          ></div>
+
+          <!-- Type de local -->
+          <div id="budget-type-local" style="display: none">
+            <div
+              style="
+                font-size: 12px;
+                font-weight: 600;
+                color: var(--gray-700);
+                margin-bottom: 8px;
+              "
+            >
+              Type d'installation
+            </div>
+            <div
+              style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px"
+            >
+              <div
+                class="choice-card"
+                id="budget-type-residentiel"
+                onclick="selectBudgetTypeLocal('residentiel')"
+                style="padding: 14px; text-align: center"
+              >
+                <div style="font-size: 28px; margin-bottom: 6px">🏠</div>
+                <div
+                  style="
+                    font-weight: 700;
+                    font-size: 13px;
+                    color: var(--gray-900);
+                    margin-bottom: 2px;
+                  "
+                >
+                  Résidentiel
+                </div>
+                <div style="font-size: 11px; color: var(--gray-500)">
+                  Maison · Villa · Appartement
+                </div>
+              </div>
+              <div
+                class="choice-card"
+                id="budget-type-commercial"
+                onclick="selectBudgetTypeLocal('commercial')"
+                style="padding: 14px; text-align: center"
+              >
+                <div style="font-size: 28px; margin-bottom: 6px">🏪</div>
+                <div
+                  style="
+                    font-weight: 700;
+                    font-size: 13px;
+                    color: var(--gray-900);
+                    margin-bottom: 2px;
+                  "
+                >
+                  Commercial
+                </div>
+                <div style="font-size: 11px; color: var(--gray-500)">
+                  Boutique · Bureau · Atelier
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="nav-buttons">
+          <button class="btn-secondary" onclick="goToPage('localisation')">
+            ← Retour
+          </button>
+          <button
+            class="btn-primary"
+            id="btn-budget-next"
+            disabled
+            onclick="goToPage('budget-charges')"
+          >
+            Suivant →
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================================================
+         PAGE BUDGET-CHARGES — APPAREILS AVEC BARRE PROGRESSION
+    ============================================================ -->
+    <div class="page" id="page-budget-charges">
+      <div class="page-content">
+        <!-- Barre budget temps réel -->
+        <div
+          style="
+            background: var(--white);
+            border: 1px solid var(--gray-200);
+            border-radius: var(--radius-lg);
+            padding: 16px;
+            margin-bottom: 16px;
+            position: sticky;
+            top: 54px;
+            z-index: 100;
+          "
+        >
+          <div
+            style="
+              display: flex;
+              justify-content: space-between;
+              align-items: center;
+              margin-bottom: 8px;
+            "
+          >
+            <div
+              style="font-size: 13px; font-weight: 600; color: var(--gray-700)"
+            >
+              Budget utilisé
+            </div>
+            <div
+              style="font-size: 13px; font-weight: 700"
+              id="budget-usage-text"
+            >
+              0 / 0 FCFA
+            </div>
+          </div>
+          <div
+            style="
+              background: var(--gray-100);
+              border-radius: 20px;
+              height: 10px;
+              overflow: hidden;
+            "
+          >
+            <div
+              id="budget-progress-bar"
+              style="
+                height: 100%;
+                border-radius: 20px;
+                background: var(--green-700);
+                width: 0%;
+                transition:
+                  width 0.4s,
+                  background 0.3s;
+              "
+            ></div>
+          </div>
+          <div
+            style="
+              display: flex;
+              justify-content: space-between;
+              margin-top: 6px;
+            "
+          >
+            <div style="font-size: 11px; color: var(--gray-500)">
+              Installation solaire
+            </div>
+            <div
+              style="font-size: 11px; font-weight: 600"
+              id="budget-reste-text"
+            >
+              Budget restant : —
+            </div>
+          </div>
+        </div>
+
+        <!-- Appareils -->
+        <div class="section-card">
+          <div class="section-title">🔌 Vos appareils électriques</div>
+          <div class="section-subtitle">
+            Ajoutez vos appareils — la barre de progression se met à jour
+            automatiquement
+          </div>
+          <div
+            style="
+              display: grid;
+              grid-template-columns: 2fr 1fr 1fr 1fr 1fr 40px;
+              gap: 6px;
+              padding: 8px 12px;
+              background: var(--gray-100);
+              border-radius: 8px 8px 0 0;
+              font-size: 11px;
+              font-weight: 600;
+              color: var(--gray-600);
+            "
+          >
+            <span>Appareil</span><span>Puissance (W)</span><span>Quantité</span>
+            <span style="display: flex; align-items: center; gap: 3px"
+              >Heures jour ☀️<button
+                class="help-btn"
+                style="padding: 1px 4px; font-size: 9px; margin: 0"
+                onclick="ouvrirHelp('heures_jour')"
+              >
+                En savoir plus
+              </button></span
+            >
+            <span style="display: flex; align-items: center; gap: 3px"
+              >Heures nuit 🌙<button
+                class="help-btn"
+                style="padding: 1px 4px; font-size: 9px; margin: 0"
+                onclick="ouvrirHelp('heures_nuit')"
+              >
+                En savoir plus
+              </button></span
+            >
+            <span></span>
+          </div>
+          <div id="budget-appareils-list"></div>
+          <button class="btn-add-row" onclick="ajouterAppareilBudget()">
+            + Ajouter un appareil
+          </button>
+        </div>
+
+        <div class="nav-buttons">
+          <button class="btn-secondary" onclick="goToPage('budget')">
+            ← Retour
+          </button>
+          <button class="btn-primary" onclick="validerChargesBudget()">
+            Calculer →
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================================================
+         PAGE BUDGET-RESULTATS
+    ============================================================ -->
+    <div class="page" id="page-budget-resultats">
+      <div class="page-content">
+        <!-- Alerte dépassement -->
+        <div
+          id="budget-alerte"
+          style="
+            display: none;
+            background: #fee2e2;
+            border: 1px solid #fca5a5;
+            border-radius: var(--radius-lg);
+            padding: 16px;
+            margin-bottom: 16px;
+          "
+        >
+          <div
+            style="
+              font-size: 14px;
+              font-weight: 700;
+              color: #dc2626;
+              margin-bottom: 8px;
+            "
+          >
+            ⚠️ Budget insuffisant
+          </div>
+          <div
+            style="font-size: 13px; color: #dc2626; margin-bottom: 12px"
+            id="budget-alerte-msg"
+          ></div>
+          <div style="display: flex; gap: 10px">
+            <button
+              class="btn-primary"
+              style="flex: 1; justify-content: center; background: #dc2626"
+              onclick="goToPage('budget')"
+            >
+              🔼 Augmenter mon budget
+            </button>
+            <button
+              class="btn-secondary"
+              style="flex: 1; justify-content: center"
+              onclick="goToPage('budget-charges')"
+            >
+              🔽 Réduire mes charges
+            </button>
+          </div>
+        </div>
+
+        <!-- Résultats OK -->
+        <div id="budget-resultats-ok" style="display: none">
+          <div class="section-card">
+            <div
+              style="
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                margin-bottom: 16px;
+              "
+            >
+              <div class="section-title" style="margin-bottom: 0">
+                ⚙️ Votre système selon budget
+              </div>
+              <div
+                id="budget-badge-tension"
+                style="
+                  display: inline-flex;
+                  align-items: center;
+                  padding: 4px 14px;
+                  border-radius: 20px;
+                  font-size: 13px;
+                  font-weight: 700;
+                  background: var(--blue-100);
+                  color: var(--blue-700);
+                "
+              >
+                —
+              </div>
+            </div>
+
+            <!-- Gamme -->
+            <div
+              id="budget-gamme-badge"
+              style="
+                border-radius: 8px;
+                padding: 8px 14px;
+                margin-bottom: 12px;
+                font-size: 12px;
+                font-weight: 600;
+                text-align: center;
+              "
+            ></div>
+
+            <!-- Composants -->
+            <div class="results-grid" style="margin-bottom: 16px">
+              <div class="result-card">
+                <div class="result-icon icon-yellow">☀️</div>
+                <div>
+                  <div class="result-label">Panneau solaire</div>
+                  <div class="result-value" id="br-panneau">—</div>
+                  <div class="result-sub" id="br-panneau-nb">—</div>
+                </div>
+              </div>
+              <div class="result-card">
+                <div class="result-icon icon-blue">🔋</div>
+                <div>
+                  <div class="result-label">Batterie</div>
+                  <div class="result-value" id="br-batterie">—</div>
+                  <div class="result-sub" id="br-batterie-info">—</div>
+                </div>
+              </div>
+              <div class="result-card">
+                <div class="result-icon icon-purple">⚡</div>
+                <div>
+                  <div class="result-label">Régulateur</div>
+                  <div class="result-value" id="br-mppt">—</div>
+                  <div class="result-sub" id="br-mppt-type">—</div>
+                </div>
+              </div>
+              <div class="result-card">
+                <div class="result-icon icon-green">🔌</div>
+                <div>
+                  <div class="result-label">Onduleur</div>
+                  <div class="result-value" id="br-onduleur">—</div>
+                  <div class="result-sub">Onde pure</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Devis budget -->
+            <div
+              style="
+                font-size: 12px;
+                font-weight: 600;
+                color: var(--gray-600);
+                margin-bottom: 8px;
+                padding-bottom: 4px;
+                border-bottom: 1px solid var(--gray-100);
+              "
+            >
+              💰 Estimation budgétaire
+            </div>
+            <div style="overflow-x: auto">
+              <table
+                style="width: 100%; border-collapse: collapse; font-size: 12px"
+              >
+                <thead>
+                  <tr style="background: var(--green-800)">
+                    <th style="padding: 8px; text-align: left; color: #fff">
+                      Désignation
+                    </th>
+                    <th style="padding: 8px; text-align: right; color: #fff">
+                      Montant
+                    </th>
+                  </tr>
+                </thead>
+                <tbody id="budget-devis-body"></tbody>
+                <tfoot>
+                  <tr style="background: var(--green-800)">
+                    <td style="padding: 8px; color: #fff; font-weight: 700">
+                      TOTAL
+                    </td>
+                    <td
+                      style="
+                        padding: 8px;
+                        text-align: right;
+                        color: #fff;
+                        font-weight: 700;
+                      "
+                      id="budget-devis-total"
+                    >
+                      —
+                    </td>
+                  </tr>
+                </tfoot>
+              </table>
+            </div>
+          </div>
+
+          <!-- Charges couvertes -->
+          <div class="section-card">
+            <div class="section-title">
+              ✅ Appareils que vous pouvez utiliser
+            </div>
+            <div
+              style="
+                background: var(--orange-100);
+                border-radius: 8px;
+                padding: 10px 14px;
+                margin-bottom: 12px;
+                font-size: 12px;
+                color: var(--orange-600);
+                font-weight: 500;
+              "
+            >
+              ⚠️ Essayez de dépasser cette liste et votre installation sera très
+              vite hors service
+            </div>
+            <div id="budget-charges-liste"></div>
+          </div>
+        </div>
+
+        <div class="nav-buttons">
+          <button class="btn-secondary" onclick="goToPage('budget-charges')">
+            ← Retour
+          </button>
+          <button class="btn-primary" onclick="goToPage('techniciens')">
+            Voir les techniciens →
+          </button>
+        </div>
+      </div>
+    </div>
+    <div class="page" id="page-consommation">
+      <div class="page-content">
+        <!-- Type installation -->
+        <div class="section-card" id="section-type-installation">
+          <div class="section-title">🏠 Type d'installation</div>
+          <div class="section-subtitle">
+            Ce choix définit les tranches horaires de votre consommation
+          </div>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px">
+            <div
+              class="choice-card"
+              id="type-residentiel"
+              onclick="selectTypeInstallation('residentiel')"
+              style="padding: 16px; text-align: center"
+            >
+              <div style="font-size: 32px; margin-bottom: 8px">🏠</div>
+              <div
+                style="
+                  font-weight: 700;
+                  font-size: 14px;
+                  color: var(--gray-900);
+                  margin-bottom: 4px;
+                "
+              >
+                Résidentiel
+              </div>
+              <div style="font-size: 11px; color: var(--gray-500)">
+                Maison · Appartement · Villa
+              </div>
+            </div>
+            <div
+              class="choice-card"
+              id="type-commercial"
+              onclick="selectTypeInstallation('commercial')"
+              style="padding: 16px; text-align: center"
+            >
+              <div style="font-size: 32px; margin-bottom: 8px">🏪</div>
+              <div
+                style="
+                  font-weight: 700;
+                  font-size: 14px;
+                  color: var(--gray-900);
+                  margin-bottom: 4px;
+                "
+              >
+                Commercial
+              </div>
+              <div style="font-size: 11px; color: var(--gray-500)">
+                Boutique · Bureau · Atelier
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Coupures SBEE (hybride uniquement) -->
+        <div class="section-card" id="section-coupures" style="display: none">
+          <div class="section-title">
+            ⚡ Situation de coupure SBEE
+            <button class="help-btn" onclick="ouvrirHelp('coupures')">
+              En savoir plus
+            </button>
+          </div>
+          <div class="section-subtitle">
+            Définissez vos tranches horaires et cochez si la SBEE coupe dans
+            votre quartier
+          </div>
+
+          <div
+            style="display: grid; gap: 10px; margin-bottom: 14px"
+            id="tranches-container"
+          >
+            <!-- Pointe matin -->
+            <div
+              style="
+                background: #fef3c7;
+                border-radius: 10px;
+                padding: 12px 14px;
+              "
+              id="bloc-pointe-matin"
+            >
+              <div
+                style="
+                  display: flex;
+                  align-items: center;
+                  justify-content: space-between;
+                  margin-bottom: 8px;
+                "
+              >
+                <div
+                  style="font-size: 13px; font-weight: 700; color: #92400e"
+                  id="label-pointe-matin"
+                >
+                  ☀️ Pointe matin
+                  <span style="font-size: 10px; font-weight: 400"
+                    >(forte consommation)</span
+                  >
+                </div>
+                <label
+                  style="
+                    display: flex;
+                    align-items: center;
+                    gap: 6px;
+                    font-size: 12px;
+                    color: #92400e;
+                    cursor: pointer;
+                  "
+                >
+                  <input
+                    type="checkbox"
+                    id="coupure-pointe-matin"
+                    style="width: 15px; height: 15px; accent-color: #f59e0b"
+                  />
+                  SBEE coupe
+                </label>
+              </div>
+              <div style="display: flex; align-items: center; gap: 8px">
+                <span style="font-size: 12px; color: #78350f">De</span>
+                <select
+                  id="pointe-matin-debut"
+                  style="
+                    border: 1px solid #f59e0b;
+                    border-radius: 6px;
+                    padding: 5px 8px;
+                    font-size: 12px;
+                    background: #fff;
+                    outline: none;
+                  "
+                ></select>
+                <span style="font-size: 12px; color: #78350f">à</span>
+                <select
+                  id="pointe-matin-fin"
+                  style="
+                    border: 1px solid #f59e0b;
+                    border-radius: 6px;
+                    padding: 5px 8px;
+                    font-size: 12px;
+                    background: #fff;
+                    outline: none;
+                  "
+                ></select>
+              </div>
+            </div>
+
+            <!-- Creuse journée -->
+            <div
+              style="
+                background: var(--green-50);
+                border-radius: 10px;
+                padding: 12px 14px;
+              "
+              id="bloc-creuse"
+            >
+              <div
+                style="
+                  display: flex;
+                  align-items: center;
+                  justify-content: space-between;
+                  margin-bottom: 8px;
+                "
+              >
+                <div
+                  style="
+                    font-size: 13px;
+                    font-weight: 700;
+                    color: var(--green-800);
+                  "
+                  id="label-creuse"
+                >
+                  🌿 Creuse journée
+                  <span style="font-size: 10px; font-weight: 400"
+                    >(faible consommation)</span
+                  >
+                </div>
+                <label
+                  style="
+                    display: flex;
+                    align-items: center;
+                    gap: 6px;
+                    font-size: 12px;
+                    color: var(--green-800);
+                    cursor: pointer;
+                  "
+                >
+                  <input
+                    type="checkbox"
+                    id="coupure-creuse"
+                    style="
+                      width: 15px;
+                      height: 15px;
+                      accent-color: var(--green-800);
+                    "
+                  />
+                  SBEE coupe
+                </label>
+              </div>
+              <div style="display: flex; align-items: center; gap: 8px">
+                <span style="font-size: 12px">De</span>
+                <select
+                  id="creuse-debut"
+                  style="
+                    border: 1px solid var(--green-200);
+                    border-radius: 6px;
+                    padding: 5px 8px;
+                    font-size: 12px;
+                    background: #fff;
+                    outline: none;
+                  "
+                ></select>
+                <span style="font-size: 12px">à</span>
+                <select
+                  id="creuse-fin"
+                  style="
+                    border: 1px solid var(--green-200);
+                    border-radius: 6px;
+                    padding: 5px 8px;
+                    font-size: 12px;
+                    background: #fff;
+                    outline: none;
+                  "
+                ></select>
+              </div>
+            </div>
+
+            <!-- Pointe soir -->
+            <div
+              style="
+                background: #fef3c7;
+                border-radius: 10px;
+                padding: 12px 14px;
+              "
+              id="bloc-pointe-soir"
+            >
+              <div
+                style="
+                  display: flex;
+                  align-items: center;
+                  justify-content: space-between;
+                  margin-bottom: 8px;
+                "
+              >
+                <div
+                  style="font-size: 13px; font-weight: 700; color: #92400e"
+                  id="label-pointe-soir"
+                >
+                  🌇 Pointe soir
+                  <span style="font-size: 10px; font-weight: 400"
+                    >(retour maison)</span
+                  >
+                </div>
+                <label
+                  style="
+                    display: flex;
+                    align-items: center;
+                    gap: 6px;
+                    font-size: 12px;
+                    color: #92400e;
+                    cursor: pointer;
+                  "
+                >
+                  <input
+                    type="checkbox"
+                    id="coupure-pointe-soir"
+                    style="width: 15px; height: 15px; accent-color: #f59e0b"
+                  />
+                  SBEE coupe
+                </label>
+              </div>
+              <div style="display: flex; align-items: center; gap: 8px">
+                <span style="font-size: 12px; color: #78350f">De</span>
+                <select
+                  id="pointe-soir-debut"
+                  style="
+                    border: 1px solid #f59e0b;
+                    border-radius: 6px;
+                    padding: 5px 8px;
+                    font-size: 12px;
+                    background: #fff;
+                    outline: none;
+                  "
+                ></select>
+                <span style="font-size: 12px; color: #78350f">à</span>
+                <select
+                  id="pointe-soir-fin"
+                  style="
+                    border: 1px solid #f59e0b;
+                    border-radius: 6px;
+                    padding: 5px 8px;
+                    font-size: 12px;
+                    background: #fff;
+                    outline: none;
+                  "
+                ></select>
+              </div>
+            </div>
+
+            <!-- Creuse nuit -->
+            <div
+              style="
+                background: #ede9fe;
+                border-radius: 10px;
+                padding: 12px 14px;
+              "
+              id="bloc-nuit"
+            >
+              <div
+                style="
+                  display: flex;
+                  align-items: center;
+                  justify-content: space-between;
+                  margin-bottom: 8px;
+                "
+              >
+                <div style="font-size: 13px; font-weight: 700; color: #5b21b6">
+                  🌙 Creuse nuit
+                  <span style="font-size: 10px; font-weight: 400"
+                    >(coupures fréquentes)</span
+                  >
+                </div>
+                <label
+                  style="
+                    display: flex;
+                    align-items: center;
+                    gap: 6px;
+                    font-size: 12px;
+                    color: #5b21b6;
+                    cursor: pointer;
+                  "
+                >
+                  <input
+                    type="checkbox"
+                    id="coupure-nuit"
+                    style="width: 15px; height: 15px; accent-color: #7c3aed"
+                    checked
+                  />
+                  SBEE coupe
+                </label>
+              </div>
+              <div style="display: flex; align-items: center; gap: 8px">
+                <span style="font-size: 12px; color: #4c1d95">De</span>
+                <select
+                  id="nuit-debut"
+                  style="
+                    border: 1px solid #c4b5fd;
+                    border-radius: 6px;
+                    padding: 5px 8px;
+                    font-size: 12px;
+                    background: #fff;
+                    outline: none;
+                  "
+                ></select>
+                <span style="font-size: 12px; color: #4c1d95">à</span>
+                <select
+                  id="nuit-fin"
+                  style="
+                    border: 1px solid #c4b5fd;
+                    border-radius: 6px;
+                    padding: 5px 8px;
+                    font-size: 12px;
+                    background: #fff;
+                    outline: none;
+                  "
+                ></select>
+              </div>
+            </div>
+          </div>
+
+          <div
+            style="
+              font-size: 13px;
+              font-weight: 600;
+              color: var(--gray-700);
+              margin-bottom: 8px;
+            "
+          >
+            Jours sans courant par semaine
+          </div>
+          <div class="days-grid" id="days-grid"></div>
+
+          <div
+            style="
+              margin-top: 12px;
+              display: flex;
+              align-items: center;
+              gap: 8px;
+            "
+          >
+            <input
+              type="checkbox"
+              id="baisse-tension"
+              style="width: 16px; height: 16px; accent-color: var(--green-800)"
+            />
+            <label
+              for="baisse-tension"
+              style="font-size: 13px; color: var(--gray-700)"
+              >Il y a souvent des baisses de tension (pas toujours une coupure
+              totale)</label
+            >
+          </div>
+          <div
+            style="
+              background: var(--orange-100);
+              border-radius: 8px;
+              padding: 10px 14px;
+              margin-top: 12px;
+              font-size: 12px;
+              color: var(--orange-600);
+              display: none;
+            "
+            id="coupure-resume"
+          ></div>
+        </div>
+
+        <!-- Appareils -->
+        <div class="section-card">
+          <div class="section-title">🔌 Vos appareils électriques</div>
+          <div class="section-subtitle">
+            Ajoutez tous vos appareils et leurs heures d'utilisation par jour
+          </div>
+          <div
+            style="
+              display: grid;
+              grid-template-columns: 2fr 1fr 1fr 1fr 1fr 40px;
+              gap: 6px;
+              padding: 8px 12px;
+              background: var(--gray-100);
+              border-radius: 8px 8px 0 0;
+              font-size: 11px;
+              font-weight: 600;
+              color: var(--gray-600);
+            "
+          >
+            <span>Appareil</span>
+            <span>Puissance (W)</span>
+            <span>Quantité</span>
+            <span style="display: flex; align-items: center; gap: 3px">
+              Heures jour ☀️
+              <button
+                class="help-btn"
+                style="padding: 1px 4px; font-size: 9px; margin: 0"
+                onclick="ouvrirHelp('heures_jour')"
+              >
+                En savoir plus
+              </button>
+            </span>
+            <span style="display: flex; align-items: center; gap: 3px">
+              Heures nuit 🌙
+              <button
+                class="help-btn"
+                style="padding: 1px 4px; font-size: 9px; margin: 0"
+                onclick="ouvrirHelp('heures_nuit')"
+              >
+                En savoir plus
+              </button>
+            </span>
+            <span></span>
+          </div>
+          <div id="appareils-list"></div>
+          <button class="btn-add-row" onclick="ajouterAppareil()">
+            + Ajouter un appareil
+          </button>
+        </div>
+
+        <div class="nav-buttons">
+          <button class="btn-secondary" onclick="goToPage('localisation')">
+            ← Retour
+          </button>
+          <button class="btn-primary" onclick="validerConsommation()">
+            Suivant →
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================================================
+         PAGE 3 — SYSTÈME
+    ============================================================ -->
+    <div class="page" id="page-systeme">
+      <div class="page-content">
+        <div class="section-card">
+          <div class="section-title">🔋 Choisissez votre configuration</div>
+          <div class="section-subtitle">
+            Sélectionnez un type de batterie et un type d'onduleur
+          </div>
+
+          <!-- Batteries -->
+          <div
+            style="
+              font-size: 12px;
+              font-weight: 600;
+              color: var(--gray-600);
+              margin-bottom: 4px;
+              display: flex;
+              align-items: center;
+              gap: 6px;
+            "
+          >
+            🔋 Type de batterie
+            <button class="help-btn" onclick="ouvrirHelp('batterie')">
+              En savoir plus
+            </button>
+          </div>
+          <div
+            style="
+              display: grid;
+              grid-template-columns: repeat(3, 1fr);
+              gap: 10px;
+              margin-bottom: 16px;
+            "
+          >
+            <div
+              class="choice-card"
+              onclick="selectBatterie('AGM')"
+              id="bat-AGM"
+              style="padding: 0"
+            >
+              <div style="padding: 12px; text-align: center">
+                <div style="font-size: 22px; margin-bottom: 6px">🔋</div>
+                <div
+                  style="
+                    font-weight: 700;
+                    font-size: 13px;
+                    color: var(--gray-900);
+                  "
+                >
+                  AGM
+                </div>
+                <div
+                  style="font-size: 11px; color: var(--gray-500); margin: 4px 0"
+                >
+                  6-8 ans · DoD 50%
+                </div>
+                <div
+                  style="
+                    font-size: 10px;
+                    color: var(--gray-500);
+                    line-height: 1.4;
+                  "
+                >
+                  Sans entretien · Robuste
+                </div>
+                <div
+                  style="
+                    font-size: 11px;
+                    color: var(--green-800);
+                    font-weight: 600;
+                    margin-top: 6px;
+                  "
+                >
+                  Prix moyen
+                </div>
+              </div>
+            </div>
+            <div
+              class="choice-card"
+              onclick="selectBatterie('Lithium-Ion')"
+              id="bat-Lithium-Ion"
+              style="padding: 0"
+            >
+              <div style="padding: 12px; text-align: center">
+                <div style="font-size: 22px; margin-bottom: 6px">⚡</div>
+                <div
+                  style="
+                    font-weight: 700;
+                    font-size: 13px;
+                    color: var(--gray-900);
+                  "
+                >
+                  Lithium-Ion
+                </div>
+                <div
+                  style="font-size: 11px; color: var(--gray-500); margin: 4px 0"
+                >
+                  10-15 ans · DoD 80%
+                </div>
+                <div
+                  style="
+                    font-size: 10px;
+                    color: var(--gray-500);
+                    line-height: 1.4;
+                  "
+                >
+                  Légère · Longévité max
+                </div>
+                <div
+                  style="
+                    font-size: 11px;
+                    color: var(--orange-600);
+                    font-weight: 600;
+                    margin-top: 6px;
+                  "
+                >
+                  Premium
+                </div>
+              </div>
+            </div>
+            <div
+              class="choice-card"
+              onclick="selectBatterie('Plomb-acide')"
+              id="bat-Plomb-acide"
+              style="padding: 0"
+            >
+              <div style="padding: 12px; text-align: center">
+                <div style="font-size: 22px; margin-bottom: 6px">🪫</div>
+                <div
+                  style="
+                    font-weight: 700;
+                    font-size: 13px;
+                    color: var(--gray-900);
+                  "
+                >
+                  Plomb-acide
+                </div>
+                <div
+                  style="font-size: 11px; color: var(--gray-500); margin: 4px 0"
+                >
+                  4-5 ans · DoD 50%
+                </div>
+                <div
+                  style="
+                    font-size: 10px;
+                    color: var(--gray-500);
+                    line-height: 1.4;
+                  "
+                >
+                  Entretien requis · Abordable
+                </div>
+                <div
+                  style="
+                    font-size: 11px;
+                    color: var(--blue-600);
+                    font-weight: 600;
+                    margin-top: 6px;
+                  "
+                >
+                  Économique
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- DoD info -->
+          <div style="margin-top: -10px; margin-bottom: 16px">
+            <button class="help-btn" onclick="ouvrirHelp('dod')">
+              En savoir plus
+            </button>
+          </div>
+
+          <!-- Onduleurs -->
+          <div
+            style="
+              font-size: 12px;
+              font-weight: 600;
+              color: var(--gray-600);
+              margin-bottom: 4px;
+              display: flex;
+              align-items: center;
+              gap: 6px;
+            "
+          >
+            🔌 Type d'onduleur
+            <button class="help-btn" onclick="ouvrirHelp('onduleur')">
+              En savoir plus
+            </button>
+          </div>
+          <div
+            style="
+              display: grid;
+              grid-template-columns: repeat(3, 1fr);
+              gap: 10px;
+              margin-bottom: 16px;
+            "
+          >
+            <div
+              class="choice-card"
+              onclick="selectTypeOnduleur('classique')"
+              id="ond-classique"
+              style="padding: 0"
+            >
+              <div style="padding: 12px; text-align: center">
+                <div style="font-size: 22px; margin-bottom: 6px">🔌</div>
+                <div
+                  style="
+                    font-weight: 700;
+                    font-size: 13px;
+                    color: var(--gray-900);
+                  "
+                >
+                  Classique
+                </div>
+                <div
+                  style="
+                    font-size: 10px;
+                    color: var(--gray-500);
+                    line-height: 1.4;
+                    margin: 4px 0;
+                  "
+                >
+                  DC → AC · Régulateur séparé
+                </div>
+                <div style="font-size: 10px; color: var(--green-800)">
+                  ✓ Prix abordable
+                </div>
+                <div style="font-size: 10px; color: var(--orange-600)">
+                  ! Régulateur séparé
+                </div>
+              </div>
+            </div>
+            <div
+              class="choice-card"
+              onclick="selectTypeOnduleur('hybride')"
+              id="ond-hybride"
+              style="padding: 0"
+            >
+              <div style="padding: 12px; text-align: center">
+                <div style="font-size: 22px; margin-bottom: 6px">🌐</div>
+                <div
+                  style="
+                    font-weight: 700;
+                    font-size: 13px;
+                    color: var(--gray-900);
+                  "
+                >
+                  Hybride
+                </div>
+                <div
+                  style="
+                    font-size: 10px;
+                    color: var(--gray-500);
+                    line-height: 1.4;
+                    margin: 4px 0;
+                  "
+                >
+                  Gère batterie + réseau SBEE
+                </div>
+                <div style="font-size: 10px; color: var(--green-800)">
+                  ✓ Pas d'ATS requis
+                </div>
+                <div style="font-size: 10px; color: var(--orange-600)">
+                  ! Prix intermédiaire
+                </div>
+              </div>
+            </div>
+            <div
+              class="choice-card"
+              onclick="selectTypeOnduleur('allinone')"
+              id="ond-allinone"
+              style="padding: 0"
+            >
+              <div style="padding: 12px; text-align: center">
+                <div style="font-size: 22px; margin-bottom: 6px">🏆</div>
+                <div
+                  style="
+                    font-weight: 700;
+                    font-size: 13px;
+                    color: var(--gray-900);
+                  "
+                >
+                  All-in-One
+                </div>
+                <div
+                  style="
+                    font-size: 10px;
+                    color: var(--gray-500);
+                    line-height: 1.4;
+                    margin: 4px 0;
+                  "
+                >
+                  Onduleur + MPPT intégré
+                </div>
+                <div style="font-size: 10px; color: var(--green-800)">
+                  ✓ Tout intégré
+                </div>
+                <div
+                  style="
+                    display: inline-block;
+                    background: #fef3c7;
+                    color: #92400e;
+                    padding: 1px 6px;
+                    border-radius: 8px;
+                    font-size: 9px;
+                    font-weight: 600;
+                    margin-top: 2px;
+                  "
+                >
+                  ⭐ Recommandé
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ATS info -->
+          <div
+            id="section-ats-info"
+            style="
+              display: none;
+              background: var(--green-50);
+              border: 1px solid var(--green-200);
+              border-radius: 10px;
+              padding: 12px 14px;
+              margin-bottom: 14px;
+            "
+          >
+            <div
+              style="
+                font-size: 12px;
+                font-weight: 600;
+                color: var(--green-800);
+                margin-bottom: 4px;
+                display: flex;
+                align-items: center;
+                gap: 8px;
+              "
+            >
+              🔄 ATS automatique inclus dans le dimensionnement
+              <button class="help-btn" onclick="ouvrirHelp('ats')">
+                En savoir plus
+              </button>
+            </div>
+            <div style="font-size: 11px; color: var(--gray-500)">
+              Commutateur automatique qui bascule entre SBEE et onduleur sans
+              intervention manuelle.
+            </div>
+          </div>
+
+          <!-- Autonomie -->
+          <div
+            style="
+              font-size: 12px;
+              font-weight: 600;
+              color: var(--gray-600);
+              margin-bottom: 4px;
+              display: flex;
+              align-items: center;
+              gap: 6px;
+            "
+          >
+            ⏱️ Autonomie (jours sans soleil)
+            <button class="help-btn" onclick="ouvrirHelp('autonomie')">
+              En savoir plus
+            </button>
+          </div>
+          <div style="display: flex; gap: 10px; margin-bottom: 16px">
+            <button
+              class="btn-secondary"
+              id="auto-1"
+              onclick="selectAutonomie(1)"
+              style="flex: 1"
+            >
+              1 jour
+            </button>
+            <button
+              class="btn-secondary"
+              id="auto-2"
+              onclick="selectAutonomie(2)"
+              style="flex: 1"
+            >
+              2 jours
+            </button>
+            <button
+              class="btn-secondary"
+              id="auto-3"
+              onclick="selectAutonomie(3)"
+              style="flex: 1"
+            >
+              3 jours
+            </button>
+          </div>
+
+          <!-- Boutons calculer -->
+          <div style="display: flex; gap: 10px; margin-bottom: 14px">
+            <button
+              class="btn-primary"
+              style="flex: 1; justify-content: center; text-align: center"
+              onclick="lancerCalcul(false)"
+              id="btn-calculer"
+            >
+              ⚙️ Calculer mon système
+            </button>
+            <button
+              class="btn-secondary"
+              style="
+                flex: 1;
+                justify-content: center;
+                text-align: center;
+                display: none;
+              "
+              onclick="lancerCalcul(true)"
+              id="btn-recalculer"
+            >
+              🔄 Recalculer
+            </button>
+          </div>
+
+          <!-- Distances câbles -->
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px">
+            <div>
+              <div
+                style="
+                  font-size: 12px;
+                  font-weight: 600;
+                  color: var(--gray-700);
+                  margin-bottom: 4px;
+                  display: flex;
+                  align-items: center;
+                  gap: 6px;
+                "
+              >
+                Distance DC — panneau → régulateur (m)
+                <button class="help-btn" onclick="ouvrirHelp('distance_dc')">
+                  En savoir plus
+                </button>
+              </div>
+              <input
+                type="number"
+                id="distance-dc"
+                value="5"
+                min="1"
+                max="50"
+                step="1"
+                onkeydown="
+                  return (
+                    event.keyCode !== 69 &&
+                    event.keyCode !== 101 &&
+                    event.keyCode !== 43 &&
+                    event.keyCode !== 45
+                  );
+                "
+                style="
+                  width: 100%;
+                  border: 1px solid var(--gray-200);
+                  border-radius: 8px;
+                  padding: 8px 10px;
+                  font-family: &quot;Inter&quot;, sans-serif;
+                  font-size: 13px;
+                  outline: none;
+                "
+              />
+            </div>
+            <div>
+              <div
+                style="
+                  font-size: 12px;
+                  font-weight: 600;
+                  color: var(--gray-700);
+                  margin-bottom: 4px;
+                  display: flex;
+                  align-items: center;
+                  gap: 6px;
+                "
+              >
+                Distance AC — onduleur → tableau (m)
+                <button class="help-btn" onclick="ouvrirHelp('distance_ac')">
+                  En savoir plus
+                </button>
+              </div>
+              <input
+                type="number"
+                id="distance-ac"
+                value="3"
+                min="1"
+                max="50"
+                step="1"
+                onkeydown="
+                  return (
+                    event.keyCode !== 69 &&
+                    event.keyCode !== 101 &&
+                    event.keyCode !== 43 &&
+                    event.keyCode !== 45
+                  );
+                "
+                style="
+                  width: 100%;
+                  border: 1px solid var(--gray-200);
+                  border-radius: 8px;
+                  padding: 8px 10px;
+                  font-family: &quot;Inter&quot;, sans-serif;
+                  font-size: 13px;
+                  outline: none;
+                "
+              />
+            </div>
+          </div>
+        </div>
+
+        <!-- RÉSULTATS -->
+        <div class="section-card" id="results-section" style="display: none">
+          <div
+            style="
+              display: flex;
+              align-items: center;
+              justify-content: space-between;
+              margin-bottom: 16px;
+            "
+          >
+            <div class="section-title" style="margin-bottom: 0">
+              ⚙️ Votre système dimensionné
+            </div>
+            <div
+              id="badge-tension"
+              style="
+                display: inline-flex;
+                align-items: center;
+                padding: 4px 14px;
+                border-radius: 20px;
+                font-size: 13px;
+                font-weight: 700;
+                background: var(--blue-100);
+                color: var(--blue-700);
+              "
+            >
+              —
+              <button class="help-btn" onclick="ouvrirHelp('tension')">
+                En savoir plus
+              </button>
+            </div>
+          </div>
+
+          <div
+            id="autonomie-box"
+            style="
+              display: none;
+              background: var(--green-50);
+              border: 1px solid var(--green-200);
+              border-radius: 10px;
+              padding: 12px 14px;
+              margin-bottom: 12px;
+            "
+          ></div>
+          <div
+            id="alerte-box"
+            style="
+              display: none;
+              background: var(--orange-100);
+              border-radius: 10px;
+              padding: 10px 14px;
+              margin-bottom: 12px;
+              font-size: 12px;
+              color: var(--orange-600);
+              font-weight: 500;
+            "
+          ></div>
+          <div
+            id="chute-box"
+            style="
+              display: none;
+              background: #fee2e2;
+              border: 1px solid #fca5a5;
+              border-radius: 10px;
+              padding: 12px 14px;
+              margin-bottom: 12px;
+              font-size: 12px;
+              color: #dc2626;
+            "
+          >
+            <div
+              style="
+                display: flex;
+                align-items: center;
+                gap: 6px;
+                margin-bottom: 4px;
+              "
+            >
+              <span style="font-weight: 700">⚠️ Chute de tension</span>
+              <button class="help-btn" onclick="ouvrirHelp('chute_tension')">
+                En savoir plus
+              </button>
+            </div>
+          </div>
+          <div
+            id="groupe-box"
+            style="
+              display: none;
+              background: var(--gray-100);
+              border-radius: 10px;
+              padding: 12px 14px;
+              margin-bottom: 12px;
+            "
+          ></div>
+
+          <div
+            style="
+              font-size: 12px;
+              font-weight: 600;
+              color: var(--gray-600);
+              margin-bottom: 8px;
+              padding-bottom: 4px;
+              border-bottom: 1px solid var(--gray-100);
+            "
+          >
+            ⚡ Composants principaux
+          </div>
+          <div class="results-grid" style="margin-bottom: 16px">
+            <div class="result-card">
+              <div class="result-icon icon-blue">🔋</div>
+              <div>
+                <div class="result-label">Batterie</div>
+                <div class="result-value" id="res-batterie">—</div>
+                <div class="result-sub" id="res-batterie-info">—</div>
+              </div>
+            </div>
+            <div class="result-card">
+              <div class="result-icon icon-green">🔌</div>
+              <div>
+                <div class="result-label">Onduleur</div>
+                <div class="result-value" id="res-onduleur">—</div>
+                <div class="result-sub" id="res-onduleur-type">Onde pure</div>
+              </div>
+            </div>
+            <div class="result-card">
+              <div class="result-icon icon-purple">⚡</div>
+              <div>
+                <div
+                  class="result-label"
+                  style="display: flex; align-items: center; gap: 4px"
+                >
+                  Régulateur
+                  <button class="help-btn" onclick="ouvrirHelp('mppt')">
+                    En savoir plus
+                  </button>
+                </div>
+                <div class="result-value" id="res-mppt">—</div>
+                <div class="result-sub" id="res-mppt-type">—</div>
+              </div>
+            </div>
+            <div class="result-card">
+              <div class="result-icon icon-yellow">☀️</div>
+              <div>
+                <div class="result-label">Panneau solaire</div>
+                <div class="result-value" id="res-panneau">—</div>
+                <div class="result-sub" id="res-panneau-nb">—</div>
+              </div>
+            </div>
+            <div class="result-card" id="res-ats-card" style="display: none">
+              <div class="result-icon icon-blue">🔄</div>
+              <div>
+                <div class="result-label">ATS</div>
+                <div class="result-value" id="res-ats">—</div>
+                <div class="result-sub">Basculement auto SBEE</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Côté DC -->
+          <div
+            style="
+              font-size: 12px;
+              font-weight: 600;
+              color: var(--blue-700);
+              margin-bottom: 8px;
+              padding-bottom: 4px;
+              border-bottom: 2px solid var(--blue-100);
+            "
+          >
+            🔵 Côté DC — Panneaux → Régulateur
+          </div>
+          <div class="results-grid" style="margin-bottom: 16px">
+            <div class="result-card">
+              <div class="result-icon" style="background: var(--blue-100)">
+                🔵
+              </div>
+              <div>
+                <div class="result-label">Câble DC</div>
+                <div class="result-value" id="res-cable-dc">—</div>
+                <div class="result-sub">Cuivre · distance 5m</div>
+              </div>
+            </div>
+            <div class="result-card">
+              <div class="result-icon" style="background: var(--blue-100)">
+                ⚡
+              </div>
+              <div>
+                <div class="result-label">Disjoncteur DC</div>
+                <div class="result-value" id="res-disj-dc">—</div>
+                <div class="result-sub">Protection court-circuit</div>
+              </div>
+            </div>
+            <div class="result-card">
+              <div class="result-icon" style="background: var(--blue-100)">
+                🛡️
+              </div>
+              <div>
+                <div class="result-label">Parafoudre DC</div>
+                <div class="result-value">Classe II</div>
+                <div class="result-sub">Protection foudre</div>
+              </div>
+            </div>
+            <div class="result-card">
+              <div class="result-icon" style="background: var(--blue-100)">
+                🌍
+              </div>
+              <div>
+                <div class="result-label">Terre DC</div>
+                <div class="result-value" id="res-terre-dc">—</div>
+                <div class="result-sub">Mise à la terre</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Côté AC -->
+          <div
+            style="
+              font-size: 12px;
+              font-weight: 600;
+              color: var(--orange-600);
+              margin-bottom: 8px;
+              padding-bottom: 4px;
+              border-bottom: 2px solid #ffedd5;
+            "
+          >
+            🟠 Côté AC — Onduleur → Tableau
+          </div>
+          <div class="results-grid" style="margin-bottom: 12px">
+            <div class="result-card">
+              <div class="result-icon" style="background: var(--orange-100)">
+                🟠
+              </div>
+              <div>
+                <div class="result-label">Câble AC</div>
+                <div class="result-value" id="res-cable-ac">—</div>
+                <div class="result-sub" id="res-cable-ac-sub">220V</div>
+              </div>
+            </div>
+            <div class="result-card">
+              <div class="result-icon" style="background: var(--orange-100)">
+                ⚡
+              </div>
+              <div>
+                <div class="result-label">Disjoncteur AC</div>
+                <div class="result-value" id="res-disj-ac">—</div>
+                <div class="result-sub">Protection surcharge</div>
+              </div>
+            </div>
+            <div class="result-card">
+              <div class="result-icon" style="background: var(--orange-100)">
+                🛡️
+              </div>
+              <div>
+                <div class="result-label">Parafoudre AC</div>
+                <div class="result-value">Classe II</div>
+                <div class="result-sub">Protection foudre</div>
+              </div>
+            </div>
+            <div class="result-card">
+              <div class="result-icon" style="background: var(--orange-100)">
+                🌍
+              </div>
+              <div>
+                <div class="result-label">Terre AC</div>
+                <div class="result-value" id="res-terre-ac">—</div>
+                <div class="result-sub">Mise à la terre</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Note câble -->
+          <div
+            style="
+              background: var(--green-50);
+              border: 1px solid var(--green-200);
+              border-radius: 8px;
+              padding: 10px 14px;
+              margin-bottom: 16px;
+              font-size: 11px;
+              color: var(--green-800);
+            "
+            id="note-cable"
+          >
+            📐 Section calculée selon vos distances — à confirmer avec votre
+            technicien selon le câble disponible sur le marché.
+          </div>
+
+          <!-- Devis -->
+          <div
+            style="
+              font-size: 12px;
+              font-weight: 600;
+              color: var(--gray-600);
+              margin-bottom: 12px;
+              padding-bottom: 4px;
+              border-bottom: 1px solid var(--gray-100);
+            "
+          >
+            💰 Devis estimatif
+          </div>
+          <div style="overflow-x: auto">
+            <table
+              id="devis-table"
+              style="width: 100%; border-collapse: collapse; font-size: 12px"
+            >
+              <thead>
+                <tr style="background: var(--green-800)">
+                  <th
+                    style="
+                      padding: 10px;
+                      text-align: left;
+                      color: #fff;
+                      font-weight: 600;
+                    "
+                  >
+                    Désignation
+                  </th>
+                  <th
+                    style="
+                      padding: 10px;
+                      text-align: center;
+                      color: #fff;
+                      font-weight: 600;
+                    "
+                  >
+                    Qté
+                  </th>
+                  <th
+                    style="
+                      padding: 10px;
+                      text-align: right;
+                      color: #fff;
+                      font-weight: 600;
+                    "
+                  >
+                    Prix unitaire
+                  </th>
+                  <th
+                    style="
+                      padding: 10px;
+                      text-align: right;
+                      color: #fff;
+                      font-weight: 600;
+                    "
+                  >
+                    Total
+                  </th>
+                </tr>
+              </thead>
+              <tbody id="devis-body"></tbody>
+              <tfoot>
+                <tr style="background: var(--green-800)">
+                  <td
+                    colspan="3"
+                    style="
+                      padding: 10px;
+                      color: #fff;
+                      font-weight: 700;
+                      font-size: 13px;
+                    "
+                  >
+                    TOTAL ESTIMÉ
+                  </td>
+                  <td
+                    style="
+                      padding: 10px;
+                      text-align: right;
+                      color: #fff;
+                      font-weight: 700;
+                      font-size: 14px;
+                    "
+                    id="devis-total"
+                  >
+                    —
+                  </td>
+                </tr>
+              </tfoot>
+            </table>
+          </div>
+          <div
+            style="
+              font-size: 11px;
+              color: var(--gray-400);
+              text-align: center;
+              margin-top: 8px;
+            "
+          >
+            ⚠️ Main d'œuvre non incluse · Prix indicatifs convertis au taux du
+            jour · À confirmer avec votre revendeur
+          </div>
+        </div>
+
+        <div class="nav-buttons">
+          <button class="btn-secondary" onclick="goToPage('consommation')">
+            ← Retour
+          </button>
+          <button
+            class="btn-primary"
+            id="btn-sys-next"
+            disabled
+            onclick="goToPage('economie')"
+          >
+            Suivant →
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================================================
+         PAGE 4 — ÉCONOMIE
+    ============================================================ -->
+    <div class="page" id="page-economie">
+      <div class="page-content">
+        <div class="section-card">
+          <div class="section-title">⛽ Votre groupe électrogène</div>
+          <div class="section-subtitle">
+            Renseignez les informations de votre groupe pour un bilan précis
+          </div>
+          <div
+            style="
+              display: grid;
+              grid-template-columns: 1fr 1fr;
+              gap: 12px;
+              margin-bottom: 14px;
+            "
+          >
+            <div>
+              <div
+                style="
+                  font-size: 12px;
+                  font-weight: 600;
+                  color: var(--gray-700);
+                  margin-bottom: 6px;
+                "
+              >
+                Type de carburant
+              </div>
+              <div style="display: flex; gap: 8px">
+                <button
+                  id="fuel-essence"
+                  onclick="selectCarburant('essence')"
+                  style="
+                    flex: 1;
+                    padding: 8px;
+                    border-radius: 8px;
+                    border: 2px solid var(--gray-200);
+                    background: #fff;
+                    cursor: pointer;
+                    font-size: 12px;
+                    font-weight: 600;
+                  "
+                >
+                  ⛽ Essence
+                </button>
+                <button
+                  id="fuel-gasoil"
+                  onclick="selectCarburant('gasoil')"
+                  style="
+                    flex: 1;
+                    padding: 8px;
+                    border-radius: 8px;
+                    border: 2px solid var(--gray-200);
+                    background: #fff;
+                    cursor: pointer;
+                    font-size: 12px;
+                    font-weight: 600;
+                  "
+                >
+                  🛢️ Gasoil
+                </button>
+              </div>
+            </div>
+            <div>
+              <div
+                style="
+                  font-size: 12px;
+                  font-weight: 600;
+                  color: var(--gray-700);
+                  margin-bottom: 6px;
+                "
+              >
+                Prix du carburant (FCFA/litre)
+              </div>
+              <input
+                type="number"
+                id="prix-carburant"
+                value="700"
+                min="100"
+                step="10"
+                style="
+                  width: 100%;
+                  border: 1px solid var(--gray-200);
+                  border-radius: 8px;
+                  padding: 9px 12px;
+                  font-family: &quot;Inter&quot;, sans-serif;
+                  font-size: 13px;
+                  outline: none;
+                "
+              />
+            </div>
+          </div>
+          <div style="margin-bottom: 14px">
+            <div
+              style="
+                font-size: 12px;
+                font-weight: 600;
+                color: var(--gray-700);
+                margin-bottom: 6px;
+              "
+            >
+              Heures d'utilisation par jour
+            </div>
+            <input
+              type="number"
+              id="heures-groupe"
+              value="8"
+              min="1"
+              max="24"
+              style="
+                width: 100%;
+                border: 1px solid var(--gray-200);
+                border-radius: 8px;
+                padding: 9px 12px;
+                font-family: &quot;Inter&quot;, sans-serif;
+                font-size: 13px;
+                outline: none;
+              "
+            />
+          </div>
+          <div style="text-align: center">
+            <button
+              class="btn-primary"
+              style="display: inline-flex; justify-content: center"
+              onclick="lancerEconomie()"
+            >
+              📊 Calculer le bilan économique
+            </button>
+          </div>
+        </div>
+
+        <div id="eco-results" style="display: none">
+          <div class="section-card">
+            <div class="section-title">📅 Bilan annuel comparatif</div>
+            <div
+              style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px"
+            >
+              <div
+                style="
+                  background: var(--orange-100);
+                  border-radius: 10px;
+                  padding: 14px;
+                "
+              >
+                <div
+                  style="
+                    font-size: 13px;
+                    font-weight: 700;
+                    color: var(--orange-600);
+                    margin-bottom: 10px;
+                  "
+                >
+                  🔥 Groupe électrogène / an
+                </div>
+                <div id="eco-detail-groupe"></div>
+                <div
+                  style="
+                    border-top: 1px solid #fed7aa;
+                    margin-top: 10px;
+                    padding-top: 10px;
+                    display: flex;
+                    justify-content: space-between;
+                  "
+                >
+                  <span
+                    style="
+                      font-size: 12px;
+                      font-weight: 700;
+                      color: var(--orange-600);
+                    "
+                    >Total / an</span
+                  >
+                  <span
+                    style="
+                      font-size: 14px;
+                      font-weight: 700;
+                      color: var(--orange-600);
+                    "
+                    id="eco-total-groupe-an"
+                    >—</span
+                  >
+                </div>
+              </div>
+              <div
+                style="
+                  background: var(--green-50);
+                  border-radius: 10px;
+                  padding: 14px;
+                "
+              >
+                <div
+                  style="
+                    font-size: 13px;
+                    font-weight: 700;
+                    color: var(--green-800);
+                    margin-bottom: 10px;
+                  "
+                >
+                  ☀️ Système solaire / an
+                </div>
+                <div id="eco-detail-solaire"></div>
+                <div
+                  style="
+                    border-top: 1px solid var(--green-200);
+                    margin-top: 10px;
+                    padding-top: 10px;
+                    display: flex;
+                    justify-content: space-between;
+                  "
+                >
+                  <span
+                    style="
+                      font-size: 12px;
+                      font-weight: 700;
+                      color: var(--green-800);
+                    "
+                    >Total / an</span
+                  >
+                  <span
+                    style="
+                      font-size: 14px;
+                      font-weight: 700;
+                      color: var(--green-800);
+                    "
+                    id="eco-total-solaire-an"
+                    >—</span
+                  >
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="section-card">
+            <div class="section-title">🔧 Calendrier d'entretien solaire</div>
+            <div class="section-subtitle">
+              Planification des opérations de maintenance
+            </div>
+            <div id="calendrier-entretien"></div>
+          </div>
+
+          <div class="section-card">
+            <div class="section-title">
+              📊 Bilan sur 10 ans
+              <button class="help-btn" onclick="ouvrirHelp('rentabilite')">
+                En savoir plus
+              </button>
+            </div>
+            <table
+              style="width: 100%; border-collapse: collapse; font-size: 13px"
+            >
+              <thead>
+                <tr style="background: var(--green-800)">
+                  <th style="padding: 10px; text-align: left; color: #fff">
+                    Poste
+                  </th>
+                  <th style="padding: 10px; text-align: right; color: #fff">
+                    Groupe élec.
+                  </th>
+                  <th style="padding: 10px; text-align: right; color: #fff">
+                    Solaire
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr style="background: #f8fafc">
+                  <td
+                    style="padding: 9px 10px; border-bottom: 1px solid #f1f5f9"
+                  >
+                    Investissement initial
+                  </td>
+                  <td
+                    style="
+                      padding: 9px 10px;
+                      border-bottom: 1px solid #f1f5f9;
+                      text-align: right;
+                    "
+                    id="eco-init-groupe"
+                  >
+                    —
+                  </td>
+                  <td
+                    style="
+                      padding: 9px 10px;
+                      border-bottom: 1px solid #f1f5f9;
+                      text-align: right;
+                    "
+                    id="eco-init-solaire"
+                  >
+                    —
+                  </td>
+                </tr>
+                <tr>
+                  <td
+                    style="padding: 9px 10px; border-bottom: 1px solid #f1f5f9"
+                  >
+                    Charges annuelles × 10
+                  </td>
+                  <td
+                    style="
+                      padding: 9px 10px;
+                      border-bottom: 1px solid #f1f5f9;
+                      text-align: right;
+                    "
+                    id="eco-charges-groupe"
+                  >
+                    —
+                  </td>
+                  <td
+                    style="
+                      padding: 9px 10px;
+                      border-bottom: 1px solid #f1f5f9;
+                      text-align: right;
+                    "
+                    id="eco-charges-solaire"
+                  >
+                    —
+                  </td>
+                </tr>
+                <tr style="background: #f8fafc">
+                  <td
+                    style="padding: 9px 10px; border-bottom: 1px solid #f1f5f9"
+                  >
+                    Remplacement batterie
+                  </td>
+                  <td
+                    style="
+                      padding: 9px 10px;
+                      border-bottom: 1px solid #f1f5f9;
+                      text-align: right;
+                    "
+                  >
+                    —
+                  </td>
+                  <td
+                    style="
+                      padding: 9px 10px;
+                      border-bottom: 1px solid #f1f5f9;
+                      text-align: right;
+                    "
+                    id="eco-bat-replace"
+                  >
+                    —
+                  </td>
+                </tr>
+                <tr style="background: var(--green-800)">
+                  <td style="padding: 10px; color: #fff; font-weight: 700">
+                    TOTAL 10 ANS
+                  </td>
+                  <td
+                    style="
+                      padding: 10px;
+                      text-align: right;
+                      color: #fff;
+                      font-weight: 700;
+                    "
+                    id="eco-total10-groupe"
+                  >
+                    —
+                  </td>
+                  <td
+                    style="
+                      padding: 10px;
+                      text-align: right;
+                      color: #fff;
+                      font-weight: 700;
+                    "
+                    id="eco-total10-solaire"
+                  >
+                    —
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+            <div
+              style="
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 10px;
+                margin-top: 12px;
+              "
+            >
+              <div
+                style="
+                  background: var(--green-50);
+                  border-radius: 8px;
+                  padding: 12px;
+                  text-align: center;
+                "
+              >
+                <div style="font-size: 11px; color: var(--gray-500)">
+                  Économies réalisées sur 10 ans
+                </div>
+                <div
+                  style="
+                    font-size: 18px;
+                    font-weight: 700;
+                    color: var(--green-800);
+                  "
+                  id="eco-economies"
+                >
+                  —
+                </div>
+              </div>
+              <div
+                style="
+                  background: var(--blue-100);
+                  border-radius: 8px;
+                  padding: 12px;
+                  text-align: center;
+                "
+              >
+                <div style="font-size: 11px; color: var(--gray-500)">
+                  Rentabilité atteinte en
+                </div>
+                <div
+                  style="
+                    font-size: 18px;
+                    font-weight: 700;
+                    color: var(--blue-700);
+                  "
+                  id="eco-rentabilite"
+                >
+                  —
+                </div>
+              </div>
+            </div>
+            <div
+              id="eco-sbee-box"
+              style="
+                display: none;
+                background: var(--green-50);
+                border: 1px solid var(--green-200);
+                border-radius: 8px;
+                padding: 12px;
+                margin-top: 10px;
+                text-align: center;
+              "
+            >
+              <div style="font-size: 12px; color: var(--green-800)">
+                💡 Facture SBEE évitée chaque mois
+              </div>
+              <div
+                style="
+                  font-size: 20px;
+                  font-weight: 700;
+                  color: var(--green-800);
+                "
+                id="eco-sbee"
+              >
+                —
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="nav-buttons">
+          <button class="btn-secondary" onclick="goToPage('systeme')">
+            ← Retour
+          </button>
+          <button class="btn-primary" onclick="goToPage('techniciens')">
+            Suivant →
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================================================
+         PAGE 5 — TECHNICIENS
+    ============================================================ -->
+    <div class="page" id="page-techniciens">
+      <div class="page-content">
+        <div class="section-card">
+          <div class="section-title">👷 Techniciens installateurs</div>
+          <div class="section-subtitle">
+            Contactez un professionnel qualifié pour l'installation
+          </div>
+          <div style="display: flex; gap: 10px; margin-bottom: 16px">
+            <input
+              type="text"
+              id="search-ville"
+              placeholder="Filtrer par ville..."
+              style="
+                flex: 1;
+                border: 1px solid var(--gray-200);
+                border-radius: 8px;
+                padding: 9px 12px;
+                font-family: &quot;Inter&quot;, sans-serif;
+                font-size: 13px;
+                outline: none;
+              "
+              oninput="filtrerTechniciens()"
+            />
+          </div>
+          <div id="techniciens-list">
+            <div
+              style="text-align: center; padding: 20px; color: var(--gray-400)"
+            >
+              Chargement...
+            </div>
+          </div>
+        </div>
+        <div class="nav-buttons">
+          <button class="btn-secondary" onclick="goToPage('economie')">
+            ← Retour
+          </button>
+          <button class="btn-primary" onclick="genererRapport()">
+            📄 Générer le rapport
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- DISCLAIMER -->
+    <div class="disclaimer">
+      ⚠️ Résultats indicatifs · Normes CEI/IEC · Prix estimatifs IRENA 2024 —
+      Consultez un technicien qualifié pour l'installation. Nous déclinons toute
+      responsabilité en cas d'installation sans professionnel.
+    </div>
+
+    <!-- Chart.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+
+    <!-- Scripts JS externes -->
+    <script src="{{ url_for('static', filename='js/config.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/navigation.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/map.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/consommation.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/appareils.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/systeme.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/economie.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/techniciens.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/budget.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/rapport.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+  </body>
+</html>
