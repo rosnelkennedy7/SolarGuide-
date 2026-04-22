@@ -74,7 +74,7 @@
         <div class="nav-title">HélioBénin</div>
         <div class="nav-subtitle">Votre guide de dimensionnement solaire — Bénin</div>
       </div>
-      <div class="nav-flag">🇧🇯</div>
+      <div class="nav-flag"><img src="/static/img/benin.webp" style="height:20px;border-radius:3px;vertical-align:middle;"></div>
     </nav>
 
     <!-- ============================================================
@@ -148,7 +148,7 @@
           <div class="sun-core"><img src="/static/img/soleil.png" alt="HélioBénin" class="logo-soleil" style="width:32px;height:32px;border-radius:50%;"></div>
         </div>
 
-        <div class="hero-badge">🇧🇯 Conçu pour le Bénin</div>
+        <div class="hero-badge"><img src="/static/img/benin.webp" style="height:20px;border-radius:3px;vertical-align:middle;"> Conçu pour le Bénin</div>
         <h1 class="hero-title"><span class="accent">Hélio</span>Bénin</h1>
         <p class="hero-desc">
           Vous en avez marre des délestages à répétition ? HélioBénin vous
@@ -184,7 +184,7 @@
             <!-- En-tête colonne -->
             <div
               style="
-                background: linear-gradient(135deg, #1d4ed8, #3b82f6);
+                background: rgba(234,88,12,0.25);backdrop-filter:blur(8px);
                 padding: 16px;
                 text-align: center;
               "
@@ -275,7 +275,7 @@
             <!-- En-tête colonne -->
             <div
               style="
-                background: linear-gradient(135deg, #166534, #22c55e);
+                background: rgba(245,166,35,0.25);backdrop-filter:blur(8px);
                 padding: 16px;
                 text-align: center;
               "
@@ -483,12 +483,8 @@
             </div>
           </div>
           <div class="btn-row" style="justify-content: space-between">
-            <button class="btn-secondary" style="color:#EF4444;border-color:#EF4444;" onclick="recommencerPosition()">
-              🔄 Recommencer
-            </button>
-            <button class="btn-primary" onclick="confirmerPosition()">
-              ✅ Confirmer
-            </button>
+            <button onclick="recommencerPosition()" style="background:#EF4444;color:#fff;border:none;border-radius:10px;padding:11px 24px;font-size:14px;font-weight:600;cursor:pointer;font-family:Inter,sans-serif;">← Recommencer</button>
+            <button onclick="confirmerPosition()" style="background:linear-gradient(135deg,#F5A623,#D47C0A);color:#fff;border:none;border-radius:10px;padding:11px 24px;font-size:14px;font-weight:600;cursor:pointer;font-family:Inter,sans-serif;">Confirmer →</button>
           </div>
         </div>
 

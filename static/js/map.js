@@ -262,11 +262,6 @@ function confirmerPosition() {
   }
   document.getElementById("btn-loc-next").disabled = false;
   document.getElementById("confirm-box").classList.remove("show");
-  alert(
-    "✅ Position confirmée ! Irradiation : " +
-      state.localisation.irradiation +
-      " kWh/m²/j",
-  );
 }
 function recommencerPosition() {
   if (marker) {

@@ -291,7 +291,7 @@
 
       /* ── SÉRIE/PARALLÈLE ── */
       .serie-parallele-card {
-        background: linear-gradient(135deg, #1d4ed8, #3b82f6);
+        background: rgba(234,88,12,0.25);backdrop-filter:blur(8px);
         border-radius: 12px; padding: 16px; color: #fff; margin-bottom: 12px;
       }
       .sp-title { font-size: 14px; font-weight: 700; margin-bottom: 10px; }
@@ -569,9 +569,12 @@
             </table>
           </div>
 
+          <div id="devis-prix-warning" style="display:none;background:#FEF3C7;border:1px solid #F59E0B;border-radius:8px;padding:10px 14px;font-size:13px;color:#92400E;margin-bottom:12px;">
+            ⚠️ Veuillez renseigner vos prix avant de générer le devis PDF.
+          </div>
           <div style="display:flex;gap:10px;justify-content:flex-end">
             <button style="background:var(--gray-100);color:var(--gray-700);border:none;border-radius:8px;padding:10px 20px;font-size:13px;font-weight:600;cursor:pointer;font-family:Inter,sans-serif" onclick="fermerDevisModal()">Annuler</button>
-            <button class="btn-pdf" onclick="telechargerDevis()">📥 Télécharger le devis PDF</button>
+            <button id="devis-pdf-btn" class="btn-pdf" onclick="telechargerDevis()">📥 Télécharger le devis PDF</button>
           </div>
         </div>
       </div>
@@ -614,7 +617,7 @@
         <div class="nav-title">HélioBénin</div>
         <div class="nav-subtitle">Interface technicien professionnel</div>
       </div>
-      <div class="nav-flag">🇧🇯</div>
+      <div class="nav-flag"><img src="/static/img/benin.webp" style="height:20px;border-radius:3px;vertical-align:middle;"></div>
     </nav>
 
     <!-- ══ BARRE DE PROGRESSION ══ -->
@@ -660,10 +663,7 @@
         </div>
         <div class="hero-badge">🔧 Interface technicien professionnel</div>
         <h1 class="hero-title"><span class="accent">Hélio</span>Bénin Pro</h1>
-        <p class="hero-desc">
-          Accès complet au moteur de dimensionnement avec paramètres personnalisables,
-          calcul série/parallèle et génération PDF professionnelle.
-        </p>
+
 
         <!-- Bouton paramètres avancés -->
         <div style="margin-bottom:20px;display:flex;gap:10px;justify-content:center;flex-wrap:wrap">
@@ -674,8 +674,8 @@
 
         <div class="choice-title">Choisissez votre type de dimensionnement</div>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;max-width:600px;margin:0 auto 20px">
-          <div style="background:#fff;border:2px solid var(--gray-200);border-radius:var(--radius-lg);overflow:hidden;transition:all .25s" id="col-dim">
-            <div style="background:linear-gradient(135deg,#166534,#22c55e);padding:16px;text-align:center">
+          <div style="background:rgba(255,255,255,0.07);border:1.5px solid rgba(255,255,255,0.18);border-radius:var(--radius-lg);overflow:hidden;transition:all .25s;backdrop-filter:blur(14px)" id="col-dim">
+            <div style="background:rgba(245,166,35,0.25);backdrop-filter:blur(8px);padding:16px;text-align:center">
               <div style="font-size:28px;margin-bottom:6px">📐</div>
               <div style="font-size:14px;font-weight:700;color:#fff">Par besoins</div>
               <div style="font-size:11px;color:rgba(255,255,255,.75);margin-top:2px">À partir de la liste des appareils</div>
@@ -697,8 +697,8 @@
               </div>
             </div>
           </div>
-          <div style="background:#fff;border:2px solid var(--gray-200);border-radius:var(--radius-lg);overflow:hidden;transition:all .25s" id="col-budget">
-            <div style="background:linear-gradient(135deg,#1d4ed8,#3b82f6);padding:16px;text-align:center">
+          <div style="background:rgba(255,255,255,0.07);border:1.5px solid rgba(255,255,255,0.18);border-radius:var(--radius-lg);overflow:hidden;transition:all .25s;backdrop-filter:blur(14px)" id="col-budget">
+            <div style="background:rgba(234,88,12,0.25);backdrop-filter:blur(8px);padding:16px;text-align:center">
               <div style="font-size:28px;margin-bottom:6px">💰</div>
               <div style="font-size:14px;font-weight:700;color:#fff">Par budget</div>
               <div style="font-size:11px;color:rgba(255,255,255,.75);margin-top:2px">Budget client disponible</div>
@@ -755,8 +755,8 @@
             </div>
           </div>
           <div class="btn-row" style="justify-content:space-between">
-            <button class="btn-primary" onclick="confirmerPosition()">✅ Confirmer</button>
-            <button class="btn-secondary" onclick="recommencerPosition()">🔄 Recommencer</button>
+            <button onclick="recommencerPosition()" style="background:#EF4444;color:#fff;border:none;border-radius:10px;padding:11px 24px;font-size:14px;font-weight:600;cursor:pointer;font-family:Inter,sans-serif;">← Recommencer</button>
+            <button onclick="confirmerPosition()" style="background:linear-gradient(135deg,#F5A623,#D47C0A);color:#fff;border:none;border-radius:10px;padding:11px 24px;font-size:14px;font-weight:600;cursor:pointer;font-family:Inter,sans-serif;">Confirmer →</button>
           </div>
         </div>
         <div class="nav-buttons">
@@ -822,6 +822,34 @@
           </div>
         </div>
 
+        <!-- Affiner avec composants réels -->
+        <div class="section-card" style="margin-top:16px;">
+          <div onclick="this.nextElementSibling.style.display=this.nextElementSibling.style.display==='none'?'block':'none';this.querySelector('.affiner-arrow').style.transform=this.nextElementSibling.style.display==='block'?'rotate(90deg)':'rotate(0deg)';"
+               style="display:flex;align-items:center;justify-content:space-between;cursor:pointer;">
+            <div style="font-size:14px;font-weight:700;color:#fff;">🔧 Affiner avec mes composants réels</div>
+            <span class="affiner-arrow" style="color:#F5A623;font-size:18px;transition:transform .3s;">›</span>
+          </div>
+          <div style="display:none;margin-top:16px;">
+            <div style="font-size:12px;color:rgba(255,255,255,.5);margin-bottom:12px;">Renseignez les caractéristiques exactes de vos composants pour recalibrer les résultats.</div>
+            <div style="font-size:13px;font-weight:700;color:#F5A623;margin-bottom:8px;">☀️ Panneau solaire</div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:16px;">
+              <div><label style="font-size:11px;color:rgba(255,255,255,.5);display:block;margin-bottom:4px;">Voc (V)</label><input type="number" id="comp-voc" placeholder="ex: 45.2" style="width:100%;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);border-radius:8px;padding:8px 10px;color:#fff;font-size:13px;"></div>
+              <div><label style="font-size:11px;color:rgba(255,255,255,.5);display:block;margin-bottom:4px;">Isc (A)</label><input type="number" id="comp-isc" placeholder="ex: 9.8" style="width:100%;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);border-radius:8px;padding:8px 10px;color:#fff;font-size:13px;"></div>
+              <div><label style="font-size:11px;color:rgba(255,255,255,.5);display:block;margin-bottom:4px;">Vmp (V)</label><input type="number" id="comp-vmp" placeholder="ex: 37.6" style="width:100%;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);border-radius:8px;padding:8px 10px;color:#fff;font-size:13px;"></div>
+              <div><label style="font-size:11px;color:rgba(255,255,255,.5);display:block;margin-bottom:4px;">Imp (A)</label><input type="number" id="comp-imp" placeholder="ex: 9.1" style="width:100%;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);border-radius:8px;padding:8px 10px;color:#fff;font-size:13px;"></div>
+              <div style="grid-column:span 2;"><label style="font-size:11px;color:rgba(255,255,255,.5);display:block;margin-bottom:4px;">Puissance crête (Wc)</label><input type="number" id="comp-pmax" placeholder="ex: 320" style="width:100%;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);border-radius:8px;padding:8px 10px;color:#fff;font-size:13px;"></div>
+            </div>
+            <div style="font-size:13px;font-weight:700;color:#F5A623;margin-bottom:8px;">🔋 Batterie</div>
+            <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:16px;">
+              <div><label style="font-size:11px;color:rgba(255,255,255,.5);display:block;margin-bottom:4px;">Capacité (Ah)</label><input type="number" id="comp-cap" placeholder="ex: 200" style="width:100%;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);border-radius:8px;padding:8px 10px;color:#fff;font-size:13px;"></div>
+              <div><label style="font-size:11px;color:rgba(255,255,255,.5);display:block;margin-bottom:4px;">DoD (%)</label><input type="number" id="comp-dod" placeholder="ex: 80" style="width:100%;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);border-radius:8px;padding:8px 10px;color:#fff;font-size:13px;"></div>
+              <div><label style="font-size:11px;color:rgba(255,255,255,.5);display:block;margin-bottom:4px;">Rend. (%)</label><input type="number" id="comp-rend" placeholder="ex: 90" style="width:100%;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);border-radius:8px;padding:8px 10px;color:#fff;font-size:13px;"></div>
+            </div>
+            <button onclick="affinerComposants()" style="width:100%;background:linear-gradient(135deg,#F5A623,#D47C0A);color:#fff;border:none;border-radius:10px;padding:10px;font-size:14px;font-weight:700;cursor:pointer;font-family:Inter,sans-serif;">Recalibrer les résultats</button>
+            <div id="affiner-result" style="margin-top:12px;font-size:13px;color:rgba(255,255,255,.7);"></div>
+          </div>
+        </div>
+
         <!-- Actions -->
         <div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:8px">
           <button class="btn-pdf" onclick="telechargerRapportPDF()">📄 Rapport technique PDF</button>
@@ -831,7 +859,7 @@
 
         <div class="nav-buttons" style="margin-top:20px">
           <button class="btn-secondary" onclick="goToPage('systeme')">← Retour</button>
-          <button class="btn-primary" onclick="goToPage('accueil')">🔄 Nouveau dimensionnement</button>
+          <button class="btn-primary" onclick="goToPage('accueil')">✅ Terminer</button>
         </div>
       </div>
     </div>
@@ -855,6 +883,30 @@
     <script src="{{ url_for('static', filename='js/techniciens.js') }}"></script>
     <script src="{{ url_for('static', filename='js/app.js') }}"></script>
 
+
+    <!-- ══ MODAL NOUVEAU PROJET ══ -->
+    <div class="nouveau-projet-overlay" id="nouveau-projet-overlay" style="position:fixed;inset:0;background:rgba(0,0,0,.65);display:none;align-items:center;justify-content:center;z-index:9992;padding:16px;">
+      <div style="background:rgba(10,15,30,0.96);backdrop-filter:blur(24px);border:1px solid rgba(255,255,255,0.15);border-radius:16px;width:100%;max-width:420px;padding:32px;color:#fff;">
+        <div style="font-family:Fraunces,serif;font-size:20px;font-weight:800;margin-bottom:6px;">📋 Nouveau projet</div>
+        <div style="font-size:13px;color:rgba(255,255,255,.6);margin-bottom:24px;">Renseignez les informations du projet client</div>
+        <div style="margin-bottom:14px;">
+          <label style="display:block;font-size:12px;font-weight:600;color:rgba(255,255,255,.7);margin-bottom:6px;">Date</label>
+          <input type="date" id="np-date" style="width:100%;background:rgba(255,255,255,0.08);border:1.5px solid rgba(255,255,255,0.2);border-radius:10px;padding:10px 14px;font-family:Inter,sans-serif;font-size:14px;color:#fff;outline:none;" />
+        </div>
+        <div style="margin-bottom:14px;">
+          <label style="display:block;font-size:12px;font-weight:600;color:rgba(255,255,255,.7);margin-bottom:6px;">Nom du projet <span style="color:#EF4444">*</span></label>
+          <input type="text" id="np-nom" placeholder="Ex : Résidence M. Koffi — Cotonou" style="width:100%;background:rgba(255,255,255,0.08);border:1.5px solid rgba(255,255,255,0.2);border-radius:10px;padding:10px 14px;font-family:Inter,sans-serif;font-size:14px;color:#fff;outline:none;" />
+        </div>
+        <div style="margin-bottom:24px;">
+          <label style="display:block;font-size:12px;font-weight:600;color:rgba(255,255,255,.7);margin-bottom:6px;">Client <span style="color:#EF4444">*</span></label>
+          <input type="text" id="np-client" placeholder="Nom complet du client" style="width:100%;background:rgba(255,255,255,0.08);border:1.5px solid rgba(255,255,255,0.2);border-radius:10px;padding:10px 14px;font-family:Inter,sans-serif;font-size:14px;color:#fff;outline:none;" />
+        </div>
+        <div style="display:flex;gap:10px;">
+          <button onclick="fermerNouveauProjet()" style="flex:1;background:rgba(255,255,255,0.1);color:rgba(255,255,255,.7);border:1px solid rgba(255,255,255,0.2);border-radius:10px;padding:12px;font-size:14px;font-weight:600;cursor:pointer;font-family:Inter,sans-serif;">Ignorer</button>
+          <button onclick="creerNouveauProjet()" style="flex:2;background:linear-gradient(135deg,#F5A623,#D47C0A);color:#fff;border:none;border-radius:10px;padding:12px;font-size:14px;font-weight:700;cursor:pointer;font-family:Inter,sans-serif;">Créer et commencer →</button>
+        </div>
+      </div>
+    </div>
     <script>
       // ══ OVERRIDES TECHNICIEN ══
 
@@ -891,6 +943,64 @@
           else circle.textContent = i + 1;
         });
       }
+
+
+      // ══ NOUVEAU PROJET ══
+      function ouvrirNouveauProjet() {
+        const overlay = document.getElementById('nouveau-projet-overlay');
+        if (overlay) {
+          overlay.style.display = 'flex';
+          document.getElementById('np-date').value = new Date().toISOString().split('T')[0];
+        }
+      }
+      function fermerNouveauProjet() {
+        const overlay = document.getElementById('nouveau-projet-overlay');
+        if (overlay) overlay.style.display = 'none';
+      }
+      function creerNouveauProjet() {
+        const nom = document.getElementById('np-nom').value.trim();
+        const client = document.getElementById('np-client').value.trim();
+        if (!nom) { alert('Le nom du projet est obligatoire.'); return; }
+        if (!client) { alert('Le nom du client est obligatoire.'); return; }
+        window._projetNom = nom;
+        window._projetClient = client;
+        fermerNouveauProjet();
+        // Mettre à jour l'affichage du projet
+        const btn = document.querySelector('[onclick="ouvrirParams()"]');
+        if (btn) btn.textContent = '⚙️ Projet : ' + nom + ' — ' + client;
+      }
+      // ══ AFFINER COMPOSANTS RÉELS ══
+      function affinerComposants() {
+        const dim = window._dernierDim;
+        if (!dim) { document.getElementById('affiner-result').innerHTML = '<span style="color:#EF4444">Réalisez d\'abord un dimensionnement.</span>'; return; }
+        const voc  = parseFloat(document.getElementById('comp-voc').value);
+        const isc  = parseFloat(document.getElementById('comp-isc').value);
+        const vmp  = parseFloat(document.getElementById('comp-vmp').value);
+        const imp  = parseFloat(document.getElementById('comp-imp').value);
+        const pmax = parseFloat(document.getElementById('comp-pmax').value);
+        const cap  = parseFloat(document.getElementById('comp-cap').value);
+        const dod  = parseFloat(document.getElementById('comp-dod').value) || 80;
+        const rend = parseFloat(document.getElementById('comp-rend').value) || 90;
+        let msgs = [];
+        if (pmax && dim.panneau_wc) {
+          const nb = Math.ceil(dim.puissance_crete / pmax);
+          msgs.push(`☀️ <b>${nb} panneau(x)</b> de ${pmax} Wc (vs ${dim.nb_panneaux}×${dim.panneau_wc} Wc estimé)`);
+          if (voc) msgs.push(`&nbsp;&nbsp;Voc=${voc}V, Isc=${isc||'—'}A, Vmp=${vmp||'—'}V, Imp=${imp||'—'}A`);
+        }
+        if (cap && dim.energie_batterie_wh) {
+          const tension = dim.tension_systeme || 24;
+          const nb = Math.ceil(dim.energie_batterie_wh / (cap * tension * (dod/100) * (rend/100)));
+          msgs.push(`🔋 <b>${nb} batterie(s)</b> de ${cap} Ah (DoD ${dod}%, rend. ${rend}%)`);
+        }
+        document.getElementById('affiner-result').innerHTML = msgs.length
+          ? msgs.join('<br>')
+          : '<span style="color:rgba(255,255,255,.5)">Renseignez au moins la puissance panneau ou capacité batterie.</span>';
+      }
+
+      // Ouvrir automatiquement au chargement
+      document.addEventListener('DOMContentLoaded', () => {
+        setTimeout(ouvrirNouveauProjet, 800);
+      });
 
       // ══ PARAMÈTRES AVANCÉS ══
       function ouvrirParams() {
@@ -1118,11 +1228,13 @@
       }
       function recalcTotal() {
         let sousTotal = 0;
+        let hasMissingPrix = false;
         document.querySelectorAll('#devis-tbody tr').forEach((tr, i) => {
           const inputs = tr.querySelectorAll('input');
           const qte = parseFloat(inputs[1]?.value) || 0;
-          const pu  = parseFloat(inputs[2]?.value) || 0;
-          const total = qte * pu;
+          const pu  = parseFloat(inputs[2]?.value);
+          if (isNaN(pu) || inputs[2]?.value === '') hasMissingPrix = true;
+          const total = qte * (pu || 0);
           sousTotal += total;
           const td = tr.querySelectorAll('td')[3];
           if (td) td.textContent = total > 0 ? total.toLocaleString('fr-FR') + ' FCFA' : '—';
@@ -1130,8 +1242,17 @@
         const mdo = parseFloat(document.getElementById('devis-mdo')?.value) || 0;
         document.getElementById('devis-sous-total').textContent = sousTotal.toLocaleString('fr-FR') + ' FCFA';
         document.getElementById('devis-total-general').textContent = (sousTotal + mdo).toLocaleString('fr-FR') + ' FCFA';
+        const warn = document.getElementById('devis-prix-warning');
+        const btn = document.getElementById('devis-pdf-btn');
+        if (warn) warn.style.display = hasMissingPrix ? 'block' : 'none';
+        if (btn) { btn.disabled = hasMissingPrix; btn.style.opacity = hasMissingPrix ? '0.4' : '1'; btn.style.cursor = hasMissingPrix ? 'not-allowed' : 'pointer'; }
       }
       function telechargerDevis() {
+        const hasMissing = Array.from(document.querySelectorAll('#devis-tbody tr')).some(tr => {
+          const pu = tr.querySelectorAll('input')[2]?.value;
+          return !pu || pu === '';
+        });
+        if (hasMissing) { document.getElementById('devis-prix-warning').style.display = 'block'; return; }
         if (typeof window.genererDevisPDF === 'function') {
           window.genererDevisPDF();
         } else {

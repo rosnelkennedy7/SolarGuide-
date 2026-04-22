@@ -480,7 +480,7 @@ def dimensionner_par_budget(budget_fcfa, irradiation, type_systeme,
                              distance_bat_ond=1, distance_ac=3):
 
     # ── Validation budget minimum ──
-    BUDGET_MIN = 150000
+    BUDGET_MIN = 200000
     if budget_fcfa < BUDGET_MIN:
         return {
             "compatible": False,

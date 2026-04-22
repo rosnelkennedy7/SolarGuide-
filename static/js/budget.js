@@ -23,7 +23,7 @@ function initPageBudget() {
   document.getElementById("budget-indicator").style.display = "none";
 }
 
-const BUDGET_MINIMUM = 150000;
+const BUDGET_MINIMUM = 200000;
 
 function verifierBudget() {
   const val = parseFloat(document.getElementById("input-budget").value) || 0;
@@ -46,7 +46,7 @@ function verifierBudget() {
     indic.style.border = "1px solid #fca5a5";
     indic.style.color = "#dc2626";
     indic.innerHTML = `<div style="font-weight:700;margin-bottom:4px;">⚠️ Budget insuffisant</div>
-      <div>Une installation solaire correcte nécessite au minimum <strong>${formatNombre(BUDGET_MINIMUM)} FCFA</strong>.</div>`;
+      <div>Une installation solaire correcte nécessite au minimum <strong>${formatNombre(BUDGET_MINIMUM)} FCFA</strong>. Veuillez augmenter votre budget.</div>`;
     input.style.borderColor = "#dc2626";
     if (!estRetour) typeLocal.style.display = "none";
     btnNext.disabled = true;

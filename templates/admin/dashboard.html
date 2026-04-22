@@ -193,66 +193,12 @@
 {% endif %}
 
 <div class="container">
-  <div class="page-title">Tableau de bord 🛡️</div>
-  <div class="page-sub">Gestion complète de HélioBénin — accès restreint</div>
-
-  <!-- STATS -->
-  <div class="stats-grid">
-    <div class="stat-card" style="animation-delay:.05s">
-      <div class="stat-icon icon-yellow">💰</div>
-      <div>
-        <div class="stat-label">Revenus aujourd'hui</div>
-        <div class="stat-value">{{ "{:,}".format(stats.revenus_jour) }} <span style="font-size:14px;color:#64748b">FCFA</span></div>
-        <div class="stat-sub">Paiements confirmés</div>
-      </div>
-    </div>
-    <div class="stat-card" style="animation-delay:.1s">
-      <div class="stat-icon icon-green">📈</div>
-      <div>
-        <div class="stat-label">Revenus ce mois</div>
-        <div class="stat-value">{{ "{:,}".format(stats.revenus_mois) }} <span style="font-size:14px;color:#64748b">FCFA</span></div>
-        <div class="stat-sub">Total mensuel</div>
-      </div>
-    </div>
-    <div class="stat-card" style="animation-delay:.15s">
-      <div class="stat-icon icon-blue">👥</div>
-      <div>
-        <div class="stat-label">Utilisateurs</div>
-        <div class="stat-value">{{ stats.nb_users }}</div>
-        <div class="stat-sub">Particuliers inscrits</div>
-      </div>
-    </div>
-    <div class="stat-card" style="animation-delay:.2s">
-      <div class="stat-icon icon-purple">🔧</div>
-      <div>
-        <div class="stat-label">Techniciens</div>
-        <div class="stat-value">{{ stats.nb_techniciens }}</div>
-        <div class="stat-sub">Dans l'annuaire</div>
-      </div>
-    </div>
-    <div class="stat-card" style="animation-delay:.25s">
-      <div class="stat-icon icon-green">📐</div>
-      <div>
-        <div class="stat-label">Dimensionnements</div>
-        <div class="stat-value">{{ stats.nb_dimensionnements }}</div>
-        <div class="stat-sub">Total réalisés</div>
-      </div>
-    </div>
-    <div class="stat-card" style="animation-delay:.3s">
-      <div class="stat-icon icon-orange">⏳</div>
-      <div>
-        <div class="stat-label">Paiements en attente</div>
-        <div class="stat-value">{{ stats.paiements_attente }}</div>
-        <div class="stat-sub">À confirmer</div>
-      </div>
-    </div>
-  </div>
-
   <!-- ONGLETS PRINCIPAUX -->
   <div class="tabs-wrap">
     <button class="tab-btn active" onclick="showTab('users')" id="tab-users">👥 Utilisateurs ({{ stats.nb_users + stats.nb_techniciens }})</button>
     <button class="tab-btn" onclick="showTab('paiements')" id="tab-paiements">💳 Paiements</button>
     <button class="tab-btn" onclick="showTab('journal')" id="tab-journal">📋 Journal</button>
+    <button class="tab-btn" onclick="showTab('telechargements')" id="tab-telechargements">📥 Téléchargements</button>
   </div>
 
   <!-- ═══ ONGLET UTILISATEURS ═══ -->
@@ -423,6 +369,35 @@
       {% endfor %}
     </div>
   </div>
+  <!-- ONGLET TÉLÉCHARGEMENTS -->
+  <div class="tab-panel" id="panel-telechargements">
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">Non professionnels <span class="count">{% set nb = namespace(v=0) %}{% for u in users %}{% if u.role == 'user' %}{% set nb.v = nb.v + 1 %}{% endif %}{% endfor %}{{ nb.v }}</span></div>
+      </div>
+      <div style="overflow-x:auto">
+        <table>
+          <thead>
+            <tr>
+              <th>Nom</th><th>Email</th><th>WhatsApp</th><th>Inscription</th><th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for u in users %}{% if u.role == 'user' %}
+            <tr>
+              <td class="td-name">{{ u.prenom }} {{ u.nom }}</td>
+              <td class="td-email">{{ u.email }}</td>
+              <td style="color:#64748b">{{ u.whatsapp or '—' }}</td>
+              <td style="color:#64748b">{{ u.date_inscription.strftime('%d/%m/%Y') if u.date_inscription else '—' }}</td>
+              <td><button class="btn-action" style="background:#F5A623;color:#000;font-weight:700" onclick="telechargerFicheUser({{ u.id }}, '{{ u.prenom }} {{ u.nom }}')">📥 Fiche PDF</button></td>
+            </tr>
+            {% endif %}{% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
 </div>
 
 <!-- MODAL DÉTAIL UTILISATEUR -->
@@ -591,6 +566,28 @@
       if (data.succes) location.reload();
       else alert(data.erreur);
     } catch { alert('Erreur réseau.'); }
+  }
+
+  function telechargerFicheUser(userId, nom) {
+    fetch('/admin/user/' + userId + '/data')
+      .then(r => r.json())
+      .then(d => {
+        if (!d.succes) { alert('Erreur'); return; }
+        const u = d.user;
+        const proj = d.projets[0] || {};
+        const pan = proj.resultats && proj.resultats.panneau;
+        const bat = proj.resultats && proj.resultats.batterie;
+        const ond = proj.resultats && proj.resultats.onduleur;
+        const prix = proj.prix && proj.prix.total ? Math.round(proj.prix.total * 1.10).toLocaleString('fr-FR') : '—';
+        const w = window.open('', '_blank');
+        w.document.write('<!doctype html><html><head><meta charset="UTF-8"><title>Fiche ' + nom + '</title><style>body{font-family:Arial,sans-serif;padding:30px;color:#1f2937}h1{color:#F5A623}table{width:100%;border-collapse:collapse;margin:16px 0}td,th{padding:10px;border:1px solid #e5e7eb;text-align:left}th{background:#f9fafb;font-weight:700}.price{font-size:20px;font-weight:800;color:#F5A623}</style></head><body>' +
+          '<h1>Fiche — ' + u.prenom + ' ' + u.nom + '</h1>' +
+          '<table><tr><th>Nom</th><td>' + u.prenom + ' ' + u.nom + '</td></tr><tr><th>Email</th><td>' + u.email + '</td></tr><tr><th>WhatsApp</th><td>' + (u.whatsapp||'—') + '</td></tr><tr><th>Inscription</th><td>' + (u.date_inscription ? new Date(u.date_inscription).toLocaleDateString('fr-FR') : '—') + '</td></tr></table>' +
+          (pan ? '<h2>Dernier dimensionnement : ' + (proj.nom||'—') + '</h2><table><tr><th>Panneaux</th><td>' + pan.nombre + '× ' + pan.puissance_unitaire + ' Wc</td></tr><tr><th>Batteries</th><td>' + (bat ? bat.nombre+'× '+bat.capacite_unitaire+' Ah '+bat.type : '—') + '</td></tr><tr><th>Onduleur</th><td>' + (ond ? ond.puissance+' W' : '—') + '</td></tr></table><p class="price">Prix max estimé : ' + prix + ' FCFA</p>' : '<p>Aucun dimensionnement.</p>') +
+          '<p style="margin-top:30px;font-size:11px;color:#6b7280">HélioBénin Admin · ' + new Date().toLocaleDateString('fr-FR') + '</p></body></html>');
+        w.document.close();
+        setTimeout(() => w.print(), 500);
+      });
   }
 
   // ── Modals ──
