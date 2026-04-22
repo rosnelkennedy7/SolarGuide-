@@ -21,7 +21,7 @@
         show_savoir_plus: false,
         show_pdf: true,
         show_devis: true,
-        kennedy_whatsapp: '+22901944389',
+        kennedy_whatsapp: '+2290194438907',
         // Paramètres avancés (modifiables dans le modal)
         params: {
           PR: 0.75,
@@ -380,127 +380,27 @@
         <div class="params-body">
 
           <div style="font-size:13px;color:var(--gray-500);margin-bottom:16px;line-height:1.6">
-            Laissez les champs vides pour utiliser les valeurs par défaut (Bénin · Tropique).
-            Les paramètres seront utilisés pour ce dimensionnement uniquement.
+            Laissez les champs vides pour utiliser les valeurs par defaut (Benin - Tropique).
           </div>
 
           <div class="params-section">
-            <div class="params-section-title">📊 Paramètres système</div>
+            <div class="params-section-title">Parametres systeme</div>
             <div class="params-grid">
               <div class="param-input-group">
-                <label>Performance Ratio (PR)</label>
-                <input type="number" class="param-input" id="p-PR" placeholder="Défaut : 0.75" min="0.5" max="1" step="0.01" />
-                <div class="param-hint">Adapté Bénin (chaleur + harmattan)</div>
+                <label style="color:#E2E8F0;font-size:13px;">Performance Ratio (PR)</label>
+                <input type="range" min="0.60" max="0.95" step="0.01" value="0.75" id="p-PR"
+                  oninput="document.getElementById(&apos;pr-val&apos;).textContent=this.value"
+                  style="width:100%;accent-color:#F5A623;" />
+                <span id="pr-val" style="color:#F5A623;font-weight:700;">0.75</span>
+                <div class="param-hint">Adapte Benin (chaleur + harmattan)</div>
               </div>
               <div class="param-input-group">
-                <label>Rendement système</label>
-                <input type="number" class="param-input" id="p-rendement" placeholder="Défaut : 0.80" min="0.5" max="1" step="0.01" />
+                <label style="color:#E2E8F0;font-size:13px;">Rendement systeme (eta)</label>
+                <input type="number" class="param-input" id="p-rendement" value="0.80" min="0.60" max="0.95" step="0.01" placeholder="0.80" />
               </div>
               <div class="param-input-group">
-                <label>Coefficient simultanéité</label>
-                <input type="number" class="param-input" id="p-coeff-simult" placeholder="Défaut : 0.80" min="0.5" max="1" step="0.01" />
-              </div>
-              <div class="param-input-group">
-                <label>Coefficient sécurité onduleur</label>
-                <input type="number" class="param-input" id="p-coeff-sec" placeholder="Défaut : 1.25" min="1" max="2" step="0.05" />
-              </div>
-            </div>
-          </div>
-
-          <div class="params-section">
-            <div class="params-section-title">☀️ Panneau solaire</div>
-            <div class="params-grid">
-              <div class="param-input-group">
-                <label>Puissance (Wc)</label>
-                <input type="number" class="param-input" id="p-pan-wc" placeholder="Ex : 400" min="50" max="700" />
-              </div>
-              <div class="param-input-group">
-                <label>Tension circuit ouvert Voc (V)</label>
-                <input type="number" class="param-input" id="p-pan-voc" placeholder="Ex : 48.5" step="0.1" />
-              </div>
-              <div class="param-input-group">
-                <label>Courant court-circuit Isc (A)</label>
-                <input type="number" class="param-input" id="p-pan-isc" placeholder="Ex : 10.2" step="0.1" />
-              </div>
-              <div class="param-input-group">
-                <label>Tension max puissance Vmp (V)</label>
-                <input type="number" class="param-input" id="p-pan-vmp" placeholder="Ex : 40.2" step="0.1" />
-              </div>
-              <div class="param-input-group">
-                <label>Courant max puissance Imp (A)</label>
-                <input type="number" class="param-input" id="p-pan-imp" placeholder="Ex : 9.95" step="0.1" />
-              </div>
-            </div>
-          </div>
-
-          <div class="params-section">
-            <div class="params-section-title">🔋 Batterie</div>
-            <div class="params-grid">
-              <div class="param-input-group">
-                <label>Capacité (Ah)</label>
-                <input type="number" class="param-input" id="p-bat-cap" placeholder="Ex : 200" />
-              </div>
-              <div class="param-input-group">
-                <label>Tension (V)</label>
-                <input type="number" class="param-input" id="p-bat-v" placeholder="Ex : 12" />
-              </div>
-              <div class="param-input-group">
-                <label>DoD (profondeur décharge)</label>
-                <input type="number" class="param-input" id="p-bat-dod" placeholder="Ex : 0.50" min="0.1" max="0.95" step="0.05" />
-              </div>
-              <div class="param-input-group">
-                <label>Rendement batterie</label>
-                <input type="number" class="param-input" id="p-bat-rend" placeholder="Ex : 0.85" min="0.5" max="1" step="0.01" />
-              </div>
-            </div>
-          </div>
-
-          <div class="params-section">
-            <div class="params-section-title">⚡ Régulateur</div>
-            <div class="params-grid">
-              <div class="param-input-group">
-                <label>Courant max (A)</label>
-                <input type="number" class="param-input" id="p-reg-i" placeholder="Ex : 60" />
-              </div>
-              <div class="param-input-group">
-                <label>Tension max (V)</label>
-                <input type="number" class="param-input" id="p-reg-v" placeholder="Ex : 150" />
-              </div>
-            </div>
-          </div>
-
-          <div class="params-section">
-            <div class="params-section-title">🔌 Onduleur</div>
-            <div class="params-grid">
-              <div class="param-input-group">
-                <label>Puissance (W)</label>
-                <input type="number" class="param-input" id="p-ond-p" placeholder="Ex : 3000" />
-              </div>
-              <div class="param-input-group">
-                <label>Rendement onduleur</label>
-                <input type="number" class="param-input" id="p-ond-rend" placeholder="Ex : 0.92" min="0.7" max="1" step="0.01" />
-              </div>
-            </div>
-          </div>
-
-          <div class="params-section">
-            <div class="params-section-title">🔧 Distances câbles (m)</div>
-            <div class="params-grid">
-              <div class="param-input-group">
-                <label>Panneaux → Régulateur (m)</label>
-                <input type="number" class="param-input" id="p-d-pan-reg" placeholder="Défaut : 5" min="1" max="100" />
-              </div>
-              <div class="param-input-group">
-                <label>Régulateur → Batteries (m)</label>
-                <input type="number" class="param-input" id="p-d-reg-bat" placeholder="Défaut : 1.5" min="0.5" max="20" step="0.5" />
-              </div>
-              <div class="param-input-group">
-                <label>Batteries → Onduleur (m)</label>
-                <input type="number" class="param-input" id="p-d-bat-ond" placeholder="Défaut : 1" min="0.5" max="20" step="0.5" />
-              </div>
-              <div class="param-input-group">
-                <label>Onduleur → Tableau AC (m)</label>
-                <input type="number" class="param-input" id="p-d-ac" placeholder="Défaut : 3" min="1" max="50" />
+                <label style="color:#E2E8F0;font-size:13px;">Coefficient simultaneite</label>
+                <input type="number" class="param-input" id="p-coeff-simult" value="0.80" min="0.60" max="1.00" step="0.01" placeholder="0.80" />
               </div>
             </div>
           </div>
@@ -857,6 +757,8 @@
           <button class="btn-secondary" onclick="sauvegarderProjetTech()">💾 Sauvegarder</button>
         </div>
 
+        <div id="techniciens-list" style="margin-top:16px;margin-bottom:4px"></div>
+
         <div class="nav-buttons" style="margin-top:20px">
           <button class="btn-secondary" onclick="goToPage('systeme')">← Retour</button>
           <button class="btn-primary" onclick="goToPage('accueil')">✅ Terminer</button>
@@ -864,9 +766,6 @@
       </div>
     </div>
 
-    <div class="disclaimer">
-      ⚠️ Résultats basés sur les données saisies. Vérifiez toujours les sections câbles et disjoncteurs sur site avant installation.
-    </div>
 
     <!-- jsPDF CDN pour génération PDF côté client -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
@@ -1011,35 +910,20 @@
           document.getElementById('params-modal-overlay').classList.remove('show');
       }
       function reinitialiserParams() {
-        ['p-PR','p-rendement','p-coeff-simult','p-coeff-sec',
-         'p-pan-wc','p-pan-voc','p-pan-isc','p-pan-vmp','p-pan-imp',
-         'p-bat-cap','p-bat-v','p-bat-dod','p-bat-rend',
-         'p-reg-i','p-reg-v','p-ond-p','p-ond-rend',
-         'p-d-pan-reg','p-d-reg-bat','p-d-bat-ond','p-d-ac'
-        ].forEach(id => { const el = document.getElementById(id); if (el) el.value = ''; });
+        const prEl = document.getElementById('p-PR');
+        if (prEl) { prEl.value = 0.75; document.getElementById('pr-val').textContent = '0.75'; }
+        ['p-rendement','p-coeff-simult'].forEach(id => { const el = document.getElementById(id); if (el) el.value = ''; });
       }
       function sauvegarderParams() {
+        const prVal = parseFloat(document.getElementById('p-PR')?.value) || 0.75;
         const get = id => { const v = parseFloat(document.getElementById(id)?.value); return isNaN(v) ? null : v; };
         SG_CONFIG.params = {
-          PR: get('p-PR') || 0.75,
+          PR: prVal,
           rendement_systeme: get('p-rendement') || 0.80,
           coeff_simultaneite: get('p-coeff-simult') || 0.80,
-          coeff_securite: get('p-coeff-sec') || 1.25,
+          coeff_securite: 1.25,
         };
-        SG_CONFIG.distance_dc_defaut  = get('p-d-pan-reg') || 5;
-        SG_CONFIG.distance_ac_defaut  = get('p-d-ac')      || 3;
-        SG_CONFIG.panneau_custom = {
-          wc: get('p-pan-wc'), voc: get('p-pan-voc'), isc: get('p-pan-isc'),
-          vmp: get('p-pan-vmp'), imp: get('p-pan-imp'),
-        };
-        SG_CONFIG.batterie_custom = {
-          cap: get('p-bat-cap'), tension: get('p-bat-v'),
-          dod: get('p-bat-dod'), rendement: get('p-bat-rend'),
-        };
-        SG_CONFIG.regulateur_custom = { i_max: get('p-reg-i'), v_max: get('p-reg-v') };
-        SG_CONFIG.onduleur_custom    = { puissance: get('p-ond-p'), rendement: get('p-ond-rend') };
         fermerParamsModal();
-        // Notification visuelle
         const btn = document.querySelector('[onclick="ouvrirParams()"]');
         if (btn) { btn.textContent = '✅ Paramètres personnalisés actifs'; btn.style.borderColor = 'var(--green-700)'; }
       }

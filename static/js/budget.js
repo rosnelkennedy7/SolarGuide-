@@ -183,6 +183,11 @@ function mettreAJourBarreBudget() {
 }
 
 function validerChargesBudget() {
+  if (!state.localisation) {
+    alert("Veuillez d'abord sélectionner votre localisation sur la carte.");
+    goToPage('localisation');
+    return;
+  }
   const budget =
     parseFloat(document.getElementById("input-budget")?.value) || 0;
   const rows = document.querySelectorAll(
@@ -217,9 +222,22 @@ function validerChargesBudget() {
 
   showLoader("Calcul du dimensionnement en cours...");
 
-  const heuresCoupure = parseFloat(
-    document.getElementById("input-heures-coupure-budget")?.value
-  ) || 8;
+  const heuresCoupure = (function() {
+    let total = 0;
+    [['b-coupure-pointe-matin','b-pointe-matin-debut','b-pointe-matin-fin'],
+     ['b-coupure-creuse','b-creuse-debut','b-creuse-fin'],
+     ['b-coupure-pointe-soir','b-pointe-soir-debut','b-pointe-soir-fin'],
+     ['b-coupure-nuit','b-nuit-debut','b-nuit-fin']
+    ].forEach(([cbId, dId, fId]) => {
+      const cb = document.getElementById(cbId);
+      if (cb && cb.checked) {
+        const d = parseFloat(document.getElementById(dId)?.value) || 0;
+        const f = parseFloat(document.getElementById(fId)?.value) || 0;
+        total += f > d ? f - d : (24 - d + f);
+      }
+    });
+    return total || 8;
+  })();
 
   fetch("/calculer_budget", {
     method: "POST",
@@ -373,21 +391,34 @@ function afficherResultatsBudget(res, appareils, budget) {
   document.getElementById("budget-devis-total").textContent =
     formatNombre(total) + " FCFA";
 
-  // Charges couvertes
+  // Charges couvertes — tableau glassmorphism
   const liste = document.getElementById("budget-charges-liste");
-  liste.innerHTML = appareils
-    .map(
-      (a) => `
-    <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--gray-100);">
-      <div style="display:flex;align-items:center;gap:8px;">
-        <div style="width:8px;height:8px;border-radius:50%;background:var(--green-700);flex-shrink:0;"></div>
-        <div>
-          <div style="font-size:13px;font-weight:600;color:var(--gray-900);">${a.nom}</div>
-          <div style="font-size:11px;color:var(--gray-500);">${a.quantite} × ${a.puissance}W · ${a.heures_jour}h jour + ${a.heures_nuit}h nuit</div>
-        </div>
-      </div>
-      <div style="font-size:12px;font-weight:600;color:var(--green-800);">${formatNombre(a.puissance * a.quantite * a.heures)} Wh/j</div>
-    </div>`,
-    )
-    .join("");
+  let totalEnergie = 0;
+  const rows = appareils.map((a, i) => {
+    const energie = a.puissance * a.quantite * (a.heures_jour + a.heures_nuit);
+    totalEnergie += energie;
+    return `<tr style="border-bottom:1px solid rgba(255,255,255,0.06);background:${i%2===0?'rgba(255,255,255,0.03)':'transparent'}">
+      <td style="padding:10px 12px;color:#E2E8F0;font-size:12px">${a.nom}</td>
+      <td style="padding:10px 12px;text-align:center;color:#94A3B8;font-size:12px">${a.puissance}W</td>
+      <td style="padding:10px 12px;text-align:center;color:#94A3B8;font-size:12px">${a.quantite}</td>
+      <td style="padding:10px 12px;text-align:center;color:#94A3B8;font-size:12px">${a.heures_jour+a.heures_nuit}h</td>
+      <td style="padding:10px 12px;text-align:right;color:#fff;font-size:12px;font-weight:600">${energie} Wh</td>
+    </tr>`;
+  }).join('');
+  liste.innerHTML = `<div style="background:rgba(255,255,255,0.06);backdrop-filter:blur(16px);border:1px solid rgba(255,255,255,0.12);border-radius:14px;overflow:hidden;margin-top:8px">
+    <table style="width:100%;border-collapse:collapse">
+      <thead><tr style="background:rgba(245,166,35,0.2);border-bottom:1px solid rgba(255,255,255,0.1)">
+        <th style="padding:12px;text-align:left;color:#F5A623;font-size:12px">Appareil</th>
+        <th style="padding:12px;text-align:center;color:#F5A623;font-size:12px">Puissance</th>
+        <th style="padding:12px;text-align:center;color:#F5A623;font-size:12px">Qté</th>
+        <th style="padding:12px;text-align:center;color:#F5A623;font-size:12px">H/jour</th>
+        <th style="padding:12px;text-align:right;color:#F5A623;font-size:12px">Énergie</th>
+      </tr></thead>
+      <tbody>${rows}</tbody>
+      <tfoot><tr style="background:rgba(245,166,35,0.15);border-top:1px solid rgba(255,255,255,0.1)">
+        <td colspan="4" style="padding:12px;color:#F5A623;font-weight:700;font-size:13px">TOTAL</td>
+        <td style="padding:12px;text-align:right;color:#F5A623;font-weight:700;font-size:13px">${totalEnergie} Wh</td>
+      </tr></tfoot>
+    </table>
+  </div>`;
 }

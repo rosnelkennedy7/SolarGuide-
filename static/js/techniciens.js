@@ -30,12 +30,12 @@ function chargerTechniciens() {
             🔧 ${t.specialite || ""}
           </div>
           <div style="display:flex;gap:8px;flex-wrap:wrap;">
-            <a href="https://wa.me/${(t.whatsapp||"").replace(/\D/g,"")}?text=${waMsg}"
+            <a href="https://wa.me/2290194438907?text=${waMsg}"
                target="_blank"
                style="background:#25D366;color:#fff;border-radius:8px;padding:8px 16px;font-size:13px;font-weight:600;text-decoration:none;display:inline-flex;align-items:center;gap:6px;">
               💬 WhatsApp
             </a>
-            <a href="mailto:${t.email || ""}"
+            <a href="mailto:rosnelkennedy7@gmail.com"
                style="background:rgba(255,255,255,0.12);color:#fff;border:1px solid rgba(255,255,255,0.2);border-radius:8px;padding:8px 16px;font-size:13px;font-weight:600;text-decoration:none;display:inline-flex;align-items:center;gap:6px;">
               ✉️ Email
             </a>

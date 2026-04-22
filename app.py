@@ -682,7 +682,7 @@ def admin_stats():
 KENNEDY_FICHE = {
     "id": 0,
     "nom": "DOSSA", "prenom": "Rosnel Kennedy",
-    "whatsapp": "+22901944389",
+    "whatsapp": "+229 01 94 43 89 07",
     "email": "rosnelkennedy7@gmail.com",
     "ville": "Bénin — toutes zones",
     "specialite": "Dimensionnement PV · Installation solaire · Audit énergétique",
@@ -830,7 +830,7 @@ if __name__ == '__main__':
             admin = User(
                 nom='DOSSA', prenom='Rosnel Kennedy',
                 email='rosnelkennedy7@gmail.com',
-                whatsapp='+22901944389',
+                whatsapp='+229 01 94 43 89 07',
                 password=bcrypt.generate_password_hash('Kennedy2026').decode('utf-8'),
                 role='admin',
                 a_paye=True,

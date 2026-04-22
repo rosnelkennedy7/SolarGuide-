@@ -21,7 +21,7 @@
         show_savoir_plus: false,
         show_pdf: false,
         show_devis: false,
-        kennedy_whatsapp: '+22901944389',
+        kennedy_whatsapp: '+2290194438907',
         kennedy_nom: 'Rosnel Kennedy DOSSA',
       };
     </script>
@@ -423,20 +423,7 @@
     <!-- ══ CONTACT KENNEDY — Résultats ══ -->
     <div class="page" id="page-contact">
       <div class="page-content">
-        <div class="kennedy-card">
-          <div style="margin-bottom:8px"><img src="/static/img/soleil.png" alt="HélioBénin" class="logo-soleil" style="width:48px;height:48px;object-fit:contain;"></div>
-          <div class="kennedy-title">Votre dimensionnement est prêt !</div>
-          <div class="kennedy-desc">
-            Pour recevoir un devis précis et une installation professionnelle,
-            contactez <strong>Rosnel Kennedy DOSSA</strong> — ⭐ Fondateur HélioBénin, Expert PV au Bénin.
-          </div>
-          <div class="kennedy-btns">
-            <a id="wa-kennedy" href="https://wa.me/22901944389?text=Bonjour+M.+DOSSA%2C+j%27ai+obtenu+mon+dimensionnement+sur+SolarGuide+et+je+souhaite+un+devis+pour+mon+installation+solaire." target="_blank" class="btn-wa">
-              📱 WhatsApp Kennedy
-            </a>
-            <a href="tel:+22901944389" class="btn-phone">📞 Appeler</a>
-          </div>
-        </div>
+        <div id="techniciens-list" style="margin-bottom:16px"><div style="text-align:center;padding:20px;color:rgba(255,255,255,.5);">Chargement...</div></div>
 
         <div class="price-range" id="price-range-box" style="display:none">
           <div style="font-size:12px;font-weight:600;margin-bottom:4px">💰 Prix maximum estimé</div>
@@ -456,7 +443,7 @@
     </div>
 
     <div class="disclaimer">
-      ⚠️ HélioBénin est un outil d'estimation. Les résultats sont indicatifs — consultez un technicien qualifié pour finaliser votre installation.
+      ⚠️ Faites toujours appel à un professionnel pour votre installation, ici vous n'aurez que des résultats approximatifs.
     </div>
 
     <!-- SCRIPTS — même ordre que index.html -->
@@ -556,6 +543,7 @@
       // Exposer pour être appelé depuis systeme.js après calcul
       window._afficherContactKennedy = function(dim, prix) {
         afficherRecap(dim, prix);
+        chargerTechniciens();
         goToPage('contact');
       };
 

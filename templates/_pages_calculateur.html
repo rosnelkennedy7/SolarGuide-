@@ -54,14 +54,58 @@
     <!-- Section coupures SBEE — visible uniquement en mode hybride -->
     <div class="section-card" id="coupures-budget-section" style="display:none">
       <div class="section-title">⚡ Coupures SBEE</div>
-      <div class="section-subtitle">Combien d'heures de coupure de courant subissez-vous en moyenne par jour ?</div>
-      <div style="display:flex;align-items:center;gap:12px;margin-top:8px">
-        <input type="range" id="input-heures-coupure-budget" min="1" max="20" value="8"
-          oninput="document.getElementById('coupure-val-budget').textContent=this.value+' h/jour';mettreAJourBarreBudget()"
-          style="flex:1;accent-color:#F5A623" />
-        <span id="coupure-val-budget" style="font-size:15px;font-weight:700;color:var(--green-700);min-width:72px;text-align:right">8 h/jour</span>
+      <div class="section-subtitle">Définissez vos tranches horaires et cochez si la SBEE coupe dans votre quartier</div>
+      <div style="display:grid;gap:10px;margin-bottom:14px">
+        <div style="background:#fef3c7;border-radius:10px;padding:12px 14px">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+            <div style="font-size:13px;font-weight:700;color:#92400e">☀️ Pointe matin <span style="font-size:10px;font-weight:400">(forte consommation)</span></div>
+            <label style="display:flex;align-items:center;gap:6px;font-size:12px;color:#92400e;cursor:pointer"><input type="checkbox" id="b-coupure-pointe-matin" style="width:15px;height:15px;accent-color:#f59e0b" /> SBEE coupe</label>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px">
+            <span style="font-size:12px;color:#78350f">De</span>
+            <input type="number" id="b-pointe-matin-debut" value="6" min="0" max="23" style="width:60px;border:1px solid #f59e0b;border-radius:6px;padding:5px 8px;font-size:12px;" /> h
+            <span style="font-size:12px;color:#78350f">à</span>
+            <input type="number" id="b-pointe-matin-fin" value="12" min="0" max="23" style="width:60px;border:1px solid #f59e0b;border-radius:6px;padding:5px 8px;font-size:12px;" /> h
+          </div>
+        </div>
+        <div style="background:var(--green-50);border-radius:10px;padding:12px 14px">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+            <div style="font-size:13px;font-weight:700;color:var(--green-800)">🌿 Creuse journée <span style="font-size:10px;font-weight:400">(faible consommation)</span></div>
+            <label style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--green-800);cursor:pointer"><input type="checkbox" id="b-coupure-creuse" style="width:15px;height:15px;accent-color:var(--green-800)" /> SBEE coupe</label>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px">
+            <span style="font-size:12px">De</span>
+            <input type="number" id="b-creuse-debut" value="12" min="0" max="23" style="width:60px;border:1px solid var(--green-200);border-radius:6px;padding:5px 8px;font-size:12px;" /> h
+            <span style="font-size:12px">à</span>
+            <input type="number" id="b-creuse-fin" value="17" min="0" max="23" style="width:60px;border:1px solid var(--green-200);border-radius:6px;padding:5px 8px;font-size:12px;" /> h
+          </div>
+        </div>
+        <div style="background:#fef3c7;border-radius:10px;padding:12px 14px">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+            <div style="font-size:13px;font-weight:700;color:#92400e">🌇 Pointe soir <span style="font-size:10px;font-weight:400">(retour maison)</span></div>
+            <label style="display:flex;align-items:center;gap:6px;font-size:12px;color:#92400e;cursor:pointer"><input type="checkbox" id="b-coupure-pointe-soir" style="width:15px;height:15px;accent-color:#f59e0b" /> SBEE coupe</label>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px">
+            <span style="font-size:12px;color:#78350f">De</span>
+            <input type="number" id="b-pointe-soir-debut" value="17" min="0" max="23" style="width:60px;border:1px solid #f59e0b;border-radius:6px;padding:5px 8px;font-size:12px;" /> h
+            <span style="font-size:12px;color:#78350f">à</span>
+            <input type="number" id="b-pointe-soir-fin" value="22" min="0" max="23" style="width:60px;border:1px solid #f59e0b;border-radius:6px;padding:5px 8px;font-size:12px;" /> h
+          </div>
+        </div>
+        <div style="background:#ede9fe;border-radius:10px;padding:12px 14px">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+            <div style="font-size:13px;font-weight:700;color:#5b21b6">🌙 Creuse nuit <span style="font-size:10px;font-weight:400">(coupures fréquentes)</span></div>
+            <label style="display:flex;align-items:center;gap:6px;font-size:12px;color:#5b21b6;cursor:pointer"><input type="checkbox" id="b-coupure-nuit" style="width:15px;height:15px;accent-color:#7c3aed" checked /> SBEE coupe</label>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px">
+            <span style="font-size:12px;color:#4c1d95">De</span>
+            <input type="number" id="b-nuit-debut" value="22" min="0" max="23" style="width:60px;border:1px solid #c4b5fd;border-radius:6px;padding:5px 8px;font-size:12px;" /> h
+            <span style="font-size:12px;color:#4c1d95">à</span>
+            <input type="number" id="b-nuit-fin" value="6" min="0" max="23" style="width:60px;border:1px solid #c4b5fd;border-radius:6px;padding:5px 8px;font-size:12px;" /> h
+          </div>
+        </div>
       </div>
-      <div style="font-size:11px;color:var(--gray-400);margin-top:6px">💡 Uniquement la portion solaire couvrira ces heures de coupure</div>
+      <div style="font-size:11px;color:var(--gray-400)">💡 Uniquement la portion solaire couvrira ces heures de coupure</div>
     </div>
 
     <div class="section-card">
@@ -102,10 +146,10 @@
         </div>
         <div id="budget-gamme-badge" style="border-radius:8px;padding:8px 14px;margin-bottom:12px;font-size:12px;font-weight:600;text-align:center"></div>
         <div class="results-grid" style="margin-bottom:16px">
-          <div class="result-card"><div class="result-icon icon-yellow">☀️</div><div><div class="result-label">Panneau solaire</div><div class="result-value" id="br-panneau">—</div><div class="result-sub" id="br-panneau-nb">—</div></div></div>
-          <div class="result-card"><div class="result-icon icon-blue">🔋</div><div><div class="result-label">Batterie</div><div class="result-value" id="br-batterie">—</div><div class="result-sub" id="br-batterie-info">—</div></div></div>
-          <div class="result-card"><div class="result-icon icon-purple">⚡</div><div><div class="result-label">Régulateur</div><div class="result-value" id="br-mppt">—</div><div class="result-sub" id="br-mppt-type">—</div></div></div>
-          <div class="result-card"><div class="result-icon icon-green">🔌</div><div><div class="result-label">Onduleur</div><div class="result-value" id="br-onduleur">—</div><div class="result-sub">Onde pure</div></div></div>
+          <div class="result-card"><div class="result-icon icon-yellow"><img src="/static/img/panneau.png" style="width:28px;height:28px;object-fit:contain;"></div><div><div class="result-label">Panneau solaire</div><div class="result-value" id="br-panneau">—</div><div class="result-sub" id="br-panneau-nb">—</div></div></div>
+          <div class="result-card"><div class="result-icon icon-blue"><img src="/static/img/batterie.png" style="width:28px;height:28px;object-fit:contain;"></div><div><div class="result-label">Batterie</div><div class="result-value" id="br-batterie">—</div><div class="result-sub" id="br-batterie-info">—</div></div></div>
+          <div class="result-card"><div class="result-icon icon-purple"><img src="/static/img/regulateur.png" style="width:28px;height:28px;object-fit:contain;"></div><div><div class="result-label">Régulateur</div><div class="result-value" id="br-mppt">—</div><div class="result-sub" id="br-mppt-type">—</div></div></div>
+          <div class="result-card"><div class="result-icon icon-green"><img src="/static/img/onduleur.png" style="width:28px;height:28px;object-fit:contain;"></div><div><div class="result-label">Onduleur</div><div class="result-value" id="br-onduleur">—</div><div class="result-sub">Onde pure</div></div></div>
         </div>
         <div style="font-size:12px;font-weight:600;color:var(--gray-600);margin-bottom:8px;padding-bottom:4px;border-bottom:1px solid var(--gray-100)">💰 Estimation budgétaire</div>
         <div style="overflow-x:auto">
@@ -387,10 +431,10 @@
 
       <div style="font-size:12px;font-weight:600;color:var(--gray-600);margin-bottom:8px;padding-bottom:4px;border-bottom:1px solid var(--gray-100)">⚡ Composants principaux</div>
       <div class="results-grid" style="margin-bottom:16px">
-        <div class="result-card"><div class="result-icon icon-blue">🔋</div><div><div class="result-label">Batterie</div><div class="result-value" id="res-batterie">—</div><div class="result-sub" id="res-batterie-info">—</div></div></div>
-        <div class="result-card"><div class="result-icon icon-green">🔌</div><div><div class="result-label">Onduleur</div><div class="result-value" id="res-onduleur">—</div><div class="result-sub" id="res-onduleur-type">Onde pure</div></div></div>
-        <div class="result-card"><div class="result-icon icon-purple">⚡</div><div><div class="result-label" style="display:flex;align-items:center;gap:4px">Régulateur<button class="help-btn" onclick="ouvrirHelp('mppt')">🔍</button></div><div class="result-value" id="res-mppt">—</div><div class="result-sub" id="res-mppt-type">—</div></div></div>
-        <div class="result-card"><div class="result-icon icon-yellow">☀️</div><div><div class="result-label">Panneau solaire</div><div class="result-value" id="res-panneau">—</div><div class="result-sub" id="res-panneau-nb">—</div></div></div>
+        <div class="result-card"><div class="result-icon icon-blue"><img src="/static/img/batterie.png" style="width:28px;height:28px;object-fit:contain;"></div><div><div class="result-label">Batterie</div><div class="result-value" id="res-batterie">—</div><div class="result-sub" id="res-batterie-info">—</div></div></div>
+        <div class="result-card"><div class="result-icon icon-green"><img src="/static/img/onduleur.png" style="width:28px;height:28px;object-fit:contain;"></div><div><div class="result-label">Onduleur</div><div class="result-value" id="res-onduleur">—</div><div class="result-sub" id="res-onduleur-type">Onde pure</div></div></div>
+        <div class="result-card"><div class="result-icon icon-purple"><img src="/static/img/regulateur.png" style="width:28px;height:28px;object-fit:contain;"></div><div><div class="result-label" style="display:flex;align-items:center;gap:4px">Régulateur<button class="help-btn" onclick="ouvrirHelp('mppt')">🔍</button></div><div class="result-value" id="res-mppt">—</div><div class="result-sub" id="res-mppt-type">—</div></div></div>
+        <div class="result-card"><div class="result-icon icon-yellow"><img src="/static/img/panneau.png" style="width:28px;height:28px;object-fit:contain;"></div><div><div class="result-label">Panneau solaire</div><div class="result-value" id="res-panneau">—</div><div class="result-sub" id="res-panneau-nb">—</div></div></div>
         <div class="result-card" id="res-ats-card" style="display:none"><div class="result-icon icon-blue">🔄</div><div><div class="result-label">ATS</div><div class="result-value" id="res-ats">—</div><div class="result-sub">Basculement auto SBEE</div></div></div>
       </div>
 

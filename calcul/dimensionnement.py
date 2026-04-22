@@ -474,179 +474,56 @@ def dimensionner(energie_a_couvrir, irradiation, type_systeme,
 # ============================================================
 
 def dimensionner_par_budget(budget_fcfa, irradiation, type_systeme,
-                             liste_appareils, type_batterie="AGM",
+                             liste_appareils, type_batterie='AGM',
                              jours_autonomie=1, heures_coupure=None,
-                             distance_panneaux_reg=5, distance_reg_bat=2,
-                             distance_bat_ond=1, distance_ac=3):
-
-    # ── Validation budget minimum ──
-    BUDGET_MIN = 200000
-    if budget_fcfa < BUDGET_MIN:
+                             **kwargs):
+    if budget_fcfa < 200000:
         return {
-            "compatible": False,
-            "erreur_budget": True,
-            "message": f"Budget insuffisant. Minimum requis : {BUDGET_MIN:,} FCFA pour une installation aux normes.",
+            'compatible': False,
+            'erreur_budget': True,
+            'message': "Veuillez saisir un budget d'au moins 200 000 FCFA",
         }
 
-    is_hybrid = "hybrid" in str(type_systeme).lower()
+    # Energie reelle des appareils
+    energie_brute = sum(
+        a['puissance'] * a.get('quantite', 1) *
+        (a.get('heures_jour', 0) + a.get('heures_nuit', 0) or a.get('heures', 4))
+        for a in liste_appareils
+    )
+    energie = energie_brute
 
-    # ── Répartition budget composants ──
-    # 40% panneaux / 40% batteries / 15% onduleur+reg / 5% câblage
-    budget_pan  = budget_fcfa * 0.40
-    budget_bat  = budget_fcfa * 0.40
-    budget_ond  = budget_fcfa * 0.15
+    if type_systeme in ('hybrid', 'hybride') and heures_coupure:
+        energie = energie * (heures_coupure / 24) * 1.40
 
-    # ── Prix IRENA 2024 × taux change × import ──
-    taux_fcfa = 571  # Taux temps réel — sera remplacé par API
-    coeff_import_pan = 1.30
-    coeff_import_bat = 1.40
+    if energie <= 0:
+        energie = 800  # fallback minimal
 
-    prix_wc = 0.25 * taux_fcfa * coeff_import_pan
-    prix_ah = {
-        "AGM":         0.95 * taux_fcfa * coeff_import_bat,
-        "Lithium-Ion": (150 / 1000 * 48) * taux_fcfa * coeff_import_bat,  # 150 USD/kWh → Ah à 48V
-        "Plomb-acide": 0.45 * taux_fcfa * coeff_import_bat,
-    }.get(type_batterie, 0.95 * taux_fcfa * coeff_import_bat)
+    dim = dimensionner(
+        energie_a_couvrir=energie,
+        irradiation=irradiation,
+        type_systeme=type_systeme,
+        liste_appareils=liste_appareils,
+        type_batterie=type_batterie,
+        jours_autonomie=jours_autonomie,
+        heures_coupure=heures_coupure,
+    )
 
-    # ── Dimensionner selon budget alloué ──
-    P_possible  = budget_pan / prix_wc
-    P_unitaire  = next((p for p in reversed(PUISSANCES_PAN) if p <= P_possible), PUISSANCES_PAN[0])
-    P_total     = P_unitaire
+    from calcul.conversion import calculer_prix_composants
+    prix = calculer_prix_composants(dim)
 
-    C_possible  = budget_bat / prix_ah
-    DoD         = DOD_TABLE.get(type_batterie, 0.50)
-    rendement   = RENDEMENT_BAT.get(type_batterie, 0.85)
-    C_unitaire  = next((c for c in reversed(CAPACITES_BAT) if c <= C_possible), CAPACITES_BAT[0])
-
-    tension     = determiner_tension(P_total)
-
-    # ── Gamme automatique ──
-    puissance_totale_w = sum(a["puissance"] * a.get("quantite", 1) for a in liste_appareils) * COEFF_SIMULT
-    E_journaliere = sum(a["puissance"] * a.get("quantite", 1) * a.get("heures", 4) for a in liste_appareils) * COEFF_SIMULT
-    gamme = determiner_gamme(E_journaliere, puissance_totale_w)
-
-    # ── Types onduleur et régulateur ──
-    type_ond = determiner_type_onduleur(gamme, type_systeme)
-    type_reg = determiner_type_regulateur(gamme, type_ond, P_total)
-
-    # ── Régulateur ──
-    I_reg_th = (P_total / tension) * COEFF_SEC
-    I_reg    = next((c for c in CALIBRES_REG if c >= I_reg_th), CALIBRES_REG[-1])
-
-    # ── Onduleur ──
-    P_ond_th   = max(puissance_totale_w * COEFF_SEC, 300)
-    P_onduleur = next((p for p in PUISSANCES_OND if p >= P_ond_th), PUISSANCES_OND[-1])
-
-    # ── ATS si hybride + classique ──
-    ats = None
-    if is_hybrid and type_ond == "classique":
-        p_ats_list = [1000, 2000, 3000, 5000]
-        ats = next((p for p in p_ats_list if p >= P_onduleur * COEFF_SEC), 5000)
-
-    # ── Énergie possible avec ce système ──
-    if is_hybrid and heures_coupure:
-        E_possible = P_total * irradiation * PR * (heures_coupure / 24) * COEFF_SEC
+    if prix.get('total', 0) <= budget_fcfa:
+        dim['compatible'] = True
+        dim['prix'] = prix
+        dim['budget_initial'] = budget_fcfa
+        return dim
     else:
-        E_possible = P_total * irradiation * PR
+        return {
+            'compatible': False,
+            'erreur_budget': False,
+            'message': 'Budget insuffisant pour couvrir vos besoins. Reduisez vos appareils ou augmentez votre budget.',
+            'budget_necessaire': prix.get('total', 0),
+        }
 
-    # ── Appareils couverts / à retirer ──
-    conso_reelle = E_journaliere
-    appareils_a_retirer = []
-    conso_cumul = 0
-    for a in sorted(liste_appareils, key=lambda x: x["puissance"] * x.get("quantite", 1) * x.get("heures", 4), reverse=True):
-        contrib = a["puissance"] * a.get("quantite", 1) * a.get("heures", 4) * COEFF_SIMULT
-        if conso_cumul + contrib > E_possible:
-            appareils_a_retirer.append({"nom": a["nom"], "puissance": a["puissance"], "contrib": round(contrib)})
-        else:
-            conso_cumul += contrib
-
-    # ── Câbles ──
-    dU_DC = tension * 0.03
-    dU_AC = 220 * 0.05
-
-    I_pan_reg = P_total / tension
-    S_pan_reg = calculer_section_cable(I_pan_reg, distance_panneaux_reg, dU_DC)
-    chute_pan_reg = verifier_chute_tension(I_pan_reg, distance_panneaux_reg, S_pan_reg, tension, 'DC')
-
-    I_reg_bat = P_total / tension
-    S_reg_bat = calculer_section_cable(I_reg_bat, distance_reg_bat, dU_DC)
-    chute_reg_bat = verifier_chute_tension(I_reg_bat, distance_reg_bat, S_reg_bat, tension, 'DC')
-
-    I_bat_ond = P_onduleur / tension
-    S_bat_ond = calculer_section_cable(I_bat_ond, distance_bat_ond, dU_DC)
-    chute_bat_ond = verifier_chute_tension(I_bat_ond, distance_bat_ond, S_bat_ond, tension, 'DC')
-
-    I_AC  = P_onduleur / 220
-    S_AC  = calculer_section_cable(I_AC, distance_ac, dU_AC)
-    chute_ac = verifier_chute_tension(I_AC, distance_ac, S_AC, 220, 'AC')
-
-    S_terre_DC = calculer_section_terre(S_pan_reg)
-    S_terre_AC = calculer_section_terre(S_AC)
-
-    disj_DC = next((c for c in CALIBRES_DISJ if c >= I_pan_reg * COEFF_SEC), 63)
-    disj_AC = next((c for c in CALIBRES_DISJ if c >= I_AC * COEFF_SEC), 63)
-
-    # ── Entretien ──
-    entretien_solaire = calculer_entretien_annuel(P_total)
-
-    return {
-        "compatible":          len(appareils_a_retirer) == 0,
-        "budget_initial":      budget_fcfa,
-        "gamme":               gamme,
-        "tension":             tension,
-        "E_possible":          round(E_possible, 1),
-        "conso_reelle":        round(conso_reelle, 1),
-        "appareils_a_retirer": appareils_a_retirer,
-
-        "panneau": {
-            "puissance_unitaire": P_unitaire,
-            "nombre":             1,
-            "puissance_totale":   P_total,
-        },
-        "batterie": {
-            "type":              type_batterie,
-            "capacite_unitaire": C_unitaire,
-            "nombre":            1,
-            "tension":           tension,
-            "DoD":               DoD,
-            "rendement":         rendement,
-        },
-        "regulateur": {
-            "courant": I_reg,
-            "type":    type_reg,
-        },
-        "onduleur": {
-            "puissance": P_onduleur,
-            "type":      type_ond,
-        },
-        "ats": ats,
-
-        "cables": {
-            "pan_reg": {
-                "type": "H1Z2Z2K", "section": S_pan_reg,
-                "metrage": distance_panneaux_reg * 2, "chute": chute_pan_reg,
-            },
-            "reg_bat": {
-                "type": "Souple rouge/noir", "section": S_reg_bat,
-                "metrage": distance_reg_bat * 2, "chute": chute_reg_bat,
-            },
-            "bat_ond": {
-                "type": "Souple rouge/noir", "section": S_bat_ond,
-                "metrage": distance_bat_ond * 2, "chute": chute_bat_ond,
-            },
-            "ac": {
-                "type": "H07RN-F", "section": S_AC,
-                "metrage": distance_ac * 2, "chute": chute_ac,
-            },
-            "terre_DC": S_terre_DC,
-            "terre_AC": S_terre_AC,
-        },
-
-        "disjoncteurs":     {"DC": disj_DC, "AC": disj_AC},
-        "puissance_installee": round(puissance_totale_w, 1),
-        "entretien_solaire":   entretien_solaire,
-        "is_hybrid":           is_hybrid,
-    }
 
 
 # ============================================================
