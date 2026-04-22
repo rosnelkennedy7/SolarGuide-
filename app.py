@@ -21,6 +21,10 @@ app.config['SQLALCHEMY_DATABASE_URI'] = _db_url
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['PERMANENT_SESSION_LIFETIME']  = timedelta(hours=24)
 
+KKIAPAY_PUBLIC_KEY  = os.environ.get('KKIAPAY_PUBLIC_KEY', '')
+KKIAPAY_PRIVATE_KEY = os.environ.get('KKIAPAY_PRIVATE_KEY', '')
+KKIAPAY_SECRET      = os.environ.get('KKIAPAY_SECRET', '')
+
 # Init extensions avec l'app
 db.init_app(app)
 bcrypt.init_app(app)
@@ -336,7 +340,10 @@ def page_paiement():
         if current_user.role == 'technicien':
             return redirect(url_for('technicien_dashboard'))
         return redirect(url_for('user_dashboard'))
-    return render_template('paiement.html', user=current_user)
+    montant = 1500 if current_user.role == 'user' else 3000
+    return render_template('paiement.html', user=current_user,
+                           kkiapay_public_key=KKIAPAY_PUBLIC_KEY,
+                           montant=montant)
 
 
 # ─── API IRRADIATION ────────────────────────────────────────────────
@@ -594,6 +601,63 @@ def initier_paiement():
         "numero":    numero,
         "message":   f"Envoyez {montant:,} FCFA au {numero} ({operateur}). Référence : {reference}",
     })
+
+
+@app.route('/paiement/callback', methods=['POST'])
+def kkiapay_callback():
+    """Webhook KKiaPay — vérifie la transaction et active l'accès."""
+    import requests as req
+    data           = request.get_json(silent=True) or {}
+    transaction_id = data.get('transactionId') or data.get('transaction_id')
+    if not transaction_id:
+        return jsonify({'error': 'transactionId manquant'}), 400
+
+    try:
+        resp = req.post(
+            'https://api.kkiapay.me/api/v1/transactions/status',
+            json={'transactionId': transaction_id},
+            headers={
+                'x-private-key': KKIAPAY_PRIVATE_KEY,
+                'x-secret-key':  KKIAPAY_SECRET,
+            },
+            timeout=10,
+        )
+        result = resp.json()
+    except Exception:
+        return jsonify({'error': 'Erreur vérification KKiaPay'}), 502
+
+    if result.get('status') != 'SUCCESS':
+        return jsonify({'error': 'Paiement non confirmé'}), 402
+
+    amount    = result.get('amount', 0)
+    reference = f"KKP-{transaction_id}"
+
+    # Évite les doublons
+    if Paiement.query.filter_by(reference=reference).first():
+        return jsonify({'succes': True, 'info': 'already_processed'})
+
+    # Détermine le type_paiement depuis le montant
+    type_paiement = next(
+        (k for k, v in MONTANTS.items() if v == amount),
+        'user'
+    )
+
+    p = Paiement(
+        user_id       = result.get('metadata', {}).get('user_id') or (current_user.id if current_user.is_authenticated else None),
+        montant       = amount,
+        operateur     = 'KKiaPay',
+        statut        = 'confirme',
+        reference     = reference,
+        type_paiement = type_paiement,
+    )
+    if p.user_id is None:
+        return jsonify({'error': 'user_id introuvable'}), 400
+
+    db.session.add(p)
+    db.session.commit()
+    _activer_acces(p)
+    db.session.commit()
+    return jsonify({'succes': True})
 
 
 @app.route('/paiement/confirmer', methods=['POST'])

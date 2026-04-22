@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>HélioBénin — Dimensionnement solaire PV</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Fraunces:wght@700;800&display=swap" rel="stylesheet" />
+  <script src="https://cdn.kkiapay.me/k.js"></script>
   <style>
     *{margin:0;padding:0;box-sizing:border-box}
     :root{
@@ -193,9 +194,15 @@
       </div>
     </div>
 
-    <button class="btn-pay" id="btn-pay" onclick="initierPaiement()">
-      <span id="btn-pay-text">💳 Initier le paiement</span>
-    </button>
+    <kkiapay-widget
+      amount="{{ montant }}"
+      api_key="{{ kkiapay_public_key }}"
+      sandbox="false"
+      phone=""
+      name="{{ user.prenom }} {{ user.nom }}"
+      data='{"user_id":"{{ user.id }}"}'
+      callback="/paiement/callback">
+    </kkiapay-widget>
   </div>
 
   <!-- CONFIRMATION APRÈS INITIATION -->
