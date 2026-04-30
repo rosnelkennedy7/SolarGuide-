@@ -1,0 +1,29 @@
+:root {
+  --primary: #f59e0b;
+  --primary-dark: #d97706;
+  --secondary: #065f46;
+  --bg: #f9fafb;
+  --text: #111827;
+  --border: #e5e7eb;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+}
+
+a {
+  color: var(--primary-dark);
+  text-decoration: none;
+}
+
+button {
+  cursor: pointer;
+}

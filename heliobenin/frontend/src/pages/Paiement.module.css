@@ -1,0 +1,310 @@
+/* ══════════════════════════════════════
+   Paiement — fond vitre + overlay
+══════════════════════════════════════ */
+.page {
+  position: relative;
+  min-height: 100vh;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 0;
+}
+
+.content {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  min-height: 100vh;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 2rem 1rem;
+  overflow-y: auto;
+}
+
+/* ── Carte centrale ── */
+.card {
+  background: rgba(0, 0, 0, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 18px;
+  padding: 2rem 2rem 1.75rem;
+  width: 100%;
+  max-width: 420px;
+  color: #ffffff;
+  margin: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+}
+
+/* ── Succès ── */
+.successCard {
+  align-items: center;
+  text-align: center;
+  gap: 0.85rem;
+  padding: 3rem 2rem;
+}
+
+.successTitle {
+  font-size: 1.55rem;
+  font-weight: 800;
+  color: #22c55e;
+  margin: 0;
+}
+
+.successMsg {
+  font-size: 1rem;
+  color: rgba(255, 255, 255, 0.85);
+  margin: 0;
+}
+
+.successRedirect {
+  font-size: 0.82rem;
+  color: rgba(255, 255, 255, 0.4);
+  margin: 0;
+}
+
+/* ── Logo ── */
+.cardLogo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45rem;
+  margin-bottom: 0.3rem;
+}
+
+.logoText {
+  font-size: 1.35rem;
+  font-weight: 800;
+}
+
+.logoHelio { color: #ffffff; }
+.logoBenin { color: #F59E0B; }
+
+.cardSlogan {
+  text-align: center;
+  font-size: 0.8rem;
+  color: rgba(255, 255, 255, 0.5);
+  margin-bottom: 1.5rem;
+}
+
+/* ── Montant ── */
+.montantRow {
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  gap: 0.55rem;
+  margin-bottom: 0.3rem;
+}
+
+.montant {
+  font-size: 3.6rem;
+  font-weight: 900;
+  color: #ffffff;
+  letter-spacing: -1px;
+  line-height: 1;
+}
+
+.devise {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #F59E0B;
+}
+
+.montantLabel {
+  text-align: center;
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.5);
+  margin-bottom: 1.4rem;
+}
+
+/* ── Séparateur ── */
+.sep {
+  border: none;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  margin: 0 0 1.3rem;
+}
+
+/* ── Réseau de paiement ── */
+.reseauTitle {
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.09em;
+  color: rgba(255, 255, 255, 0.45);
+  text-align: center;
+  margin-bottom: 0.95rem;
+}
+
+.reseaux {
+  display: flex;
+  gap: 0.7rem;
+  margin-bottom: 1.25rem;
+}
+
+.reseauCard {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.85rem 0.4rem 0.7rem;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1.5px solid rgba(255, 255, 255, 0.12);
+  border-radius: 10px;
+  cursor: pointer;
+  transition: border-color 0.2s, background 0.2s;
+}
+
+.reseauCard:hover {
+  background: rgba(255, 255, 255, 0.09);
+  border-color: rgba(255, 255, 255, 0.28);
+}
+
+.reseauActive {
+  border-color: #F59E0B !important;
+  background: rgba(245, 158, 11, 0.1) !important;
+}
+
+.reseauImg {
+  width: 60px;
+  height: 38px;
+  object-fit: contain;
+  border-radius: 5px;
+}
+
+.reseauLabel {
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.7);
+  text-align: center;
+  line-height: 1.3;
+}
+
+/* ── Champ numéro ── */
+.numField {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  margin-bottom: 1.1rem;
+}
+
+.numLabel {
+  font-size: 0.88rem;
+  color: rgba(255, 255, 255, 0.78);
+  font-weight: 500;
+}
+
+.numInput {
+  background: rgba(255, 255, 255, 0.07);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 8px;
+  padding: 0.65rem 0.8rem;
+  font-size: 0.95rem;
+  color: #ffffff;
+  outline: none;
+  transition: border-color 0.2s;
+  width: 100%;
+}
+
+.numInput::placeholder {
+  color: rgba(255, 255, 255, 0.3);
+}
+
+.numInput:focus {
+  border-color: rgba(255, 255, 255, 0.45);
+}
+
+/* ── Bouton payer ── */
+.btnPayer {
+  width: 100%;
+  padding: 0.88rem;
+  background: #F59E0B;
+  color: #000000;
+  font-size: 1rem;
+  font-weight: 700;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.2s;
+  margin-top: 0.25rem;
+  margin-bottom: 0.85rem;
+}
+
+.btnPayer:hover:not(.btnDisabled) {
+  background: #D97706;
+}
+
+.btnDisabled {
+  background: rgba(255, 255, 255, 0.12) !important;
+  color: rgba(255, 255, 255, 0.3) !important;
+  cursor: not-allowed;
+}
+
+/* Loader dans le bouton */
+.loadingInner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.spinner {
+  animation: spin 1s linear infinite;
+}
+
+/* Erreur champ numéro */
+.numInputErr {
+  border-color: #ef4444 !important;
+}
+
+.errMsg {
+  font-size: 0.78rem;
+  color: #ef4444;
+  margin-top: 0.2rem;
+}
+
+.required {
+  color: #ef4444;
+  margin-left: 2px;
+}
+
+/* ── Mention sécurisé ── */
+.secure {
+  text-align: center;
+  font-size: 0.78rem;
+  color: rgba(255, 255, 255, 0.38);
+  margin: 0;
+}
+
+/* ── Responsive ── */
+@media (max-width: 460px) {
+  .card {
+    padding: 1.5rem 1.2rem;
+  }
+
+  .montant {
+    font-size: 2.9rem;
+  }
+
+  .reseauImg {
+    width: 46px;
+    height: 30px;
+  }
+
+  .reseauLabel {
+    font-size: 0.63rem;
+  }
+}

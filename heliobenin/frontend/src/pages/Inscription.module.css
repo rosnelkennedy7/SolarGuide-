@@ -1,0 +1,314 @@
+/* ══════════════════════════════════════
+   Inscription — fond plein écran + overlay
+══════════════════════════════════════ */
+.page {
+  position: relative;
+  min-height: 100vh;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.55);
+  z-index: 0;
+}
+
+.content {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  min-height: 100vh;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 2rem 1rem;
+  overflow-y: auto;
+}
+
+/* ── Carte centrale ── */
+.card {
+  background: rgba(0, 0, 0, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 18px;
+  padding: 2rem 2rem 1.75rem;
+  width: 100%;
+  max-width: 490px;
+  color: #ffffff;
+  margin: auto;
+}
+
+/* ── Logo ── */
+.cardLogo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45rem;
+  margin-bottom: 0.3rem;
+}
+
+.logoText {
+  font-size: 1.35rem;
+  font-weight: 800;
+}
+
+.logoHelio { color: #ffffff; }
+.logoBenin { color: #F59E0B; }
+
+.cardSlogan {
+  text-align: center;
+  font-size: 0.82rem;
+  color: rgba(255, 255, 255, 0.5);
+  margin-bottom: 1.5rem;
+}
+
+/* ── Onglets ── */
+.tabs {
+  display: flex;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  margin-bottom: 1.5rem;
+}
+
+.tab {
+  flex: 1;
+  padding: 0.65rem;
+  font-size: 0.95rem;
+  font-weight: 600;
+  background: transparent;
+  border: none;
+  color: rgba(255, 255, 255, 0.5);
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+}
+
+.tabOrange {
+  background: rgba(245, 158, 11, 0.18);
+  color: #F59E0B;
+  border-bottom: 2px solid #F59E0B;
+}
+
+.tabBlue {
+  background: rgba(14, 165, 233, 0.18);
+  color: #0EA5E9;
+  border-bottom: 2px solid #0EA5E9;
+}
+
+/* ── Champs du formulaire ── */
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  margin-bottom: 1.05rem;
+}
+
+.field label {
+  font-size: 0.92rem;
+  color: rgba(255, 255, 255, 0.8);
+  font-weight: 500;
+}
+
+.required {
+  color: #ef4444;
+  margin-left: 2px;
+}
+
+.field input,
+.field select {
+  background: rgba(255, 255, 255, 0.07);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 8px;
+  padding: 0.6rem 0.8rem;
+  font-size: 0.95rem;
+  color: #ffffff;
+  outline: none;
+  transition: border-color 0.2s;
+  width: 100%;
+}
+
+.field input::placeholder {
+  color: rgba(255, 255, 255, 0.3);
+}
+
+.field input:focus,
+.field select:focus {
+  border-color: rgba(255, 255, 255, 0.45);
+}
+
+.field select option {
+  background: #1a1a1a;
+  color: #fff;
+}
+
+.inputError {
+  border-color: #ef4444 !important;
+}
+
+.errorMsg {
+  font-size: 0.8rem;
+  color: #ef4444;
+}
+
+/* ── Ligne à deux colonnes ── */
+.row {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.row .field {
+  flex: 1;
+  min-width: 0;
+}
+
+/* ── Champ téléphone (préfixe fixe +229) ── */
+.phoneWrap {
+  display: flex;
+  align-items: stretch;
+  background: rgba(255, 255, 255, 0.07);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 8px;
+  overflow: hidden;
+  transition: border-color 0.2s;
+}
+
+.phoneWrap:focus-within {
+  border-color: rgba(255, 255, 255, 0.45);
+}
+
+.phoneError {
+  border-color: #ef4444 !important;
+}
+
+.phonePrefix {
+  padding: 0.6rem 0.7rem;
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.6);
+  white-space: nowrap;
+  border-right: 1px solid rgba(255, 255, 255, 0.12);
+  user-select: none;
+  display: flex;
+  align-items: center;
+}
+
+.phoneInput {
+  flex: 1;
+  min-width: 0;
+  background: transparent;
+  border: none;
+  padding: 0.6rem 0.75rem;
+  font-size: 0.95rem;
+  color: #ffffff;
+  outline: none;
+  letter-spacing: 0.05em;
+}
+
+.phoneInput::placeholder {
+  color: rgba(255, 255, 255, 0.3);
+  letter-spacing: normal;
+}
+
+/* ── Champ mot de passe avec bouton œil ── */
+.passwordWrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.passwordWrap input {
+  padding-right: 2.5rem;
+}
+
+.eyeBtn {
+  position: absolute;
+  right: 0.65rem;
+  background: none;
+  border: none;
+  color: rgba(255, 255, 255, 0.45);
+  cursor: pointer;
+  padding: 0;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+}
+
+.eyeBtn:hover {
+  color: rgba(255, 255, 255, 0.8);
+}
+
+/* ── Bandeaux info ── */
+.infoOrange {
+  background: rgba(245, 158, 11, 0.12);
+  border: 1px solid rgba(245, 158, 11, 0.3);
+  border-radius: 8px;
+  padding: 0.75rem 0.9rem;
+  font-size: 0.82rem;
+  color: rgba(255, 220, 130, 0.9);
+  line-height: 1.55;
+  margin-bottom: 1rem;
+}
+
+.infoBlue {
+  background: rgba(14, 165, 233, 0.12);
+  border: 1px solid rgba(14, 165, 233, 0.3);
+  border-radius: 8px;
+  padding: 0.75rem 0.9rem;
+  font-size: 0.82rem;
+  color: rgba(147, 210, 245, 0.95);
+  line-height: 1.55;
+  margin-bottom: 1rem;
+}
+
+/* ── Boutons de soumission ── */
+.btnOrange {
+  width: 100%;
+  padding: 0.8rem;
+  background: #F59E0B;
+  color: #000000;
+  font-size: 0.98rem;
+  font-weight: 700;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.2s;
+  margin-top: 0.25rem;
+}
+
+.btnOrange:hover {
+  background: #D97706;
+}
+
+.btnBlue {
+  width: 100%;
+  padding: 0.8rem;
+  background: #0EA5E9;
+  color: #ffffff;
+  font-size: 0.98rem;
+  font-weight: 700;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.2s;
+  margin-top: 0.25rem;
+}
+
+.btnBlue:hover {
+  background: #0284C7;
+}
+
+/* ── Responsive ── */
+@media (max-width: 500px) {
+  .card {
+    padding: 1.5rem 1.2rem;
+  }
+
+  .row {
+    flex-direction: column;
+    gap: 0;
+  }
+}

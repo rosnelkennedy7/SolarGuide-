@@ -1,0 +1,34 @@
+.page {
+  max-width: 860px;
+  margin: 2rem auto;
+  padding: 0 1.5rem;
+}
+
+h1 { font-size: 1.8rem; margin-bottom: 0.25rem; }
+.subtitle { color: #6b7280; margin-bottom: 1.5rem; }
+
+.form { background: #fff; border-radius: 12px; padding: 1.5rem; box-shadow: 0 1px 4px #0001; }
+
+.table { width: 100%; border-collapse: collapse; margin-bottom: 1rem; }
+.table th { text-align: left; padding: 0.5rem; font-size: 0.85rem; color: #6b7280; border-bottom: 1px solid var(--border); }
+.table td { padding: 0.4rem; }
+.table input { width: 100%; padding: 0.35rem 0.5rem; border: 1px solid var(--border); border-radius: 6px; font-size: 0.95rem; }
+
+.del { background: none; border: none; color: #ef4444; font-size: 1rem; padding: 0.25rem 0.5rem; }
+.addBtn { background: none; border: 1px dashed var(--border); padding: 0.5rem 1rem; border-radius: 6px; color: #6b7280; margin-bottom: 1rem; }
+.addBtn:hover { border-color: var(--primary); color: var(--primary-dark); }
+
+.options { display: flex; gap: 2rem; margin-bottom: 1.5rem; flex-wrap: wrap; }
+.options label { display: flex; flex-direction: column; gap: 0.35rem; font-size: 0.9rem; color: #4b5563; }
+.options select { padding: 0.4rem 0.75rem; border: 1px solid var(--border); border-radius: 6px; }
+
+.calcBtn { background: var(--primary); color: #fff; border: none; padding: 0.75rem 2rem; border-radius: 8px; font-size: 1rem; font-weight: 600; }
+.calcBtn:disabled { opacity: 0.6; }
+.erreur { color: #ef4444; margin-top: 0.75rem; }
+
+.result { margin-top: 2rem; }
+.result h2 { margin-bottom: 1rem; }
+.cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1rem; }
+.card { background: #fff; border-radius: 12px; padding: 1.25rem; text-align: center; box-shadow: 0 1px 4px #0001; border-top: 3px solid var(--primary); }
+.card span { display: block; font-size: 1.5rem; font-weight: 700; color: var(--secondary); }
+.card label { font-size: 0.85rem; color: #6b7280; }

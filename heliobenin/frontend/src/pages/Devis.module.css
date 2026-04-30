@@ -1,0 +1,9 @@
+.page { max-width: 520px; margin: 2rem auto; padding: 0 1.5rem; }
+h1 { font-size: 1.8rem; margin-bottom: 0.5rem; }
+.info { color: #6b7280; margin-bottom: 1.5rem; }
+.form { background: #fff; border-radius: 12px; padding: 1.5rem; box-shadow: 0 1px 4px #0001; display: flex; flex-direction: column; gap: 1rem; }
+.form label { display: flex; flex-direction: column; gap: 0.35rem; font-size: 0.9rem; color: #374151; }
+.form input, .form select { padding: 0.5rem 0.75rem; border: 1px solid var(--border); border-radius: 6px; font-size: 0.95rem; }
+.erreur { color: #ef4444; }
+.btn { background: var(--secondary); color: #fff; border: none; padding: 0.75rem; border-radius: 8px; font-size: 1rem; font-weight: 600; }
+.btn:disabled { opacity: 0.6; }

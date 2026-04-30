@@ -1,0 +1,524 @@
+/* ══════════════════════════════════════
+   Page — fond vitre + overlay
+══════════════════════════════════════ */
+.page {
+  position: relative;
+  min-height: 100vh;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  display: flex;
+  flex-direction: column;
+}
+
+.overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.2);
+  z-index: 0;
+}
+
+.inner {
+  position: relative;
+  z-index: 1;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding: 1.5rem 1.25rem 2rem;
+  max-width: 980px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+/* ══════════════════════════════════════
+   Stepper
+══════════════════════════════════════ */
+.stepper {
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 80px;
+}
+
+.stepWrap { display: flex; align-items: center; }
+
+.stepItem {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.45rem;
+}
+
+.stepDot {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.1);
+  border: 2.5px solid rgba(255, 255, 255, 0.22);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.4);
+}
+
+.stepDotActive {
+  background: #F59E0B;
+  border-color: #F59E0B;
+  color: #fff;
+  box-shadow: 0 0 0 5px rgba(245, 158, 11, 0.2);
+}
+
+.stepDotDone {
+  background: #22C55E;
+  border-color: #22C55E;
+  color: #fff;
+  box-shadow: 0 0 0 5px rgba(34, 197, 94, 0.2);
+}
+
+.stepLabel {
+  font-size: 1rem;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.4);
+  white-space: nowrap;
+}
+
+.stepLabelActive { color: #F59E0B; }
+
+/* ══════════════════════════════════════
+   Budget
+══════════════════════════════════════ */
+.budgetSection {
+  background: rgba(15, 23, 42, 0.85);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  padding: 1rem 1.1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+}
+
+.budgetLabel {
+  font-size: 1rem;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.82);
+}
+
+.budgetInputWrap {
+  display: flex;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.07);
+  border: 1.5px solid rgba(255, 255, 255, 0.15);
+  border-radius: 9px;
+  padding: 0 0.9rem;
+  transition: border-color 0.2s;
+}
+
+.budgetInputWrap:focus-within { border-color: rgba(245, 158, 11, 0.55); }
+.budgetError { border-color: #EF4444 !important; }
+
+.budgetInput {
+  flex: 1;
+  background: transparent;
+  border: none;
+  outline: none;
+  color: #fff;
+  font-size: 1rem;
+  font-family: inherit;
+  padding: 0.72rem 0;
+  letter-spacing: 0.02em;
+}
+
+.budgetInput::placeholder { color: rgba(255, 255, 255, 0.28); }
+
+.budgetCurrency {
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.45);
+  flex-shrink: 0;
+}
+
+.budgetHint {
+  font-size: 0.82rem;
+  color: rgba(255, 255, 255, 0.4);
+  margin: 0;
+}
+
+.budgetHintError {
+  color: #EF4444;
+  font-weight: 600;
+}
+
+/* ══════════════════════════════════════
+   Boutons d'ajout (droite)
+══════════════════════════════════════ */
+.actionsRow {
+  display: flex;
+  gap: 0.65rem;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+}
+
+.btnAddLigne {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.62rem 1.1rem;
+  background: #F59E0B;
+  border: none;
+  border-radius: 9px;
+  color: #000;
+  font-size: 0.95rem;
+  font-weight: 700;
+  font-family: inherit;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.btnAddLigne:hover { background: #D97706; }
+
+.btnAddManual {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.62rem 1.1rem;
+  background: transparent;
+  border: 1.5px solid rgba(255, 255, 255, 0.4);
+  border-radius: 9px;
+  color: rgba(255, 255, 255, 0.82);
+  font-size: 0.95rem;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  transition: background 0.2s, border-color 0.2s;
+}
+
+.btnAddManual:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.65);
+}
+
+/* ══════════════════════════════════════
+   Tableau
+══════════════════════════════════════ */
+.tableWrap {
+  overflow-x: auto;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.table {
+  width: 100%;
+  min-width: 620px;
+  border-collapse: collapse;
+  background: rgba(15, 23, 42, 0.85);
+}
+
+.th {
+  padding: 0.65rem 0.75rem;
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.45);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  text-align: left;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  white-space: nowrap;
+  vertical-align: top;
+  display: table-cell;
+}
+
+.thApp { min-width: 210px; }
+
+.thSub {
+  display: block;
+  font-size: 0.68rem;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.28);
+  text-transform: none;
+  letter-spacing: 0;
+  margin-top: 0.15rem;
+}
+
+.td {
+  padding: 0.5rem 0.65rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  vertical-align: middle;
+}
+
+.tdApp {
+  padding: 0.5rem 0.65rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  vertical-align: middle;
+  min-width: 210px;
+}
+
+.rowError { background: rgba(239, 68, 68, 0.06); }
+
+.emptyMsg {
+  text-align: center;
+  color: rgba(255, 255, 255, 0.3);
+  font-size: 0.9rem;
+  padding: 2.2rem 1rem;
+  font-style: italic;
+}
+
+/* ── Inputs dans les cellules ── */
+.cellInput {
+  width: 100%;
+  background: rgba(255, 255, 255, 0.07);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 7px;
+  color: #fff;
+  font-size: 0.9rem;
+  font-family: inherit;
+  padding: 0.4rem 0.5rem;
+  outline: none;
+  transition: border-color 0.15s;
+}
+
+.cellInput:focus { border-color: rgba(245, 158, 11, 0.5); }
+.cellInputError  { border-color: #EF4444 !important; background: rgba(239, 68, 68, 0.08) !important; }
+.cellNum         { max-width: 72px; }
+
+.cellNuitWrap {
+  display: flex;
+  flex-direction: column;
+  gap: 0.22rem;
+}
+
+.overflowMsg {
+  font-size: 0.7rem;
+  color: #EF4444;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+/* ── Dropdown trigger dans la cellule ── */
+.ddTrigger {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.4rem;
+  padding: 0.42rem 0.6rem;
+  background: rgba(255, 255, 255, 0.07);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 7px;
+  color: rgba(255, 255, 255, 0.82);
+  font-size: 0.9rem;
+  font-family: inherit;
+  cursor: pointer;
+  min-height: 34px;
+  transition: border-color 0.15s;
+  text-align: left;
+}
+
+.ddTrigger:hover      { border-color: rgba(255, 255, 255, 0.3); }
+.ddTriggerOpen        { border-color: rgba(245, 158, 11, 0.6); }
+
+.ddValue {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  flex: 1;
+  min-width: 0;
+}
+
+.ddPlaceholder {
+  color: rgba(255, 255, 255, 0.28);
+  font-size: 0.88rem;
+  flex: 1;
+}
+
+.ddChevron {
+  flex-shrink: 0;
+  color: rgba(255, 255, 255, 0.4);
+  transition: transform 0.18s;
+}
+
+.ddChevronOpen { transform: rotate(180deg); }
+
+/* ── Bouton poubelle ── */
+.trashBtn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: rgba(255, 255, 255, 0.3);
+  display: flex;
+  align-items: center;
+  padding: 0.3rem;
+  border-radius: 6px;
+  transition: color 0.2s, background 0.2s;
+}
+
+.trashBtn:hover {
+  color: #EF4444;
+  background: rgba(239, 68, 68, 0.1);
+}
+
+/* ══════════════════════════════════════
+   Navigation bas
+══════════════════════════════════════ */
+.bottomNav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.65rem;
+}
+
+.btnRetour {
+  padding: 0.65rem 1.2rem;
+  background: rgba(255, 255, 255, 0.07);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 9px;
+  color: rgba(255, 255, 255, 0.72);
+  font-size: 1rem;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.btnRetour:hover { background: rgba(255, 255, 255, 0.13); }
+
+.btnSuivant {
+  padding: 0.65rem 1.6rem;
+  background: #F59E0B;
+  border: none;
+  border-radius: 9px;
+  color: #000;
+  font-size: 1rem;
+  font-weight: 700;
+  font-family: inherit;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.btnSuivant:hover:not(.btnDisabled) { background: #D97706; }
+
+.btnDisabled {
+  background: rgba(255, 255, 255, 0.1) !important;
+  color: rgba(255, 255, 255, 0.28) !important;
+  cursor: not-allowed;
+}
+
+/* ══════════════════════════════════════
+   Dropdown global (position: fixed)
+══════════════════════════════════════ */
+.ddBackdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 400;
+}
+
+.ddPanel {
+  position: fixed;
+  width: 320px;
+  z-index: 401;
+  background: rgba(10, 15, 30, 0.98);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.65);
+  display: flex;
+  flex-direction: column;
+  max-height: 380px;
+}
+
+.ddSearchRow {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.6rem 0.85rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+  flex-shrink: 0;
+}
+
+.ddSearchInput {
+  flex: 1;
+  background: transparent;
+  border: none;
+  outline: none;
+  color: #fff;
+  font-size: 0.9rem;
+  font-family: inherit;
+  padding: 0.2rem 0;
+}
+
+.ddSearchInput::placeholder { color: rgba(255, 255, 255, 0.28); }
+
+.ddList {
+  overflow-y: auto;
+  flex: 1;
+}
+
+.catHeader {
+  padding: 0.45rem 0.85rem 0.3rem;
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.35);
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  background: rgba(255, 255, 255, 0.03);
+  position: sticky;
+  top: 0;
+}
+
+.catItem {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 0.52rem 0.85rem;
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+  color: rgba(255, 255, 255, 0.82);
+  font-size: 0.88rem;
+  font-family: inherit;
+  text-align: left;
+  cursor: pointer;
+  gap: 0.75rem;
+  transition: background 0.12s;
+}
+
+.catItem:hover {
+  background: rgba(245, 158, 11, 0.1);
+  color: #fff;
+}
+
+.catName {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.catPower {
+  font-size: 0.78rem;
+  color: rgba(255, 255, 255, 0.35);
+  flex-shrink: 0;
+}
+
+.noResult {
+  padding: 1.2rem 0.85rem;
+  text-align: center;
+  color: rgba(255, 255, 255, 0.3);
+  font-size: 0.88rem;
+  font-style: italic;
+}
+
+/* ══════════════════════════════════════
+   Responsive
+══════════════════════════════════════ */
+@media (max-width: 560px) {
+  .stepper { gap: 28px; }
+  .stepDot { width: 38px; height: 38px; font-size: 1rem; }
+  .stepLabel { font-size: 0.72rem; }
+  .inner { padding: 1.25rem 0.75rem 1.5rem; }
+  .actionsRow { justify-content: stretch; flex-direction: column; }
+  .btnAddLigne, .btnAddManual { width: 100%; justify-content: center; }
+}

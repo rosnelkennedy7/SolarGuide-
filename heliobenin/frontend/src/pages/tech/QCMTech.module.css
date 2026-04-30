@@ -1,0 +1,226 @@
+/* ══════════════════════════════════════
+   QCMTech — fond vitre + overlay
+══════════════════════════════════════ */
+.page {
+  position: relative;
+  min-height: 100vh;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 0;
+}
+
+.content {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  min-height: 100vh;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 4.5rem 1rem 2rem;
+  overflow-y: auto;
+}
+
+/* ── Carte centrale ── */
+.card {
+  background: rgba(0, 0, 0, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 18px;
+  padding: 2rem 2rem 1.75rem;
+  width: 100%;
+  max-width: 480px;
+  color: #ffffff;
+  margin: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+}
+
+/* ── Logo ── */
+.cardLogo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45rem;
+  margin-bottom: 0.3rem;
+}
+
+.logoText {
+  font-size: 1.35rem;
+  font-weight: 800;
+}
+
+.logoHelio { color: #ffffff; }
+.logoBenin { color: #F59E0B; }
+
+.cardSlogan {
+  text-align: center;
+  font-size: 0.8rem;
+  color: rgba(255, 255, 255, 0.5);
+  margin-bottom: 1.25rem;
+}
+
+/* ── Barre de progression ── */
+.progressLabel {
+  text-align: center;
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.6);
+  margin-bottom: 0.5rem;
+}
+
+.progressBar {
+  width: 100%;
+  height: 5px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 99px;
+  overflow: hidden;
+  margin-bottom: 1.5rem;
+}
+
+.progressFill {
+  height: 100%;
+  background: #F59E0B;
+  border-radius: 99px;
+  transition: width 0.35s ease;
+}
+
+/* ── Texte de la question ── */
+.questionText {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #ffffff;
+  line-height: 1.5;
+  margin-bottom: 1.1rem;
+}
+
+/* ── Options ── */
+.options {
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+  margin-bottom: 1.25rem;
+}
+
+.option {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  width: 100%;
+  padding: 0.85rem;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1.5px solid rgba(255, 255, 255, 0.12);
+  border-radius: 10px;
+  color: rgba(255, 255, 255, 0.82);
+  font-size: 0.9rem;
+  font-family: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: border-color 0.2s, background 0.2s;
+}
+
+.option:hover:not(.optionSelected) {
+  background: rgba(255, 255, 255, 0.09);
+  border-color: rgba(255, 255, 255, 0.25);
+}
+
+.optionSelected {
+  border-color: #F59E0B !important;
+  background: rgba(245, 158, 11, 0.10) !important;
+}
+
+.optionCircle {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  flex-shrink: 0;
+  transition: border-color 0.2s, background 0.2s;
+}
+
+.optionCircleSelected {
+  background: #F59E0B;
+  border-color: #F59E0B;
+}
+
+.optionText {
+  flex: 1;
+  line-height: 1.4;
+}
+
+/* ── Bouton Suivant / Voir le résultat ── */
+.btnNext {
+  width: 100%;
+  padding: 0.88rem;
+  background: #F59E0B;
+  color: #000000;
+  font-size: 1rem;
+  font-weight: 700;
+  font-family: inherit;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.btnNext:hover {
+  background: #D97706;
+}
+
+/* ── Écran résultat ── */
+.resultCard {
+  align-items: center;
+  text-align: center;
+  gap: 0.6rem;
+  padding: 2.5rem 2rem;
+}
+
+.resultIcon {
+  margin: 0.5rem 0;
+}
+
+.resultTitleSuccess {
+  font-size: 1.55rem;
+  font-weight: 800;
+  color: #22c55e;
+  margin: 0;
+}
+
+.resultTitleFail {
+  font-size: 1.55rem;
+  font-weight: 800;
+  color: #ef4444;
+  margin: 0;
+}
+
+.resultScore {
+  font-size: 0.92rem;
+  color: rgba(255, 255, 255, 0.82);
+  margin: 0;
+}
+
+.resultHint {
+  font-size: 0.82rem;
+  color: rgba(255, 255, 255, 0.45);
+  margin: 0;
+}
+
+/* ── Responsive ── */
+@media (max-width: 520px) {
+  .card {
+    padding: 1.5rem 1.2rem;
+  }
+  .content {
+    padding: 3.5rem 0.75rem 1.5rem;
+  }
+}
