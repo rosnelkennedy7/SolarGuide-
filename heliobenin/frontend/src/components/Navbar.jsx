@@ -1,18 +1,28 @@
-import { Link, NavLink } from 'react-router-dom'
+import { Sun } from 'lucide-react'
+import flaagImg from '../assets/images/flaag.jpg'
 import styles from './Navbar.module.css'
 
-export default function Navbar() {
+export default function Navbar({ stepper, avatar }) {
   return (
-    <nav className={styles.nav}>
-      <Link to="/" className={styles.logo}>
-        ☀️ HélioBénin
-      </Link>
-      <ul className={styles.links}>
-        <li><NavLink to="/" end className={({ isActive }) => isActive ? styles.active : ''}>Accueil</NavLink></li>
-        <li><NavLink to="/dimensionnement" className={({ isActive }) => isActive ? styles.active : ''}>Dimensionnement</NavLink></li>
-        <li><NavLink to="/devis" className={({ isActive }) => isActive ? styles.active : ''}>Devis</NavLink></li>
-        <li><NavLink to="/login" className={({ isActive }) => isActive ? styles.active : ''}>Connexion</NavLink></li>
-      </ul>
+    <nav className={styles.navbar}>
+      <div className={styles.navLeft}>
+        <img src={flaagImg} alt="Bénin" className={styles.flag} />
+        <div className={styles.logo}>
+          <Sun size={24} color="#F59E0B" />
+          <span className={styles.logoText}>
+            <span className={styles.logoHelio}>Hélio</span>
+            <span className={styles.logoBenin}>Bénin</span>
+          </span>
+        </div>
+      </div>
+
+      <div className={styles.navStepper}>
+        {stepper}
+      </div>
+
+      <div className={styles.navAvatar}>
+        {avatar}
+      </div>
     </nav>
   )
 }

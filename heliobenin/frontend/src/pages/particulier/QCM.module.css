@@ -3,6 +3,7 @@
   min-height: 100vh;
   background-size: cover;
   background-position: center;
+  background-attachment: fixed;
   background-repeat: no-repeat;
   display: flex;
   align-items: center;
@@ -10,10 +11,11 @@
 }
 
 .overlay {
-  position: absolute;
+  position: fixed;
   inset: 0;
   background: rgba(0, 0, 0, 0.5);
   z-index: 0;
+  pointer-events: none;
 }
 
 .content {

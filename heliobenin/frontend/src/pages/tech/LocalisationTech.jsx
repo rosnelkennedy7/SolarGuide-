@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Search, MapPin } from 'lucide-react'
+import Navbar from '../../components/Navbar'
 import { MapContainer, TileLayer, Marker, useMapEvents, useMap } from 'react-leaflet'
 import L from 'leaflet'
 import 'leaflet/dist/leaflet.css'
@@ -231,9 +232,9 @@ export default function LocalisationTech() {
     <div className={styles.page} style={{ backgroundImage: `url(${vitreImg})` }}>
       <div className={styles.overlay} />
 
+      <Navbar stepper={<Stepper active={0} />} avatar={<AvatarTech />} />
+
       <div className={styles.inner}>
-        {/* Stepper */}
-        <Stepper active={0} />
 
         {/* Barre de recherche */}
         <div className={styles.searchRow}>
@@ -365,8 +366,6 @@ export default function LocalisationTech() {
           </button>
         </div>
       </div>
-
-      <AvatarTech />
     </div>
   )
 }

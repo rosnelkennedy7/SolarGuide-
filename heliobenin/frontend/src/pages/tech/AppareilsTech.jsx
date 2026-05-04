@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Trash2, Plus, ChevronDown, Search, Check } from 'lucide-react'
+import Navbar from '../../components/Navbar'
 import vitreImg from '../../assets/images/vitre.png'
 import AvatarTech from '../../components/AvatarTech'
 import { APPAREILS } from '../../data/appareils'
@@ -141,8 +142,9 @@ export default function AppareilsTech() {
     <div className={styles.page} style={{ backgroundImage: `url(${vitreImg})` }}>
       <div className={styles.overlay} />
 
+      <Navbar stepper={<Stepper active={1} />} avatar={<AvatarTech />} />
+
       <div className={styles.inner}>
-        <Stepper active={1} />
 
         {/* Boutons d'ajout — alignés à droite */}
         <div className={styles.actionsRow}>
@@ -249,8 +251,10 @@ export default function AppareilsTech() {
                     <td className={styles.td}>
                       <input
                         type="number"
-                        min={0}
+                        min={0.1}
                         max={24}
+                        step={0.5}
+                        placeholder="0.5"
                         value={row.hJour}
                         onChange={e => updateRow(row.id, 'hJour', +e.target.value)}
                         className={`${styles.cellInput} ${styles.cellNum} ${overflow ? styles.cellInputError : ''}`}
@@ -262,8 +266,10 @@ export default function AppareilsTech() {
                       <div className={styles.cellNuitWrap}>
                         <input
                           type="number"
-                          min={0}
+                          min={0.1}
                           max={24}
+                          step={0.5}
+                          placeholder="0.5"
                           value={row.hNuit}
                           onChange={e => updateRow(row.id, 'hNuit', +e.target.value)}
                           className={`${styles.cellInput} ${styles.cellNum} ${overflow ? styles.cellInputError : ''}`}
@@ -318,8 +324,6 @@ export default function AppareilsTech() {
           </button>
         </div>
       </div>
-
-      <AvatarTech />
 
       {/* ── Dropdown global (position: fixed) ── */}
       {openDdId && (

@@ -1,37 +1,72 @@
-.nav {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 1rem 2rem;
-  background: #fff;
-  border-bottom: 2px solid var(--primary);
+.navbar {
   position: sticky;
   top: 0;
   z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.75rem 1.5rem;
+  background: rgba(15,23,42,0.92);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+  gap: 1rem;
+}
+
+.navLeft {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-shrink: 0;
+}
+
+.flag {
+  width: 36px;
+  height: 24px;
+  object-fit: cover;
+  border-radius: 3px;
+  border: 1px solid rgba(255,255,255,0.2);
 }
 
 .logo {
-  font-size: 1.4rem;
-  font-weight: 700;
-  color: var(--secondary);
-}
-
-.links {
   display: flex;
-  gap: 1.5rem;
-  list-style: none;
+  align-items: center;
+  gap: 0.4rem;
 }
 
-.links a {
-  color: var(--text);
-  font-weight: 500;
-  padding: 0.25rem 0;
-  border-bottom: 2px solid transparent;
-  transition: border-color 0.2s;
+.logoText {
+  font-size: 1.4rem;
+  font-weight: 800;
+  letter-spacing: -0.5px;
 }
 
-.links a:hover,
-.active {
-  border-bottom-color: var(--primary) !important;
-  color: var(--primary-dark) !important;
+.logoHelio { color: #ffffff; }
+.logoBenin { color: #F59E0B; }
+
+.navStepper {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.navAvatar {
+  flex-shrink: 0;
+  position: relative;
+}
+
+@media (max-width: 768px) {
+  .navbar { flex-wrap: wrap; padding: 0.6rem 1rem; }
+  .navLeft { order: 1; }
+  .navAvatar { order: 2; margin-left: auto; }
+  .navStepper {
+    order: 3;
+    width: 100%;
+    padding: 0.4rem 0;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .logoText { font-size: 1.1rem; }
+  .flag { width: 28px; height: 18px; }
 }
